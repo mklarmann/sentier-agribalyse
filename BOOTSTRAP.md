@@ -57,16 +57,28 @@ import os
 import bw2data as bd
 import bw2io as bi
 
-bd.projects.set_current("dds-bootstrap")
-bi.import_ecoinvent_release(
-    version="3.9.1",
-    system_model="cutoff",
-    username=os.environ["ECOINVENT_USERNAME"],
-    password=os.environ["ECOINVENT_PASSWORD"],
-)
-# Confirm the database name the rest of the pipeline expects:
-assert "ecoinvent-3.9.1-cutoff" in bd.databases
+
+def main():
+    bd.projects.set_current("dds-bootstrap")
+    bi.import_ecoinvent_release(
+        version="3.9.1",
+        system_model="cutoff",
+        username=os.environ["ECOINVENT_USERNAME"],
+        password=os.environ["ECOINVENT_PASSWORD"],
+        use_mp=False,
+    )
+    # Confirm the database name the rest of the pipeline expects:
+    assert "ecoinvent-3.9.1-cutoff" in bd.databases
+
+
+if __name__ == "__main__":
+    main()
 ```
+
+Keep the `main()` wrapper and `use_mp=False`. bw2io defaults to
+multiprocessing, and with the `spawn` start method (Windows, macOS) every
+worker re-imports the main module, so module-level code re-runs the import
+recursively. Single-process is a few minutes slower and works everywhere.
 
 Note the on-disk location of that project's `databases.db` (bw2data prints the
 project dir; the SQLite lives under `<project>/lci/databases.db`).

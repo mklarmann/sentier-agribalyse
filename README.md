@@ -119,11 +119,24 @@ Flags worth knowing:
 
 After replacing the SimaPro CSV run `uv run dds-reset`, then repeat from step 3.
 
-What-if on a parameter, no SimaPro needed:
+## Changing parameters (no SimaPro required)
+
+AGB 3.2's SimaPro process-level parameters (577 names across 13,725 processes, packaging stage included) are editable from the command line. Only input parameters accept overrides; calculated parameters are formula-derived and refuse with their formula.
 
 ```bash
+uv run dds-list-parameters --name-like packaging                          # names, counts, value ranges, active overrides
 uv run dds-set-parameter Packaging_Weight 0.03 --product EI3CQUNI000025017101234
+uv run dds-set-parameter Packaging_Weight 0.03 --all-products             # every process that defines it
+uv run dds-clear-parameters                                               # back to the baseline
 ```
+
+`dds-set-parameter` writes the override to `source/parameter_overrides.csv` (gitignored; a process-specific row beats a `*` row), prints the changed exchange amounts, then reruns `dds-link-all` and `dds-backtest` so the dashboard shows the scenario. `--no-rescore` skips the rerun. `--fast` replays only the scoring-package stage against the cached linked graph (`cache/linked_cache.pkl`) and ratio-patches the amounts; exchanges whose baseline evaluates to 0 are reported and need the full path. Baseline and what-if scoring packages coexist in `cache/scoring_packages/` because the content hash covers the amounts. `dds-reset` deletes the overrides file unless you pass `--keep-overrides`.
+
+Rebuilds are deterministic: after `dds-clear-parameters` the next run reproduces the original scores exactly. This is verified on the full 2,451-product backtest.
+
+### Changing parameters in SimaPro instead
+
+For structural edits (new parameters, changed formulas), edit in SimaPro, re-export with the original settings, replace `source/AGB32_final.CSV`, then run `uv run dds-reset`, `uv run dds-link-all`, `uv run dds-backtest`. `dds-reset` is required because the CSV parse cache does not hash the source file.
 
 ## Layout
 
