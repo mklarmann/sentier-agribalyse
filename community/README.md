@@ -1,6 +1,10 @@
 # Community contributions and consensus
 
-This is the dataset's shared working space: canonical import → contributor layers → application and testing → reviewed consensus → recommendations to the dataset team.
+This public project is the central working space for AGRIBALYSE, spanning dataset releases. Its purpose is to make the canonical import easy to reproduce, collect contributions and discussions from partners and hackathon participants, apply proposed improvements as traceable layers, and test them against the canonical baseline.
+
+The resulting evidence supports an explicit review and consensus process. Agreed findings become actionable recommendations to ADEME for improving the source dataset, with delivery and provider responses recorded here. Sentier provides the collaboration and testing infrastructure; the recommendations concern AGRIBALYSE.
+
+The working sequence is: canonical import → contributor layers → application and testing → reviewed consensus → recommendations to ADEME.
 
 Keep the canonical source and its import reproducible. Store each proposed correction, mapping, parameter scenario or process model as a separate contribution with a source release, pinned implementation revision, evidence and validation plan. Apply it in an isolated candidate build; retain the baseline and comparison outputs. A local experiment does not change the provider's official dataset.
 
