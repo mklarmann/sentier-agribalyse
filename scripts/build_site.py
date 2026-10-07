@@ -1,6 +1,6 @@
 """Build the public documentation site from an explicit, inventory-free file list.
 
-Run: uv run --with markdown==3.7 scripts/build_site.py
+Run: uv run --no-project --with markdown==3.7 scripts/build_site.py
 """
 
 import argparse
@@ -19,10 +19,21 @@ def esc(value):
     return html.escape(str(value), quote=True)
 
 
-def build(out):
+def build(out, source_repository=None, source_ref=None, preview_url=None):
     config = json.loads((ROOT / "site/config.json").read_text())
     repo = config["repository"]
-    source_repo = config.get("source_repository", repo)
+    source_repo = source_repository or config.get("source_repository", repo)
+    config["source_ref"] = source_ref or config["source_ref"]
+    if preview_url and not preview_url.startswith("https://github.com/"):
+        raise ValueError("Preview notice must link to a GitHub pull request")
+    preview_notice = (
+        '<aside class="preview-notice" aria-label="Review preview"><div class="wrap">'
+        '<strong>Review preview.</strong> These documentation changes are proposed '
+        f'for the shared repository. <a href="{esc(preview_url)}">Review the pull request ↗</a>'
+        "</div></aside>"
+        if preview_url
+        else ""
+    )
     dataset = config["dataset"]
     provider = config["provider"]
     docs = config["documents"]
@@ -70,7 +81,7 @@ def build(out):
         return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)} · {esc(dataset)} · Sentier</title><meta name="description" content="{esc(config["description"])}"><meta name="theme-color" content="#29483c"><link rel="icon" href="assets/sentier.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body>
 <a class="skip" href="#main">Skip to content</a><header class="masthead"><div class="wrap top"><a class="brand" href="index.html" aria-label="Sentier {esc(dataset)} home"><img src="assets/sentier.svg" alt="sentier.dev"><span>{esc(dataset)}</span></a><div class="top-links"><a href="https://sentier.dev">About Sentier</a><a href="{esc(config["sibling_url"])}">{esc(config["sibling_name"])} ↗</a><a href="{repo}">Repository ↗</a></div></div><nav class="wrap nav" aria-label="Main navigation">{nav}</nav></header>
-{main}
+{preview_notice}{main}
 <footer><div class="wrap"><p><strong>A Sentier community workspace.</strong><br>Evidence and contributions toward better {esc(dataset)} data. Reviews and recommendations concern the source dataset; provider endorsement is not implied.</p><p><a href="terms.html">Data & attribution</a><br><a href="{esc(config["sibling_url"])}">{esc(config["sibling_name"])} ↗</a><br><a href="{repo}/issues/new/choose">Start a discussion ↗</a></p></div></footer></body></html>'''
 
     layer_cards = ""
@@ -127,6 +138,7 @@ def build(out):
                 "accepted": accepted,
                 "recommendations_sent": delivered,
                 "source_ref": config["source_ref"],
+                "preview": bool(preview_url),
             },
             indent=2,
         )
@@ -138,4 +150,8 @@ def build(out):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=ROOT / "_site")
-    build(parser.parse_args().out)
+    parser.add_argument("--source-repository", help="Repository containing this build's source")
+    parser.add_argument("--source-ref", help="Source branch or revision for repository links")
+    parser.add_argument("--preview-url", help="Show a review notice linking to this pull request")
+    args = parser.parse_args()
+    build(args.out, args.source_repository, args.source_ref, args.preview_url)

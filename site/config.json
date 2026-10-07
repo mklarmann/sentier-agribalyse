@@ -2,11 +2,11 @@
   "dataset": "AGRIBALYSE",
   "provider": "ADEME",
   "repository": "https://github.com/sentier-dev/sentier-agribalyse",
-  "source_ref": "community-contribution-workspace",
+  "source_ref": "main",
   "description": "The public Sentier workspace for AGRIBALYSE imports, partner contributions, application tests, reviewed consensus and recommendations to ADEME.",
   "sibling_name": "BAFU / UVEK",
-  "sibling_url": "https://github.com/sentier-dev/sentier-bafu",
-  "validation_note": "Community additions and the characterization audit are proposed in PR #6. Checks use synthetic fixtures; this work does not claim a newly reproduced licensed AGRIBALYSE baseline or partner consensus.",
+  "sibling_url": "https://sentier-dev.github.io/sentier-bafu/",
+  "validation_note": "Community checks use synthetic fixtures; this work does not claim a newly reproduced licensed AGRIBALYSE baseline or partner consensus.",
   "documents": [
     {
       "title": "Import & use",
@@ -48,6 +48,5 @@
       "source": "community/data-and-attribution.md",
       "page": "terms.html"
     }
-  ],
-  "source_repository": "https://github.com/mklarmann/sentier-agribalyse"
+  ]
 }
