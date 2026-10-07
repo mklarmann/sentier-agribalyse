@@ -31,6 +31,12 @@ class ContributionTests(unittest.TestCase):
             input_hashes={"source": "hash"},
         )
         self.record["layer"]["implementation_revision"] = "def"
+        self.record["layer"].update(
+            kind="synthetic", implementation_url="https://example.org/layer"
+        )
+        self.record["approvals"][0].update(
+            baseline=copy.deepcopy(self.record["baseline"]), layer_revision="def"
+        )
         self.record["runs"] = [
             dict(
                 baseline=copy.deepcopy(self.record["baseline"]),
@@ -61,6 +67,16 @@ class ContributionTests(unittest.TestCase):
 
     def test_unresolved_objection_blocks_acceptance(self):
         self.record["objections"] = [{"reason": "boundary"}]
+        self.assertTrue(records.validate(self.record))
+
+    def test_approval_for_old_layer_is_not_consensus(self):
+        self.record["approvals"][0]["layer_revision"] = "old-layer"
+        self.assertTrue(records.validate(self.record))
+
+    def test_empty_implementation_cannot_be_accepted(self):
+        self.record["layer"]["implementation_revision"] = ""
+        self.record["runs"][0]["layer_revision"] = ""
+        self.record["approvals"][0]["layer_revision"] = ""
         self.assertTrue(records.validate(self.record))
 
     def test_comparison_checks_scope_metrics_units_and_finiteness(self):

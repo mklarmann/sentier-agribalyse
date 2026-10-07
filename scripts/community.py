@@ -71,6 +71,13 @@ def validate(record):
     if record["status"] == "accepted":
         baseline = record["baseline"]
         if not all(
+            record["layer"].get(k)
+            for k in ("kind", "implementation_url", "implementation_revision")
+        ):
+            errors.append("accepted contributions need a named, pinned implementation")
+        if any(not isinstance(r, str) or not r.strip() for r in record["required_reviewers"]):
+            errors.append("required reviewers must have nonempty identities")
+        if not all(
             baseline.get(k)
             for k in (
                 "dataset",
@@ -108,10 +115,15 @@ def validate(record):
         approved = {
             a.get("reviewer")
             for a in record["approvals"]
-            if isinstance(a, dict) and a.get("evidence_url")
+            if isinstance(a, dict)
+            and a.get("evidence_url")
+            and a.get("baseline") == baseline
+            and a.get("layer_revision") == record["layer"]["implementation_revision"]
         }
         if not record["required_reviewers"] or not set(record["required_reviewers"]) <= approved:
-            errors.append("acceptance needs named reviewers and every approval with evidence")
+            errors.append(
+                "acceptance needs named reviewers and every approval tied to the exact baseline and layer revision"
+            )
         if any(
             not isinstance(o, dict) or not o.get("disposition") or not o.get("evidence_url")
             for o in record["objections"]

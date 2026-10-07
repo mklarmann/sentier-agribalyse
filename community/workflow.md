@@ -9,3 +9,7 @@
 Contribution status: proposed → testing → reviewing → accepted / rejected / superseded. A useful scenario need not become an official correction. A merged importer PR alone is not dataset-provider endorsement.
 
 No owners, reviewers or provider contacts are assigned without confirming their participation. An assistant's synthesis remains a proposal. Consensus is represented by explicit approval records with objections and evidence, not a vote count or silence.
+
+## Bind review to the tested candidate
+
+Each approval includes `reviewer`, `evidence_url`, the complete `baseline` object and `layer_revision`. Acceptance checks these against the contribution record, so approval of an earlier revision cannot promote a changed candidate. A link records the actual reviewer decision; automatic validation does not manufacture it.

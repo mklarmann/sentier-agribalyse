@@ -98,3 +98,6 @@ docs/
 # Isolated community experiments and private evidence
 .local/
 community/private/
+
+# Generated public documentation
+_site/
