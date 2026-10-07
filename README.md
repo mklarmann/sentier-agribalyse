@@ -48,6 +48,17 @@ flowchart LR
     CP[dds-clear-parameters] -.-> LINK
 ```
 
+## Partner contributions, application tests and consensus
+
+This public project is also the central working space for partner and hackathon contributions around AGRIBALYSE. Keep its version-specific canonical import reproducible, apply proposed mappings, parameter scenarios and models as separate candidate layers, compare and validate them, then turn reviewed consensus into recommendations to ADEME. The project scope spans releases; the current documented adapter targets 3.2. No private or unreleased adapter is required for community participation.
+
+Start with [the community workspace](community/README.md), [application and testing](community/application-and-testing.md), [existing-work assessment](community/existing-work-assessment.md), and [contribution records](community/contributions/). Reuse the MappingRegistry, parameter override tools, backtest and parity-checked export below. An import fix, a scenario and a proposed upstream inventory correction have different claims and validation requirements.
+
+```sh
+python3 scripts/community.py check
+python3 -m unittest discover -s community/tests
+```
+
 ## Prerequisites
 
 - Python 3.11+ and [uv](https://docs.astral.sh/uv/).
