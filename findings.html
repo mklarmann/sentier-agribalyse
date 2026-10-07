@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Findings &amp; shared lessons · AGRIBALYSE · Sentier</title><meta name="description" content="The public Sentier workspace for AGRIBALYSE imports, partner contributions, application tests, reviewed consensus and recommendations to ADEME."><meta name="theme-color" content="#29483c"><link rel="icon" href="assets/sentier.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body>
+<a class="skip" href="#main">Skip to content</a><header class="masthead"><div class="wrap top"><a class="brand" href="index.html" aria-label="Sentier AGRIBALYSE home"><img src="assets/sentier.svg" alt="sentier.dev"><span>AGRIBALYSE</span></a><div class="top-links"><a href="https://sentier.dev">About Sentier</a><a href="https://sentier-dev.github.io/sentier-bafu/">BAFU / UVEK ↗</a><a href="https://github.com/sentier-dev/sentier-agribalyse">Repository ↗</a></div></div><nav class="wrap nav" aria-label="Main navigation"><a href="index.html">Overview</a><a href="import.html">Import & use</a><a href="testing.html">Evidence & testing</a><a href="findings.html" aria-current="page">Findings</a><a href="contribute.html">Contribute</a></nav></header>
+<aside class="preview-notice" aria-label="Review preview"><div class="wrap"><strong>Review preview.</strong> These documentation changes are proposed for the shared repository. <a href="https://github.com/sentier-dev/sentier-agribalyse/pull/6">Review the pull request ↗</a></div></aside><main id="main" class="wrap document"><aside class="sidebar" aria-label="Documentation"><strong>In this workspace</strong><a href="import.html">Import &amp; use</a><a href="testing.html">Evidence &amp; testing</a><a href="findings.html" aria-current="page">Findings &amp; shared lessons</a><a href="contribute.html">Contribute</a><a href="application.html">Apply a candidate layer</a><a href="consensus.html">Consensus &amp; recommendations</a><a href="existing-work.html">Existing contribution hooks</a><a href="terms.html">Data &amp; attribution</a></aside><article class="article"><h1 id="findings-and-shared-lessons">Findings and shared lessons</h1>
+<p>This ledger distinguishes <strong>AGRIBALYSE source findings</strong>, <strong>adapter defects</strong>, and <strong>candidate model claims</strong>. A source finding needs a named dataset, release, observation and reproduction against ADEME's source files. An import or method problem belongs to the component that introduced it. These engineering lessons from lci-bafu-catalog do not establish a defect in AGRIBALYSE.</p>
+<h2 id="current-review">Current review</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Evidence</th>
+<th>Application here</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Silent losses between source and served exchanges</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/2">BAFU importer parity #2</a></td>
+<td>Named row-delta reconciliation; retain existing drop and dangling-edge reports</td>
+<td>Shared audit tool implemented; licensed baseline reconciliation not run</td>
+</tr>
+<tr>
+<td>Linked greenhouse gases with missing CFs</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/5">Method derivation #5</a></td>
+<td>Audit the final scoring biosphere; distinguish missing factors from explicit zeros</td>
+<td>Integrated coverage gate and synthetic regressions proposed in PR #6</td>
+</tr>
+<tr>
+<td>Identity changes across rebuilds</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/5">Build identity #5</a></td>
+<td>Keep exact output hashes and a portable aggregate-summary identity</td>
+<td>Shared summary tool implemented; not a full inventory fingerprint</td>
+</tr>
+<tr>
+<td>Aggregated inventories versus reconstructions</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/3">Aggregated datasets #3</a></td>
+<td>Separate candidate identity, scope and score comparison</td>
+<td>Review requirement; no equivalence inferred</td>
+</tr>
+<tr>
+<td>Retired processes selected unknowingly</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/4">Maintenance signals #4</a></td>
+<td>Preserve AGRIBALYSE lifecycle signals when supplied; examine stale mapping anchors</td>
+<td>Requires AGRIBALYSE-specific evidence; BAFU prefixes are not copied</td>
+</tr>
+<tr>
+<td>Artifact-specific redistribution terms</td>
+<td><a href="https://github.com/sentier-dev/sentier-bafu/issues/1">Redistribution discussion #1</a></td>
+<td>Distinguish public results, foreground evidence and licensed background exports</td>
+<td>Documented; no new distribution agreement assumed</td>
+</tr>
+</tbody>
+</table></div>
+<p>No new AGRIBALYSE source-value defect or ADEME recommendation is asserted by this ledger. No new licensed baseline has been reproduced in this documentation work. The BAFU strawberry, refrigerant and cement observations remain BAFU findings; they may affect a BAFU-background candidate but do not describe canonical AGRIBALYSE.</p>
+<h2 id="add-a-finding">Add a finding</h2>
+<p><a href="https://github.com/sentier-dev/sentier-agribalyse/issues/new/choose">Open a source finding</a> with the release, dataset identity, measured observation, expected behaviour, reproduction steps and permitted evidence. Record whether the observation comes from source files, an imported representation or a served result. Invite independent reproduction; keep unresolved interpretations explicit.</p>
+<p>If a contribution addresses it, link its <a href="https://github.com/mklarmann/sentier-agribalyse/blob/community-contribution-workspace/community/contributions">record</a> and <a href="testing.html">validation</a>. A workaround does not close the provider question. Reviewed recommendations and actual ADEME responses belong in <a href="https://github.com/mklarmann/sentier-agribalyse/blob/community-contribution-workspace/community/recommendations">the recommendation tracker</a>.</p></article></main>
+<footer><div class="wrap"><p><strong>A Sentier community workspace.</strong><br>Evidence and contributions toward better AGRIBALYSE data. Reviews and recommendations concern the source dataset; provider endorsement is not implied.</p><p><a href="terms.html">Data & attribution</a><br><a href="https://sentier-dev.github.io/sentier-bafu/">BAFU / UVEK ↗</a><br><a href="https://github.com/sentier-dev/sentier-agribalyse/issues/new/choose">Start a discussion ↗</a></p></div></footer></body></html>
