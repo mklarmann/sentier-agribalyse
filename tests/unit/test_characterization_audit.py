@@ -1,11 +1,20 @@
+import ast
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
 from scipy import sparse
 
-from scoring.characterization_audit import audit_characterization
+from scoring import CharacterizationAuditor
 from scoring.exchange_frame_builder import ExchangeFrameBuilder
 from scoring.matrix_builder import BuiltMatrix
+
+SRC = Path(__file__).resolve().parents[2] / "src"
+
+
+def audit_characterization(biosphere, method_cfs, catalog):
+    return CharacterizationAuditor().audit(biosphere, method_cfs, catalog)
 
 
 def fixture():
@@ -69,3 +78,21 @@ def test_nonfinite_and_duplicate_factors_fail():
     cfs[key] = pd.concat([cfs[key], cfs[key].iloc[:1]])
     with pytest.raises(ValueError, match="Duplicate"):
         audit_characterization(b, cfs, catalog)
+
+
+def test_audit_follows_the_source_conventions():
+    """``src/`` convention: instantiable classes, imports at the top of the file."""
+    audit_module = ast.parse((SRC / "scoring/characterization_audit.py").read_text())
+    assert [n.name for n in audit_module.body if isinstance(n, ast.FunctionDef)] == []
+    assert "CharacterizationAuditor" in [
+        n.name for n in audit_module.body if isinstance(n, ast.ClassDef)
+    ]
+    link_all = ast.parse((SRC / "pipelines/link_all.py").read_text())
+    nested_imports = [
+        ast.unparse(node)
+        for function in ast.walk(link_all)
+        if isinstance(function, ast.FunctionDef)
+        for node in ast.walk(function)
+        if isinstance(node, (ast.Import, ast.ImportFrom))
+    ]
+    assert nested_imports == []
