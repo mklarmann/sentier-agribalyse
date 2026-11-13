@@ -44,13 +44,26 @@ class CharacterizationAuditor:
             "carbon dioxide, non-fossil",
             "carbon dioxide, biogenic",
             "carbon dioxide, peat oxidation",
+            # Land-use change: the ecoinvent 3.9.1 name, then the older biosphere3 one.
+            "carbon dioxide, from soil or biomass stock",
+            "carbon dioxide, land transformation",
             "methane",
             "methane, fossil",
             "methane, non-fossil",
             "methane, biogenic",
             "methane, peat oxidation",
+            "methane, from soil or biomass stock",
+            "methane, land transformation",
             "dinitrogen monoxide",
             "dinitrogen monoxide, peat oxidation",
+            # The method's own flow list (``ef``): the matcher may link an emission there.
+            "carbon dioxide (fossil)",
+            "carbon dioxide (biogenic)",
+            "carbon dioxide (land use change)",
+            "methane (fossil)",
+            "methane (biogenic)",
+            "methane (land use change)",
+            "nitrous oxide",
         }
     )
 
@@ -91,12 +104,11 @@ class CharacterizationAuditor:
                 "code": str(row.code),
                 "name": str(row.name),
             }
-            name = str(row.name).strip().casefold()
-            categories = tuple(row.categories) if row.categories is not None else ()
-            if categories and str(categories[0]).casefold() == "air" and name in self.CORE_GASES:
-                required.add(key)
-            if self._is_emission_to_air(categories):
+            if self._is_emission_to_air(row.categories):
+                name = str(row.name).strip().casefold()
                 air_flows_by_name.setdefault(name, set()).add(key)
+                if name in self.CORE_GASES:
+                    required.add(key)
         missing_labels = sorted(used - labels.keys())
         methods, failures = [], []
         for method, factors in sorted(method_cfs.items()):
@@ -185,7 +197,15 @@ class CharacterizationAuditor:
         return bool(method_flows) and all(cf_by_flow.get(key) == 0.0 for key in method_flows)
 
     @staticmethod
-    def _is_emission_to_air(categories: Iterable[Any]) -> bool:
-        """ecoinvent says ``("air", ...)``; the EF nomenclature ``("Emissions", "Emissions to air", ...)``."""
+    def _is_emission_to_air(categories: Any) -> bool:
+        """ecoinvent says ``("air", ...)``; the EF nomenclature ``("Emissions", "Emissions to air", ...)``.
+
+        The catalog parquet hands the compartment over as a tuple, list or array; a
+        missing one arrives as ``None`` or NaN and is not an emission to air.
+        """
+        if isinstance(categories, str):
+            categories = (categories,)
+        if not isinstance(categories, Iterable):
+            return False
         names = [str(part).strip().casefold() for part in categories]
         return bool(names) and (names[0] == "air" or "emissions to air" in names)

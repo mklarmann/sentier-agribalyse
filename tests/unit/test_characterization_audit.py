@@ -199,6 +199,83 @@ def test_a_gas_the_policy_does_not_name_is_never_excused():
     ]
 
 
+def emitted_fixture(rows):
+    """Every catalog row is emitted once. ``rows``: (database, code, name, categories)."""
+    catalog = pd.DataFrame(rows, columns=["database", "code", "name", "categories"])
+    ids = [
+        ExchangeFrameBuilder.flow_id_for((database, code))
+        for database, code in zip(catalog.database, catalog.code, strict=True)
+    ]
+    biosphere = BuiltMatrix(
+        matrix=sparse.csr_matrix(np.ones((len(ids), 1))),
+        row_id_to_idx=dict(zip(ids, range(len(ids)), strict=True)),
+        col_id_to_idx={1: 0},
+    )
+    return biosphere, catalog, ids
+
+
+def missing_names(audit):
+    return sorted(g["name"] for g in audit["methods"][0]["missing_core_gases"])
+
+
+def test_land_use_change_co2_and_methane_are_core_gases():
+    """ecoinvent 3.9.1 and biosphere3 name these flows differently from fossil CO2/CH4."""
+    names = [
+        "Carbon dioxide, from soil or biomass stock",
+        "Methane, from soil or biomass stock",
+        "Carbon dioxide, land transformation",
+        "Methane, land transformation",
+    ]
+    biosphere, catalog, ids = emitted_fixture(
+        [("bio", f"luc{i}", name, ("air",)) for i, name in enumerate(names)]
+        + [("bio", "nh3", "Ammonia", ("air",))]
+    )
+    without = {CLIMATE: pd.DataFrame({"flow_id": ids[-1:], "cf": [0.0]})}
+    audit = audit_characterization(biosphere, without, catalog)
+    assert audit["status"] == "failed"
+    assert missing_names(audit) == sorted(names)
+    with_factors = {CLIMATE: pd.DataFrame({"flow_id": ids[:4], "cf": [1.0, 29.8, 1.0, 29.8]})}
+    assert audit_characterization(biosphere, with_factors, catalog)["status"] == "passed"
+
+
+def test_core_gases_linked_to_the_methods_own_flows_are_required_too():
+    """The matcher may link an emission to an ``ef`` flow; those carry the EF names."""
+    names = [
+        "carbon dioxide (fossil)",
+        "Carbon dioxide (land use change)",
+        "methane (fossil)",
+        "methane (biogenic)",
+        "methane (land use change)",
+        "nitrous oxide",
+    ]
+    air = (*EF_AIR, "Emissions to air, unspecified")
+    biosphere, catalog, ids = emitted_fixture(
+        [("ef", f"g{i}", name, air) for i, name in enumerate(names)]
+        # Not emissions to air: never required, whatever the name.
+        + [
+            ("ef", "soil", "nitrous oxide", ("Emissions", "Emissions to soil", "x")),
+            ("ef", "uptake", "carbon dioxide (fossil)", ("Resources", "Resources from air", "x")),
+        ]
+    )
+    unrelated = {CLIMATE: pd.DataFrame({"flow_id": ids[-1:], "cf": [0.0]})}
+    audit = audit_characterization(biosphere, unrelated, catalog)
+    assert audit["status"] == "failed"
+    assert missing_names(audit) == sorted(names)
+
+
+def test_compartment_is_read_whatever_shape_the_catalog_gives_it():
+    shapes = [("air",), ["air", "urban air close to ground"], np.array(["air"], dtype=object)]
+    shapes += [(" Air ",), "air"]
+    biosphere, catalog, _ = emitted_fixture(
+        [("bio", f"m{i}", "Methane, fossil", shape) for i, shape in enumerate(shapes)]
+        + [("bio", "none", "Methane, fossil", None), ("bio", "nan", "Methane, fossil", np.nan)]
+    )
+    unrelated = {CLIMATE: pd.DataFrame({"flow_id": [-1], "cf": [1.0]})}
+    audit = audit_characterization(biosphere, unrelated, catalog)
+    # Five rows say "air" in one shape or another; a row without a compartment is not air.
+    assert len(audit["methods"][0]["missing_core_gases"]) == len(shapes)
+
+
 def test_ef31_source_table_gives_every_policy_species_a_zero_factor_to_air():
     """The policy names species; the public JRC table in ``source/`` is its evidence."""
     table = pd.read_parquet(Settings().paths.ef_cf_parquet)
@@ -229,9 +306,14 @@ class TestRealRegistry:
             .load_all()
             .items()
         }
-        # Treat every flow of the inventory's biosphere database as emitted: a superset of
-        # what a link run can emit from it, so a pass here holds for any such run.
-        emitted = catalog[catalog["database"] == Settings().biosphere_db_name]
+        # Treat every flow of the inventory's biosphere database and of the method's own
+        # flow list as emitted: a superset of what a link run can emit from those two, so
+        # a pass here holds for any such run. (The matcher's last resort, biosphere3, has
+        # no factors in this registry; a core gas linked there fails the audit by design.)
+        settings = Settings()
+        emitted = catalog[
+            catalog["database"].isin([settings.biosphere_db_name, settings.ef_db_name])
+        ]
         ids = [
             ExchangeFrameBuilder.flow_id_for((database, code))
             for database, code in zip(emitted["database"], emitted["code"], strict=True)
@@ -284,8 +366,10 @@ class TestRealRegistry:
         method_cfs[key] = method_cfs[key][~method_cfs[key]["flow_id"].isin(biogenic)]
         audit = audit_characterization(biosphere, method_cfs, catalog)
         assert audit["status"] == "failed"
+        # The method's own flows lost their rows, and with them the inventory flow its excuse.
         assert {g["name"] for g in self._headline(audit)["missing_core_gases"]} == {
-            "Carbon dioxide, non-fossil"
+            "carbon dioxide (biogenic)",
+            "Carbon dioxide, non-fossil",
         }
 
 
