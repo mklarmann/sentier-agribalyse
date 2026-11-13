@@ -276,6 +276,38 @@ def test_compartment_is_read_whatever_shape_the_catalog_gives_it():
     assert len(audit["methods"][0]["missing_core_gases"]) == len(shapes)
 
 
+def test_a_zero_factor_on_a_core_gas_needs_the_methods_definition_too():
+    """A row that says 0 for fossil CO2, methane or N2O scores it zero as surely as no row."""
+    biosphere, catalog, ids = emitted_fixture(
+        [
+            ("bio", "co2f", "Carbon dioxide, fossil", ("air",)),
+            ("bio", "ch4", "Methane, fossil", ("air",)),
+            ("bio", "n2o", "Dinitrogen monoxide", ("air",)),
+            ("bio", "co2b", "Carbon dioxide, biogenic", ("air",)),
+            ("ef", "b1", "carbon dioxide (biogenic)", (*EF_AIR, "Emissions to air, indoor")),
+        ]
+    )
+    zeros = {CLIMATE: pd.DataFrame({"flow_id": ids, "cf": [0.0, 0.0, -0.0, 0.0, 0.0]})}
+    audit = audit_characterization(biosphere, zeros, catalog)
+    assert audit["status"] == "failed"
+    method = audit["methods"][0]
+    assert sorted(g["name"] for g in method["zero_factor_core_gases"]) == [
+        "Carbon dioxide, fossil",
+        "Dinitrogen monoxide",
+        "Methane, fossil",
+    ]
+    assert sorted(g["name"] for g in method["zero_by_method_definition"]) == [
+        "Carbon dioxide, biogenic",
+        "carbon dioxide (biogenic)",
+    ]
+    assert method["missing_core_gases"] == []
+
+    factors = {CLIMATE: pd.DataFrame({"flow_id": ids, "cf": [1.0, 29.8, 273.0, 0.0, 0.0]})}
+    audit = audit_characterization(biosphere, factors, catalog)
+    assert audit["status"] == "passed"
+    assert audit["methods"][0]["zero_factor_core_gases"] == []
+
+
 def test_ef31_source_table_gives_every_policy_species_a_zero_factor_to_air():
     """The policy names species; the public JRC table in ``source/`` is its evidence."""
     table = pd.read_parquet(Settings().paths.ef_cf_parquet)
@@ -336,8 +368,11 @@ class TestRealRegistry:
         assert audit["status"] == "passed"
         headline = self._headline(audit)
         assert headline["missing_core_gases"] == []
+        assert headline["zero_factor_core_gases"] == []
+        # The inventory flow (no row of its own) and the method's own flows (zero rows).
         assert {g["name"] for g in headline["zero_by_method_definition"]} == {
-            "Carbon dioxide, non-fossil"
+            "Carbon dioxide, non-fossil",
+            "carbon dioxide (biogenic)",
         }
 
     def test_registry_without_its_fossil_co2_factors_fails(self):

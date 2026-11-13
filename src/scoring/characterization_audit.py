@@ -8,12 +8,13 @@ emitted flows have no factor in most methods (about 4,150 of 4,260 per method on
 AGRIBALYSE 3.2 build), and that list can be rebuilt from the package's ``ids.json``
 and characterization matrices.
 
-A core gas without a factor row fails the audit, with one exception that the method
-itself must prove: a species the method defines as exactly zero. EF 3.1 lists biogenic
-CO2 emissions to air with a factor of 0, but under its own flow ids; the ecoinvent
-biosphere flow "Carbon dioxide, non-fossil" that the inventory emits has no row of its
-own. Such a flow is reported as zero by method definition, apart from a missing factor,
-and only while the method's CF table carries those explicit zero rows.
+A core gas that scores zero fails the audit, whether it has no factor row or a row that
+says 0, with one exception that the method itself must prove: a species the method
+defines as exactly zero. EF 3.1 lists biogenic CO2 emissions to air with a factor of 0,
+but under its own flow ids; the ecoinvent biosphere flow "Carbon dioxide, non-fossil"
+that the inventory emits has no row of its own. Such a flow is reported as zero by
+method definition, apart from a missing factor, and only while the method's CF table
+carries those explicit zero rows.
 """
 
 from __future__ import annotations
@@ -125,15 +126,20 @@ class CharacterizationAuditor:
             }
             covered = set(cf_by_flow)
             climate = any(str(part).casefold() == "climate change" for part in method)
-            without_factor = sorted((used & required) - covered) if climate else []
-            zero_by_definition = [
-                key
-                for key in without_factor
-                if self._method_defines_zero(labels[key]["name"], cf_by_flow, air_flows_by_name)
-            ]
-            missing_required = [key for key in without_factor if key not in zero_by_definition]
+            zero_by_definition, zero_factor, missing_required = [], [], []
+            for key in sorted(used & required) if climate else []:
+                name, factor = labels[key]["name"], cf_by_flow.get(key)
+                if factor is None:
+                    if self._method_defines_zero(name, cf_by_flow, air_flows_by_name):
+                        zero_by_definition.append(key)
+                    else:
+                        missing_required.append(key)
+                elif factor == 0.0:
+                    # A row that says 0 scores the gas zero as surely as no row. It is the
+                    # method's word only for a species the policy names as method-defined zero.
+                    (zero_by_definition if self._is_zero_species(name) else zero_factor).append(key)
             # Unlabelled rows could hide core gases; a climate audit cannot certify them.
-            if climate and (missing_required or missing_labels):
+            if climate and (missing_required or zero_factor or missing_labels):
                 failures.append(list(method))
             entry: dict[str, Any] = {
                 "method": list(method),
@@ -142,18 +148,19 @@ class CharacterizationAuditor:
                 "uncharacterized_flows": len(used - covered),
             }
             if climate:
-                # Bounded by the core-gas rows of the catalog, and named: these two lists
-                # are the evidence a reviewer needs.
+                # Bounded by the core-gas rows of the catalog, and named: these lists are
+                # the evidence a reviewer needs. Only the first is compatible with a pass.
                 entry["zero_by_method_definition"] = [labels[key] for key in zero_by_definition]
+                entry["zero_factor_core_gases"] = [labels[key] for key in zero_factor]
                 entry["missing_core_gases"] = [labels[key] for key in missing_required]
             methods.append(entry)
         return {
             "status": "failed" if failures else "passed",
             "policy": (
-                "Core CO2/CH4/N2O air emissions require source CF rows in climate-change "
-                "methods; no inferred CFs. A species the method defines as zero is accepted "
-                "without a row of its own only while the method's table lists it with "
-                "explicit zero factors."
+                "Core CO2/CH4/N2O air emissions require non-zero source CF rows in "
+                "climate-change methods; no inferred CFs. Zero is accepted only for a "
+                "species the method defines as zero: on the flow's own zero row, or without "
+                "a row while the method's table lists the species with explicit zero factors."
             ),
             "scope": "Coverage only; other gases and non-climate omissions require method-specific review.",
             "emitted_flows": len(used),
@@ -195,6 +202,14 @@ class CharacterizationAuditor:
         species = self.ZERO_BY_METHOD_DEFINITION.get(flow_name.strip().casefold())
         method_flows = air_flows_by_name.get(species, set()) if species else set()
         return bool(method_flows) and all(cf_by_flow.get(key) == 0.0 for key in method_flows)
+
+    def _is_zero_species(self, flow_name: str) -> bool:
+        """True for a name the policy lists, in the inventory's or the method's nomenclature."""
+        name = flow_name.strip().casefold()
+        return (
+            name in self.ZERO_BY_METHOD_DEFINITION
+            or name in self.ZERO_BY_METHOD_DEFINITION.values()
+        )
 
     @staticmethod
     def _is_emission_to_air(categories: Any) -> bool:
