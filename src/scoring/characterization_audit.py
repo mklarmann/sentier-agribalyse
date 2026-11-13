@@ -5,8 +5,13 @@ unqualified methane. The core-gas policy covers CO2, CH4 and N2O emitted to air;
 every other flow the receipt gives each method's counts, for method-specific review.
 The receipt holds counts and the named core gases, never the list of flow ids: most
 emitted flows have no factor in most methods (about 4,150 of 4,260 per method on the
-AGRIBALYSE 3.2 build), and that list can be rebuilt from the package's ``ids.json``
-and characterization matrices.
+AGRIBALYSE 3.2 build). For an emitted package that list can be rebuilt from its
+``ids.json`` and characterization matrices; a withheld candidate has no package, and
+its receipt names the gases that withheld it.
+
+``status`` is ``passed`` only if at least one headline climate method (a method key
+with the part "climate change") was audited and nothing failed; ``not_audited`` if
+the registry holds no such method, so that a pass never means "nothing to check".
 
 A core gas that scores zero fails the audit, whether it has no factor row or a row that
 says 0, with one exception that the method itself must prove: a species the method
@@ -36,7 +41,8 @@ from scoring.matrix_builder import BuiltMatrix
 
 @dataclass(frozen=True)
 class CharacterizationAuditor:
-    """Stateless. ``audit(...)`` returns the receipt; ``status`` is ``passed`` or ``failed``."""
+    """Stateless. ``audit(...)`` returns the receipt; ``status`` is ``passed``, ``failed``
+    or ``not_audited``."""
 
     CORE_GASES: ClassVar[frozenset[str]] = frozenset(
         {
@@ -110,8 +116,14 @@ class CharacterizationAuditor:
                 air_flows_by_name.setdefault(name, set()).add(key)
                 if name in self.CORE_GASES:
                     required.add(key)
-        missing_labels = sorted(used - labels.keys())
-        methods, failures = [], []
+        if len(labels) != len(catalog):
+            # Two rows for one flow: its name, and so its verdict, would be whichever came last.
+            raise ValueError(
+                f"Duplicate biosphere catalog rows: {len(catalog) - len(labels)} "
+                "(database, code) pairs appear more than once"
+            )
+        missing_labels = sorted(int(key) for key in used - labels.keys())
+        methods, failures, n_climate = [], [], 0
         for method, factors in sorted(method_cfs.items()):
             values = factors["cf"].to_numpy(dtype=float)
             if not np.isfinite(values).all():
@@ -125,7 +137,8 @@ class CharacterizationAuditor:
                 for key, value in zip(factors["flow_id"], values, strict=True)
             }
             covered = set(cf_by_flow)
-            climate = any(str(part).casefold() == "climate change" for part in method)
+            climate = any(str(part).strip().casefold() == "climate change" for part in method)
+            n_climate += climate
             zero_by_definition, zero_factor, missing_required = [], [], []
             for key in sorted(used & required) if climate else []:
                 name, factor = labels[key]["name"], cf_by_flow.get(key)
@@ -155,7 +168,8 @@ class CharacterizationAuditor:
                 entry["missing_core_gases"] = [labels[key] for key in missing_required]
             methods.append(entry)
         return {
-            "status": "failed" if failures else "passed",
+            "status": "failed" if failures else "passed" if n_climate else "not_audited",
+            "climate_methods_audited": n_climate,
             "policy": (
                 "Core CO2/CH4/N2O air emissions require non-zero source CF rows in "
                 "climate-change methods; no inferred CFs. Zero is accepted only for a "

@@ -308,6 +308,57 @@ def test_a_zero_factor_on_a_core_gas_needs_the_methods_definition_too():
     assert audit["methods"][0]["zero_factor_core_gases"] == []
 
 
+def test_without_a_headline_climate_method_nothing_was_audited():
+    """A pass must mean the core gases were checked, not that there was nothing to check."""
+    biosphere, cfs, catalog = fixture()
+    no_methane_factor = cfs[CLIMATE].iloc[1:]
+    for method_cfs in (
+        {},
+        {("test", "acidification"): no_methane_factor},
+        {("test", "climate change: fossil"): no_methane_factor},  # a sub-indicator
+    ):
+        audit = audit_characterization(biosphere, method_cfs, catalog)
+        assert audit["status"] == "not_audited", method_cfs.keys()
+        assert audit["climate_methods_audited"] == 0
+        assert audit["failed_methods"] == []
+    audit = audit_characterization(biosphere, cfs, catalog)
+    assert (audit["status"], audit["climate_methods_audited"]) == ("passed", 1)
+
+
+def test_headline_method_is_recognised_whatever_its_case_and_spacing():
+    biosphere, cfs, catalog = fixture()
+    spelled = {("EF v3.1", " Climate Change ", "GWP100"): cfs[CLIMATE].iloc[1:]}
+    audit = audit_characterization(biosphere, spelled, catalog)
+    assert audit["status"] == "failed"
+    assert missing_names(audit) == ["Methane"]
+
+
+def test_a_catalog_with_two_rows_for_one_flow_is_refused():
+    """The label of a flow must not depend on which of two rows came last."""
+    biosphere, cfs, catalog = fixture()
+    twice = pd.concat([catalog, catalog.iloc[:1].assign(name="Carbon dioxide, biogenic")])
+    for ordered in (twice, twice.iloc[::-1]):
+        with pytest.raises(ValueError, match="Duplicate biosphere catalog rows"):
+            audit_characterization(biosphere, cfs, ordered)
+
+
+def test_receipt_is_written_whatever_integer_type_the_flow_ids_have(tmp_path):
+    biosphere, cfs, catalog = fixture()
+    numpy_ids = BuiltMatrix(
+        matrix=biosphere.matrix,
+        row_id_to_idx={np.int64(key): row for key, row in biosphere.row_id_to_idx.items()},
+        col_id_to_idx=biosphere.col_id_to_idx,
+    )
+    auditor = CharacterizationAuditor()
+    audit = auditor.audit(numpy_ids, cfs, catalog.iloc[1:])  # one emitted flow is unlabelled
+    assert audit["unlabelled_emitted_flows"] == 1
+    receipt = json.loads(auditor.write_receipt(audit, "abc", tmp_path / "audit.json").read_text())
+    assert receipt["unlabelled_emitted_flow_id_sample"] == [
+        int(ExchangeFrameBuilder.flow_id_for(("bio", "ch4")))
+    ]
+    assert list(tmp_path.iterdir()) == [tmp_path / "audit.json"]
+
+
 def test_ef31_source_table_gives_every_policy_species_a_zero_factor_to_air():
     """The policy names species; the public JRC table in ``source/`` is its evidence."""
     table = pd.read_parquet(Settings().paths.ef_cf_parquet)
