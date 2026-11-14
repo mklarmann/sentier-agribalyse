@@ -187,8 +187,10 @@ class CharacterizationAuditor:
     def write_receipt(self, audit: Mapping[str, Any], candidate_hash: str, path: Path) -> Path:
         """Write the audit of one scoring-package candidate to its own file, atomically.
 
-        Written whether the audit passed or failed, so the file always describes the
-        last candidate; ``candidate_content_hash`` says which one.
+        Written whether the audit passed or failed; ``candidate_content_hash`` says
+        which candidate it describes. An audit that cannot be made and raises (an
+        inconsistent catalog or factor table) writes no receipt, and the receipt of
+        the earlier candidate stays.
         """
         path.parent.mkdir(parents=True, exist_ok=True)
         partial = path.with_suffix(path.suffix + ".partial")
