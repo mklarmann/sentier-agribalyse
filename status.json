@@ -1,8 +1,12 @@
 {
   "dataset": "AGRIBALYSE",
+  "findings": 0,
+  "findings_by_stage": {},
   "contributions": 1,
   "accepted": 0,
-  "recommendations_sent": 0,
-  "source_ref": "community-contribution-workspace",
+  "source_ref": "main",
+  "revision": null,
+  "built": "2026-11-14",
+  "issues": null,
   "preview": true
 }

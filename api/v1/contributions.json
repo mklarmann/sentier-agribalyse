@@ -1,0 +1,54 @@
+{
+ "schema": "sentier-bafu/contributions/1",
+ "generated": "2026-11-14",
+ "revision": null,
+ "site": "https://sentier-dev.github.io/sentier-agribalyse/",
+ "classes": [
+  {
+   "key": "import-fix",
+   "label": "Import fix",
+   "group": "patched-release",
+   "description": "A preparation every reader of the release needs: encoding, unit names, exchange numbers."
+  },
+  {
+   "key": "linking-repair",
+   "label": "Linking repair",
+   "group": "patched-release",
+   "description": "A declared supplier that does not resolve is linked to the dataset that exists; the original declaration is kept."
+  },
+  {
+   "key": "re-declaration",
+   "label": "Re-declaration",
+   "group": "patched-release",
+   "description": "A unit or label that ADEME's own change log corrects."
+  },
+  {
+   "key": "variant",
+   "label": "Variant",
+   "group": "beside",
+   "description": "A method or data variant, such as a residual electricity mix; it keeps its own name."
+  },
+  {
+   "key": "model",
+   "label": "Model",
+   "group": "beside",
+   "description": "A model or a rebuilt inventory: a new inventory with its own tests."
+  },
+  {
+   "key": "mapping",
+   "label": "Mapping",
+   "group": "beside",
+   "description": "A correspondence between flows, datasets or methods."
+  }
+ ],
+ "contributions": [
+  {
+   "id": "C001",
+   "issue": null,
+   "title": "Review parameter scenarios and mapping contributions against the canonical AGRIBALYSE import",
+   "class": "variant",
+   "status": "proposed",
+   "url": "https://sentier-dev.github.io/sentier-agribalyse/contributions/C001.html"
+  }
+ ]
+}

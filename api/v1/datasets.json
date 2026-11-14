@@ -1,0 +1,14 @@
+{
+ "schema": "sentier-bafu/datasets/1",
+ "generated": "2026-11-14",
+ "revision": null,
+ "site": "https://sentier-dev.github.io/sentier-agribalyse/",
+ "roles": {
+  "subject": "The observation is in this dataset.",
+  "affected": "A result of this dataset changes because it uses a dataset the finding is about.",
+  "named": "Named in the finding as a supplier or for comparison."
+ },
+ "datasets": {
+
+}
+}

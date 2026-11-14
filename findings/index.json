@@ -1,0 +1,80 @@
+{
+ "schema": "sentier-bafu/list-index/1",
+ "note": "For the findings list of the site. Tools read api/v1/findings.json instead.",
+ "columns": [
+  "number",
+  "title",
+  "concerns",
+  "more",
+  "codes",
+  "releases",
+  "status",
+  "steps",
+  "outcome",
+  "patches",
+  "thread",
+  "thread_url",
+  "comments",
+  "changed",
+  "waiting_since",
+  "kind"
+ ],
+ "statuses": [
+  [
+   "filed",
+   "Needs a second measurement"
+  ],
+  [
+   "confirmed",
+   "Repeated, not yet reported"
+  ],
+  [
+   "sent",
+   "Reported to ADEME"
+  ],
+  [
+   "answered",
+   "Answered by ADEME"
+  ],
+  [
+   "fixed",
+   "Resolved"
+  ],
+  [
+   "not-a-defect",
+   "For information"
+  ],
+  [
+   "withdrawn",
+   "Withdrawn"
+  ]
+ ],
+ "releases": [
+  [
+   "3.2",
+   "AGRIBALYSE 3.2"
+  ]
+ ],
+ "kinds": [
+  [
+   "defect",
+   "Defect"
+  ],
+  [
+   "question",
+   "Question"
+  ],
+  [
+   "difference",
+   "Difference in method or scope"
+  ]
+ ],
+ "outcomes": [
+  "confirmed",
+  "declined",
+  "explained"
+ ],
+ "rows": [
+
+]
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentier-dev.github.io/sentier-bafu/schema/contribution.schema.json",
+  "title": "Contribution record",
+  "description": "One file per contribution: community/contributions/C<number>.json. A contribution is a proposal with evidence and a validation plan. `python3 scripts/community.py check` validates every record against this schema and adds the rules a schema cannot express: the file is named after the id, no text holds raw HTML, every link is a plain https address; and the rules for acceptance: an accepted contribution needs a pinned baseline and implementation, every required check passed on that exact revision, named reviewers who approved it, and an answer to every objection.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "issue", "title", "class", "status", "baseline", "layer", "evidence", "required_checks",
+    "runs", "required_reviewers", "approvals", "objections", "upstream_project"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^C[0-9]{3,}$"},
+    "issue": {"type": ["integer", "null"], "minimum": 1, "description": "The issue in this repository where the contribution is discussed, or null."},
+    "title": {"type": "string"},
+    "class": {
+      "enum": ["import-fix", "linking-repair", "re-declaration", "variant", "model", "mapping"],
+      "description": "What the contribution is. import-fix, linking-repair and re-declaration can enter the patched release. variant, model and mapping stand beside the provider's numbers under their own name."
+    },
+    "status": {"enum": ["proposed", "testing", "reviewing", "accepted", "rejected", "superseded"]},
+    "baseline": {
+      "type": "object",
+      "required": ["dataset", "release", "import_repository", "import_revision", "input_hashes"],
+      "description": "The provider release and the import the contribution builds on."
+    },
+    "layer": {
+      "type": "object",
+      "required": ["kind", "implementation_url", "implementation_revision", "payloads"],
+      "description": "The implementation, pinned to a revision.",
+      "properties": {
+        "file": {
+          "type": ["string", "null"],
+          "pattern": "^community/layers/C[0-9]{3,}-[a-z0-9]+(-[a-z0-9]+)*\\.json$",
+          "description": "For a contribution that changes the inventory: the file that states its changes, from which the release build makes a database of its own beside the patched release. Null or absent for any other contribution."
+        }
+      }
+    },
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "required_checks": {"type": "array", "items": {"type": "string"}},
+    "runs": {"type": "array", "items": {"type": "object"}},
+    "required_reviewers": {"type": "array"},
+    "approvals": {"type": "array"},
+    "objections": {"type": "array"},
+    "upstream_project": {"type": "string", "description": "The project that owns the decision."},
+    "validation_scope": {"type": "string"},
+    "next_action": {"type": ["string", "null"]},
+    "review_role": {"type": ["string", "null"]},
+    "evidence_url": {"type": ["string", "null"]},
+    "retained": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "text", "evidence_url"],
+        "properties": {
+          "kind": {"enum": ["ask", "objection", "earlier-interpretation"]}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+ "schema": "sentier-bafu/status/1",
+ "dataset": "AGRIBALYSE",
+ "findings": 0,
+ "findings_by_stage": {},
+ "contributions": 1,
+ "accepted": 0,
+ "source_ref": "main",
+ "revision": null,
+ "built": "2026-11-14",
+ "issues": null,
+ "preview": true,
+ "findings_by_status": {
+  "filed": 0,
+  "confirmed": 0,
+  "sent": 0,
+  "answered": 0,
+  "fixed": 0,
+  "not-a-defect": 0,
+  "withdrawn": 0
+ },
+ "patches": 0
+}

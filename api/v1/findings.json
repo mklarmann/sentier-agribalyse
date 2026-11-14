@@ -1,0 +1,46 @@
+{
+ "schema": "sentier-bafu/findings/1",
+ "generated": "2026-11-14",
+ "revision": null,
+ "site": "https://sentier-dev.github.io/sentier-agribalyse/",
+ "statuses": [
+  {
+   "key": "filed",
+   "label": "Needs a second measurement",
+   "description": "No second person is on record as having repeated this measurement on ADEME's files."
+  },
+  {
+   "key": "confirmed",
+   "label": "Repeated, not yet reported",
+   "description": "A second person repeated the measurement and reproduced it; it has not been reported to ADEME yet."
+  },
+  {
+   "key": "sent",
+   "label": "Reported to ADEME",
+   "description": "Reported to ADEME, which has not answered yet and decides what it changes."
+  },
+  {
+   "key": "answered",
+   "label": "Answered by ADEME",
+   "description": "ADEME has answered; its answer is summarised below."
+  },
+  {
+   "key": "fixed",
+   "label": "Resolved",
+   "description": "An ADEME release covers this point; the release is named below."
+  },
+  {
+   "key": "not-a-defect",
+   "label": "For information",
+   "description": "Recorded for information: a difference in method or scope, a convention worth knowing, or a question; it is not reported as a defect."
+  },
+  {
+   "key": "withdrawn",
+   "label": "Withdrawn",
+   "description": "The observation did not hold when it was measured again; it stays listed so that nobody reports it a second time."
+  }
+ ],
+ "findings": [
+
+]
+}
