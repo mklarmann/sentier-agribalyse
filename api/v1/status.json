@@ -5,10 +5,10 @@
  "findings_by_stage": {},
  "contributions": 1,
  "accepted": 0,
- "source_ref": "main",
+ "source_ref": "site/port-from-bafu",
  "revision": null,
  "built": "2026-11-14",
- "issues": null,
+ "issues": "live",
  "preview": true,
  "findings_by_status": {
   "filed": 0,

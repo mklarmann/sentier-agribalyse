@@ -1,0 +1,9 @@
+{
+ "format": "sentier/last-run/2",
+ "state": "no run",
+ "note": "the repository has no such workflow",
+ "repository": "mklarmann/sentier-agribalyse",
+ "workflow": "import-run.yml",
+ "name": "Import run",
+ "read": "2026-11-14T15:01:24+00:00"
+}
