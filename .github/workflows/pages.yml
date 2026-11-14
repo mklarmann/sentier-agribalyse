@@ -7,8 +7,7 @@ name: Site
 # The site is built from the records, the issues and the pages of prose. No file of ADEME's
 # release and nothing from the ecoinvent background is an input, and no database is built.
 #
-# Labels do not start a build: scripts/sync.py writes them from the records, and a change of a
-# record arrives as a push.
+# Labels do not start a build: a change of a record arrives as a push.
 
 on:
   push:

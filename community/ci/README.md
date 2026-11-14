@@ -13,6 +13,6 @@ uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 ```
 
-[The Site workflow](../../.github/workflows/pages.yml) deploys the site; [site/README.md](../../site/README.md) describes it. [Intake](../../.github/workflows/intake.yml) and [Sync](../../.github/workflows/sync.yml) write to issues: Intake proposes a finding's record as a pull request for a person to review, and Sync writes the labels of finding issues from the records.
+[The Site workflow](../../.github/workflows/pages.yml) deploys the site; [site/README.md](../../site/README.md) describes it, and says which automations of sentier-bafu are not switched on here yet.
 
 `github-actions.yml` here is a standalone copy of the checks for a repository that wants only them. The portable `.gitlab-ci.yml` runs the same checks and publishes the site for a GitLab mirror.

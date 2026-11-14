@@ -85,17 +85,18 @@ class Forms(unittest.TestCase):
         self.assertIn(f'labels: ["{intake.FINDING_LABEL}", "needs-triage"]', form)
         self.assertEqual(intake.form_with_releases(form, community.load_config(ROOT)), form)
 
-    def test_the_intake_workflow_starts_for_the_label_of_the_configuration(self):
-        workflow = (ROOT / ".github/workflows/intake.yml").read_text(encoding="utf-8")
-        self.assertIn(f"contains(github.event.issue.labels.*.name, '{CONFIG['finding_label']}')", workflow)
-
-    def test_no_workflow_builds_or_publishes_a_release(self):
+    def test_no_workflow_builds_a_release_writes_to_issues_or_reads_a_local_run(self):
         workflows = sorted(path.name for path in (ROOT / ".github/workflows").glob("*.yml"))
-        self.assertEqual(workflows, ["checks.yml", "ci.yml", "intake.yml", "pages.yml", "sync.yml"])
-        for name in ("checks.yml", "pages.yml", "intake.yml", "sync.yml"):
+        # ci.yml is the import's own. Intake and Sync, which write to issues, are not here yet.
+        self.assertEqual(workflows, ["checks.yml", "ci.yml", "pages.yml"])
+        for name in ("checks.yml", "pages.yml"):
             text = (ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
-            for word in ("upload-release", "gh release", "softprops/action-gh-release", "ECOINVENT_"):
+            for word in ("upload-release", "gh release", "softprops/action-gh-release", "ECOINVENT_",
+                         "issues: write", "pull-requests: write", "contents: write"):
                 self.assertNotIn(word, text, name)
+            # A record of a run on a licensed machine is shown in a local build only: the
+            # published site is never built from a file somebody hands it.
+            self.assertNotIn("--last-run", text, name)
 
 
 class Intake(unittest.TestCase):

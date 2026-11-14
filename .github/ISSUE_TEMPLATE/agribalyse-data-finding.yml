@@ -1,7 +1,7 @@
 name: AGRIBALYSE data finding
 description: Something you measured in ADEME's data that looks wrong, or that you cannot explain
 title: "[Finding] "
-# `needs-triage` means: no record of this finding has been merged yet. A workflow takes it off.
+# `needs-triage` means: no record of this finding has been merged yet. A maintainer takes it off.
 labels: ["agribalyse-finding", "needs-triage"]
 # The headings below are read by scripts/intake.py. To change one, read the note at the top of
 # that script first; community/tests/test_workspace.py compares the two.
@@ -16,9 +16,9 @@ body:
 
         **What happens next**
 
-        1. A record of your finding is proposed as a pull request. Its number is the number of this issue: issue 48 is finding F48.
-        2. A maintainer reads the record and merges it. The finding is then listed on the site with the status "Needs a second measurement".
-        3. A second person repeats your measurement on ADEME's release files and comments here, beginning with the line `/repeated reproduced` or `/repeated not-reproduced`.
+        1. A maintainer reads your report and adds a record of the finding. Its number is the number of this issue: issue 48 is finding F48.
+        2. The finding is then listed on the site with the status "Needs a second measurement".
+        3. A second person repeats your measurement on ADEME's release files and says here what they got.
         4. Findings are reported to ADEME together. ADEME decides what it changes; its answer is recorded here.
   - type: dropdown
     id: kind

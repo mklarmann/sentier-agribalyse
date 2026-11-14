@@ -7,9 +7,8 @@ name: Checks
 # The records, the site and their tests run on Python 3.12, outside the import's own project
 # (`uv run --no-project --python 3.12`). The import's lint and tests are in ci.yml.
 #
-# intake.yml calls this workflow for the pull requests it opens, because a pull request opened
-# by a workflow starts no workflow of its own. The job names below are names under which
-# intake.yml reports the result (CHECK_CONTEXTS in scripts/intake.py).
+# The workflow can also be called by another workflow for a commit it names. scripts/intake.py
+# reads the names of the jobs below (CHECK_CONTEXTS); nothing calls it yet, see site/README.md.
 
 on:
   pull_request:
