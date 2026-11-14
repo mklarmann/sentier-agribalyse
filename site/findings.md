@@ -9,7 +9,7 @@ Findings are feedback to ADEME, the French Agency for Ecological Transition, whi
 ## How to read the list
 
 - **A row is one finding.** It shows the number, the title, what the finding concerns, its status and where it is discussed. You can search by finding number or by word, and you can show one status at a time.
-- **What a finding concerns.** AGRIBALYSE processes have a name and no number. A finding says in words which process, group of processes, elementary flow or published file it is about, with the unit and the geography where they matter.
+- **What a finding concerns.** An AGRIBALYSE process has a name and a process identifier. A finding says in words which process, group of processes, elementary flow or published file it is about, with the unit and the geography where they matter. For a single process it also gives the process identifier, and the search finds the finding by it.
 - **The status is computed from the record.** A record holds dated evidence: who reported the finding, who repeated the measurement, when it was reported to ADEME, what ADEME answered, and which AGRIBALYSE release covers the point. Nobody sets a status by hand. A step that the record does not hold is shown as "not recorded", never as done.
 
 ## What a status means

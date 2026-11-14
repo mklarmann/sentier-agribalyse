@@ -10,4 +10,4 @@ The two files under `schema/` are the JSON Schema of a finding record and of a c
 
 The files have the same shape on every Sentier dataset site, so a tool that reads one site reads the others. For that reason the `schema` value inside a file names the format, `sentier-bafu/findings/1` and so on, also on this site. It does not say that the content is about BAFU's data.
 
-AGRIBALYSE processes have a name and no number, so `api/v1/datasets.json` is empty here. A finding says in its `scope` what it is about.
+AGRIBALYSE processes have a name and a process identifier of letters and digits, and no number, so `api/v1/datasets.json` is empty here. A finding says in its `scope` what it is about, for a single process with its process identifier.

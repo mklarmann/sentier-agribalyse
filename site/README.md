@@ -39,7 +39,7 @@ What differs from sentier-bafu, and why:
 
 - **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The "Import and build" page says how to build on your own machine.
 - **Releases.** A release is one entry under `releases`, with the background it is built on. Register a release only after ADEME has published it; a test holds the list to the published releases.
-- **Processes have a name and no number.** `dataset_code_pattern` is left out. A finding lists no datasets and says in `scope` what it is about.
+- **Processes have a name and a process identifier of letters and digits, and no number.** The shared record format lists datasets by number, so `dataset_code_pattern` is left out. A finding lists no datasets and says in `scope` what it is about, for a single process with its process identifier.
 - **Numbers.** `older_numbering_until` is 0: the number of a finding is the number of its issue.
 - **The index colour.** `index` is aubergine, `#5d4a66`, with its dark, soft and tint shades. Every Sentier dataset site has the same frame (the logo, the paper, the type) and its own index colour; BAFU/UVEK has slate blue, `#3e5c76`. The build refuses a colour that cannot be read.
 

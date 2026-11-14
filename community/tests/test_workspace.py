@@ -11,6 +11,7 @@ import importlib.util
 import io
 import json
 import re
+import shutil
 import sys
 import tempfile
 import unittest
@@ -211,6 +212,34 @@ class Intake(unittest.TestCase):
         self.assertEqual(community.stage(made["record"]), "confirmed")
         own = dict(comment, user={"login": "reporter"})
         self.assertEqual(intake.second_measurement(record, own, 48, self.REPO, "reproduced")["result"], "refused")
+
+    @unittest.skipIf(build_site is None, "the site build needs the markdown package")
+    def test_a_process_identifier_given_with_the_finding_is_what_the_list_searches(self):
+        """The shared record format lists datasets by number, and an AGRIBALYSE process has an
+        identifier of letters and digits. The form asks for it in what the finding concerns.
+        It must then be in the text that the findings list searches (site/assets/list.js: the
+        number, the title and the two texts of what a finding concerns) and on the finding's page."""
+        import intake
+        identifier = "MADEUPID000000000000048"
+        self.assertIn("process identifier", (ROOT / intake.FORM_FILE).read_text(encoding="utf-8"))
+        made = intake.record_from_issue(
+            self.issue(scope=f"A made-up process, 1 kg, FR; process identifier {identifier}"),
+            community.load_config(ROOT))
+        self.assertEqual(made["result"], "record", made)
+        with tempfile.TemporaryDirectory() as tmp:
+            root, out = Path(tmp) / "tree", Path(tmp) / "site"
+            shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns(
+                ".git", ".venv", ".local", "_site", "source", "tests", "__pycache__"))
+            record = root / community.record_path(made["record"])
+            record.parent.mkdir(parents=True, exist_ok=True)
+            record.write_text(json.dumps(made["record"], indent=1) + "\n", encoding="utf-8")
+            self.assertEqual(community.problems(root)[0], [])
+            with Quiet():
+                build_site.build(out, offline=True, root=root)
+            rows = json.loads((out / "findings/index.json").read_text(encoding="utf-8"))["rows"]
+            row = next(r for r in rows if r[0] == 48)
+            self.assertIn(identifier, f"{row[2]} {row[3]}")
+            self.assertIn(identifier, (out / "findings/F48.html").read_text(encoding="utf-8"))
 
 
 @unittest.skipIf(build_site is None, "the site build needs the markdown package")

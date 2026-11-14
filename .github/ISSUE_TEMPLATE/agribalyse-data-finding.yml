@@ -46,7 +46,7 @@ body:
     id: scope
     attributes:
       label: What else it concerns
-      description: "What the finding is about: the process or the group of processes by name, as ADEME's export writes it, with unit and geography; or an elementary flow, a method, a file of the release."
+      description: "What the finding is about: the process or the group of processes by name, as ADEME's export writes it, with unit and geography, and for a single process its process identifier from the export; or an elementary flow, a method, a file of the release."
     validations:
       required: true
   - type: textarea

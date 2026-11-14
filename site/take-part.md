@@ -19,7 +19,7 @@ The second measurement must come from someone other than the person who reported
 
 You measured something in ADEME's data that looks wrong, or that you cannot explain.
 
-1. [Open a finding](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=agribalyse-data-finding.yml) and fill in the form: the release, the process or group of processes, where you looked, what you measured and how, and why it looks wrong. Give numbers with their units.
+1. [Open a finding](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=agribalyse-data-finding.yml) and fill in the form: the release, the process or group of processes (for a single process with its process identifier from ADEME's export), where you looked, what you measured and how, and why it looks wrong. Give numbers with their units.
 2. A maintainer reads the report and adds a record. The finding gets a number, which is the number of its issue with an F in front.
 3. The finding has the status "Needs a second measurement" until a second person has repeated it.
 4. Then the finding is reported to ADEME. ADEME decides what it changes. ADEME's answer is recorded. The finding is resolved once an AGRIBALYSE release covers the point.
