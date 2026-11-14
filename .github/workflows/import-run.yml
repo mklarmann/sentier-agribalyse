@@ -1,0 +1,62 @@
+name: Import run
+
+# Runs the stage of the import that needs nothing but this repository: ADEME's export, as it
+# is shipped without the ecoinvent datasets it carried, is unpacked, compared with the checksum
+# recorded beside it, and its processes are counted. The five later stages need an ecoinvent
+# licence; the run names them as "not run here" and runs none of them.
+#
+# The run keeps its own account (run.json) and every line it printed (transcript.json). The
+# site shows the last run from those two files, step by step, whether it worked or not
+# (scripts/last_run.py). They hold counts, sizes and checksums; no value of the export and
+# nothing of ecoinvent. Once a month the run repeats by itself, so that this record is never
+# older than GitHub keeps it (90 days).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "source/AGB32_ecoinvent_free.CSV.xz"
+      - "source/agribalyse-3.2-stripped-ecoinvent-processes.json"
+      - "scripts/import_run.py"
+      - "scripts/runrecord/**"
+      - ".github/workflows/import-run.yml"
+  schedule:
+    - cron: "37 4 3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: import-run-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: Read ADEME's export
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Run the stage that needs no licence
+        # The wrapper is started with the runner's own Python, which prints nothing: every
+        # line of this step is then a line of the run, and all of them are kept.
+        run: |
+          python3 scripts/runrecord/transcript.py \
+            --out "$RUNNER_TEMP/transcript.json" -- \
+            python3 scripts/import_run.py --out "$RUNNER_TEMP/import-run/run.json"
+      - name: Set what the run printed beside its account
+        if: ${{ !cancelled() }}
+        run: |
+          python3 scripts/runrecord/transcript.py \
+            --keep "$RUNNER_TEMP/transcript.json" --into "$RUNNER_TEMP/import-run"
+      - name: Keep the account and the transcript (counts, sizes and checksums; no data)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: import-run-results
+          path: ${{ runner.temp }}/import-run/
+          if-no-files-found: warn
+          retention-days: 90

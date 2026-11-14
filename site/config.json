@@ -139,5 +139,10 @@
     "releases/index.html": "findings.html",
     "feedback/index.html": "feedback.html",
     "about/index.html": "about/data.html"
+  },
+  "run": {
+    "name": "Import run",
+    "workflow": "import-run.yml",
+    "artifact": "import-run-results"
   }
 }

@@ -1,0 +1,35 @@
+{
+  "about": "What each stage of an import run does, in plain words, for the page 'Import and build'. The key is the name the run gives the stage (scripts/import_run.py).",
+  "steps": {
+    "ADEME's export": {
+      "short": "ADEME's export",
+      "title": "ADEME's export, as it is shipped",
+      "text": "The repository holds ADEME's export of AGRIBALYSE 3.2 without the ecoinvent datasets it carried. The run unpacks it, compares it with the checksum recorded beside it and counts its processes. Nothing in it is changed."
+    },
+    "Licensed files": {
+      "short": "Licensed files",
+      "title": "The files of your ecoinvent licence",
+      "text": "Once, on your machine: the files of the ecoinvent 3.9.1 background are made from your own licence. They never leave your machine."
+    },
+    "Registry": {
+      "short": "Registry",
+      "title": "One registry of every mapping",
+      "text": "Every mapping, flow list and factor table is put into one registry. Every later stage reads the registry."
+    },
+    "Link": {
+      "short": "Link",
+      "title": "Every input linked",
+      "text": "The export is read, the curated changes are applied, and every input is linked to its supplier and every elementary flow to its flow in the method."
+    },
+    "Score": {
+      "short": "Score",
+      "title": "Scored and compared with ADEME's results",
+      "text": "Every mapped product is scored with the 19 headline EF 3.1 methods, and each score is compared with ADEME's reference value."
+    },
+    "Export": {
+      "short": "Export",
+      "title": "A Brightway package, on your machine",
+      "text": "Optional: the linked system is written as a Brightway package with its own importer. The package holds ecoinvent data and stays on your machine."
+    }
+  }
+}

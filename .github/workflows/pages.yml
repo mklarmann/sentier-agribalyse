@@ -1,7 +1,8 @@
 name: Site
 
 # Builds the site from the records and the issues and deploys it to GitHub Pages: after a push
-# to main, once a day (so that "waiting since" and the discussion counts stay current), when an
+# to main, once a day (so that "waiting since", the discussion counts and the last import run
+# stay current), when an
 # issue is opened, closed or reopened, and on request. Pull requests are checked by checks.yml.
 #
 # The site is built from the records, the issues and the pages of prose. No file of ADEME's
@@ -34,6 +35,7 @@ jobs:
     permissions:
       contents: read
       issues: read
+      actions: read # the record of the last import run: its account and what it printed
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:

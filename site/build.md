@@ -1,14 +1,17 @@
 # Import and build
 
-This workspace serves no built database. AGRIBALYSE 3.2 is built on ecoinvent 3.9.1, which is licensed data, so nothing built from it can be published here. What the repository gives you is the import: you run it on your own machine, with ADEME's export and your own ecoinvent licence.
+The import takes ADEME's export to a scored and linked system in six stages. One of them runs here, in public, on every change. The other five need an ecoinvent 3.9.1 licence: they run on your own machine, with the import this repository gives you. This is the last run, as it happened.
 
-The findings and the feedback to ADEME do not depend on a build. A finding is measured on the files that ADEME published.
+<!-- generated: last-run -->
+
+This workspace serves no built database. AGRIBALYSE 3.2 is built on ecoinvent 3.9.1, which is licensed data, so nothing built from it can be published here. The findings and the feedback to ADEME do not depend on a build: a finding is measured on the files that ADEME published.
 
 ## What you need
 
 | What | Where it comes from |
 |---|---|
-| ADEME's export of AGRIBALYSE 3.2 | ADEME, under its own terms. It is not in the repository. |
+| ADEME's export of AGRIBALYSE 3.2 | In the repository, without the ecoinvent datasets it carried: `source/AGB32_ecoinvent_free.CSV.xz`. ADEME publishes AGRIBALYSE under the Etalab Open Licence 2.0. |
+| The list of elementary flows | `dds-fetch-harmonised-flows` downloads it once (Brightway Flows, under the ODbL). |
 | ecoinvent 3.9.1 | Your own licence. The repository holds no ecoinvent data, and a guard refuses to commit any. |
 | The EF 3.1 methods | Read by the import from their published sources. |
 | The import | This repository: the code, the curated mappings and the tests. |
@@ -27,16 +30,16 @@ Then follow the steps below. [BOOTSTRAP.md](../BOOTSTRAP.md) covers the files th
 
 | Stage | What happens | What it needs |
 |---|---|---|
-| 1. Your licensed files | Once: the files of the ecoinvent background are made on your machine from your own licence, as [BOOTSTRAP.md](../BOOTSTRAP.md) describes. | An ecoinvent 3.9.1 licence |
-| 2. Registry | `dds-build-registry` and the four builders after it put every mapping, flow list and factor table under `source/` into one registry. Every later step reads the registry. | ADEME's export and the files of stage 1 |
-| 3. Link | `dds-link-all` reads ADEME's export, applies the curated changes listed below and links every input to its supplier and every elementary flow to its flow in the method. It writes the linked system and a report of the run. | The registry |
-| 4. Score | `dds-backtest` scores every mapped product with the 19 headline EF 3.1 methods and compares each score with ADEME's reference value. | The linked system |
-| 5. Look | `dds-compare-cfs` and `dds-build-flow-decomp` write the data of the dashboard, which shows each score beside ADEME's and what a difference comes from. | The scores |
+| 1. ADEME's export | The shipped export is unpacked, compared with the checksum recorded beside it, and its processes are counted. This is the stage that runs here. | Nothing but the repository |
+| 2. Licensed files | Once: the files of the ecoinvent background are made on your machine from your own licence, as [BOOTSTRAP.md](../BOOTSTRAP.md) describes. | An ecoinvent 3.9.1 licence |
+| 3. Registry | `dds-build-registry` and the four builders after it put every mapping, flow list and factor table under `source/` into one registry. Every later stage reads the registry. | The files of stage 2 |
+| 4. Link | `dds-link-all` reads ADEME's export, applies the curated changes listed below and links every input to its supplier and every elementary flow to its flow in the method. It writes the linked system and a report of the run. | The registry |
+| 5. Score | `dds-backtest` scores every mapped product with the 19 headline EF 3.1 methods and compares each score with ADEME's reference value. `dds-compare-cfs` and `dds-build-flow-decomp` write the data of the dashboard, which shows each score beside ADEME's. | The linked system |
 | 6. Export | Optional: `dds-build-bw-package` writes the linked system as a Brightway package with its own importer. The package holds ecoinvent data and stays on your machine. | The linked system |
 
 Keep what the build was made from beside it: the release, the hashes of the source files, the background version, the method source, the mappings and any parameter overrides. [How builds are checked](../community/build-validation.md) says what the checks on a build cover and what they do not.
 
-**No run is shown on this page.** GitHub has neither ADEME's export nor an ecoinvent licence, so it can run no stage on the real data. What it runs on every change is the import's own tests, on made-up data, and the checks of this workspace.
+GitHub has no ecoinvent licence, so it runs the first stage and no later one: on every change to the export or to the run, once a month, and when a maintainer asks for it. The run at the top of this page is the last of those, also when it failed. Nothing in it is written by hand: the numbers come from the account the run kept, and the lines are the lines it printed. On every change GitHub also runs the import's own tests, on made-up data, and the checks of this workspace.
 
 ## What the import changes in ADEME's export
 
@@ -52,7 +55,7 @@ None of these is ADEME's correction. A change of this sort is proposed as a pull
 
 ## What stays on your machine
 
-- ADEME's export and everything derived from the ecoinvent background: the snapshots, the factor tables keyed by ecoinvent flows, the scoring caches and the Brightway package.
+- ADEME's full export, with the ecoinvent datasets it carries, and everything derived from the ecoinvent background: the snapshots, the factor tables keyed by ecoinvent flows, the scoring caches and the Brightway package.
 - Anything from a release that ADEME has not published.
 
 The repository's `.gitignore` and its pre-commit guard keep these files out of a commit. [Data and terms](../community/data-and-attribution.md) says which terms apply to what.

@@ -88,15 +88,74 @@ class Forms(unittest.TestCase):
     def test_no_workflow_builds_a_release_writes_to_issues_or_reads_a_local_run(self):
         workflows = sorted(path.name for path in (ROOT / ".github/workflows").glob("*.yml"))
         # ci.yml is the import's own. Intake and Sync, which write to issues, are not here yet.
-        self.assertEqual(workflows, ["checks.yml", "ci.yml", "pages.yml"])
-        for name in ("checks.yml", "pages.yml"):
+        self.assertEqual(workflows, ["checks.yml", "ci.yml", "import-run.yml", "pages.yml"])
+        for name in ("checks.yml", "import-run.yml", "pages.yml"):
             text = (ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
-            for word in ("upload-release", "gh release", "softprops/action-gh-release", "ECOINVENT_",
+            for word in ("upload-release", "gh release", "softprops/action-gh-release", "ECOINVENT_", "uv sync", "dds-",
                          "issues: write", "pull-requests: write", "contents: write"):
                 self.assertNotIn(word, text, name)
             # A record of a run on a licensed machine is shown in a local build only: the
             # published site is never built from a file somebody hands it.
             self.assertNotIn("--last-run", text, name)
+
+
+class ImportRun(unittest.TestCase):
+    """The run the page "Import and build" shows: one stage for real, five named as not run here."""
+
+    @classmethod
+    def setUpClass(cls):
+        import import_run
+        cls.module = import_run
+        with Quiet():
+            cls.account = import_run.run(ROOT)
+
+    def test_the_first_stage_reads_the_shipped_export_and_agrees_with_its_manifest(self):
+        from runrecord import summary
+        self.assertEqual(summary.shape_errors(self.account), [])
+        self.assertEqual(self.account["status"], "completed")
+        first = self.account["steps"][0]
+        self.assertEqual((first["name"], first["status"]), ("ADEME's export", "completed"))
+        manifest = json.loads((ROOT / self.module.MANIFEST).read_text(encoding="utf-8"))
+        figures = {figure["label"]: figure["value"] for figure in first["figures"]}
+        self.assertEqual(figures["processes"], int(manifest["processes"]["kept"]))
+        self.assertEqual(figures["ecoinvent datasets taken out"], int(manifest["processes"]["removed"]))
+        self.assertEqual(figures["bytes shipped"], (ROOT / self.module.EXPORT).stat().st_size)
+
+    def test_the_stages_that_need_a_licence_are_not_run_and_say_why(self):
+        later = self.account["steps"][1:]
+        self.assertEqual([step["name"] for step in later], list(self.module.LICENSED))
+        for step in later:
+            self.assertEqual(step["status"], "not run here", step["name"])
+            self.assertIn("ecoinvent 3.9.1 licence", step["reason"])
+            self.assertEqual(step["figures"], [])
+        # the run reads nothing a licence gives, and no command of the licensed pipeline
+        source = (ROOT / "scripts/import_run.py").read_text(encoding="utf-8")
+        for word in ("ecoinvent-3.9.1", "subprocess", "dds-", "registry/"):
+            self.assertNotIn(word, source)
+
+    def test_an_export_that_is_not_the_recorded_file_fails_the_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "source").mkdir()
+            manifest = json.loads((ROOT / self.module.MANIFEST).read_text(encoding="utf-8"))
+            manifest["stripped_csv"]["sha256"] = "0" * 64
+            (root / self.module.MANIFEST).write_text(json.dumps(manifest))
+            (root / self.module.EXPORT).write_bytes((ROOT / self.module.EXPORT).read_bytes())
+            with Quiet():
+                account = self.module.run(root)
+        self.assertEqual(account["status"], "failed")
+        self.assertEqual(account["steps"][0]["status"], "failed")
+        self.assertIn("checksums differ", account["steps"][0]["reason"])
+        self.assertTrue(account["blocking"])
+
+    def test_every_stage_has_its_words_and_the_site_names_the_workflow_that_runs_it(self):
+        words = json.loads((ROOT / "site/run-steps.json").read_text(encoding="utf-8"))["steps"]
+        self.assertEqual(list(words), [step["name"] for step in self.account["steps"]])
+        run = CONFIG["run"]
+        workflow = (ROOT / ".github/workflows" / run["workflow"]).read_text(encoding="utf-8")
+        self.assertIn(f'name: {run["artifact"]}', workflow)
+        self.assertIn("scripts/import_run.py --out", workflow)
+        self.assertIn("<!-- generated: last-run -->", (ROOT / "site/build.md").read_text(encoding="utf-8"))
 
 
 class Intake(unittest.TestCase):
@@ -191,11 +250,15 @@ class Site(unittest.TestCase):
 
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)
-        self.assertFalse((self.out / "api/v1/last-run.json").exists())
+        # built without GitHub and without a record: the file of the last run holds no run
+        record = json.loads((self.out / "api/v1/last-run.json").read_text(encoding="utf-8"))
+        self.assertIsNone(record.get("run"))
+        self.assertIsNone(record.get("summary"))
         for name, text in self.pages.items():
             self.assertNotIn("patched-release.html", text, name)
-            self.assertNotIn("replay.js", text, name)
-            self.assertNotIn("last-run.json", text, name)
+            if name not in ("build.html", "about/data.html"):
+                self.assertNotIn("replay.js", text, name)
+                self.assertNotIn("last-run.json", text, name)
 
     def test_the_release_page_names_the_background(self):
         self.assertIn("AGRIBALYSE 3.2 is built on ecoinvent 3.9.1.", self.pages["releases/3.2.html"])
