@@ -1,22 +1,26 @@
-name: Dataset or application discussion
-description: Discuss an import, mapping, method, scenario or recommendation.
+name: Discussion
+description: A question or decision about the data, a method difference, or how a finding is reported to ADEME
+title: "[Discussion] "
+labels: ["discussion"]
 body:
-  - type: textarea
-    id: question
+  - type: input
+    id: topic
     attributes:
-      label: Question and context
-      description: Name the release, component and decision to be made.
+      label: Topic
+      description: "One sentence: what should we decide, understand or change?"
     validations:
       required: true
   - type: textarea
-    id: evidence
+    id: context
     attributes:
-      label: Evidence and alternatives
-      description: Link reproducible tests or permitted source evidence; make uncertainty explicit.
-    validations:
-      required: true
+      label: Context
+      description: "Links: a finding (its page on the site or its issue), a release note of ADEME, a contribution, a paper."
   - type: textarea
-    id: next
+    id: positions
     attributes:
-      label: Proposed next step
-      description: What measurement, application test or reviewer decision would settle this?
+      label: Options or positions so far
+  - type: textarea
+    id: settle
+    attributes:
+      label: What would settle it
+      description: A measurement, an answer from ADEME, a decision by a named maintainer.

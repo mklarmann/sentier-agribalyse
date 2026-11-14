@@ -1,0 +1,82 @@
+name: Intake
+
+# An issue filed with the finding form becomes a pull request that adds one record. A comment
+# that begins with /repeated becomes a pull request that records a second measurement. A person
+# reviews and merges both. docs/automation.md has the whole picture and the threat model.
+#
+# What an issue or a comment says is untrusted. So:
+# - no step puts any of it into a shell command: there is no ${{ }} inside a `run:` here, and
+#   scripts/intake.py reads the event from the event file;
+# - the job that holds the write token checks out the default branch, never a pull request,
+#   and runs only this repository's own script, which uses the standard library alone;
+# - the checks, which install a package, run in a job of their own that can only read.
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+concurrency:
+  # One issue at a time, in the order of its events. Other issues do not wait.
+  group: intake-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  record:
+    name: Propose the record
+    # Only finding issues, and only comments on issues that begin with a command. The script
+    # decides everything else; this keeps a runner from starting for every comment.
+    if: >-
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'agribalyse-finding'))
+      || (github.event_name == 'issue_comment' && !github.event.issue.pull_request
+      && (startsWith(github.event.comment.body, '/repeated') || startsWith(github.event.comment.body, '/record')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write # a branch intake/F<n> or repeat/F<n> with one file
+      pull-requests: write # the pull request for it
+      issues: write # one comment on the issue; the label needs-info
+    outputs:
+      sha: ${{ steps.intake.outputs.sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Read the event, propose the record, answer on the issue
+        id: intake
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 -I scripts/intake.py run
+
+  checks:
+    name: Check the proposal
+    needs: record
+    if: needs.record.outputs.sha != ''
+    permissions:
+      contents: read
+    uses: ./.github/workflows/checks.yml
+    with:
+      ref: ${{ needs.record.outputs.sha }}
+
+  status:
+    name: Report the checks on the proposal
+    needs: [record, checks]
+    if: ${{ !cancelled() && needs.record.outputs.sha != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      statuses: write # the result of the checks, on the proposed commit
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Report the result on the proposed commit
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INTAKE_SHA: ${{ needs.record.outputs.sha }}
+          INTAKE_CHECKS: ${{ needs.checks.result }}
+        run: python3 -I scripts/intake.py status

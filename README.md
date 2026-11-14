@@ -6,7 +6,7 @@
 
 This public Sentier project combines the existing AGRIBALYSE adapter with a central space for partner evidence, hackathon contributions, candidate improvements and source-dataset discussions. The project spans releases; its current documented adapter imports **AGRIBALYSE 3.2** with **ecoinvent 3.9.1** and **EF 3.1**. Public participation requires no private or unreleased adapter.
 
-[Import & use](IMPORT.md) · [Findings & shared lessons](community/findings.md) · [Evidence & testing](community/build-validation.md) · [Contribute](community/README.md) · [Consensus](community/workflow.md)
+[Import and build](IMPORT.md) · [Findings](site/findings.md) · [Take part](site/take-part.md) · [Contributions](community/workflow.md) · [How builds are checked](community/build-validation.md)
 
 ## Start with the existing adapter
 
@@ -30,13 +30,13 @@ Obtain the source export and licensed background inputs locally; follow [BOOTSTR
 | Reviewed consensus | Actual reviewer decisions, objections and their disposition |
 | Recommendations to ADEME | Agreed findings, delivery evidence and provider responses |
 
-A **source finding** needs reproduction against the named AGRIBALYSE release. An **adapter defect** needs evidence of the transformation that introduced it. A **scenario** needs assumptions and application tests; it is not automatically a correction of ADEME's data. [Open a finding or discussion](https://github.com/sentier-dev/sentier-agribalyse/issues/new/choose), or start with [a contribution record](community/templates/contribution.json).
+A **source finding** needs reproduction against the named AGRIBALYSE release. An **adapter defect** needs evidence of the transformation that introduced it. A **scenario** needs assumptions and application tests; it is not automatically a correction of ADEME's data. [Open a finding](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=agribalyse-data-finding.yml), [start a discussion](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=discussion.yml), or start with [a contribution record](community/templates/contribution.json). A finding gets a record of its own under `community/findings/`; its status is computed from the dated evidence in that record.
 
 Reuse the existing MappingRegistry, parameter overrides, dangling-edge auditor, backtests and export parity verifier. The [application guide](community/application-and-testing.md) explains how to retain separate baseline and candidate builds.
 
 ## Shared lessons from the BAFU workspace
 
-The [review ledger](community/findings.md) brings relevant lci-bafu-catalog lessons into AGRIBALYSE:
+[Lessons from the BAFU/UVEK workspace](community/lessons-from-bafu.md) brings relevant lci-bafu-catalog lessons into AGRIBALYSE:
 
 - Account for source, imported and served exchange counts through named changes.
 - Audit final biosphere characterization separately from successful linking: a flow that links but has no factor scores zero without an error. `scripts/build_checks.py` checks this on a submitted build audit; a check inside the adapter's emit stage is proposed in a separate pull request.
@@ -45,18 +45,19 @@ The [review ledger](community/findings.md) brings relevant lci-bafu-catalog less
 
 ```sh
 python3 scripts/community.py check
-python3 -m unittest discover -s community/tests
+python3 scripts/shared_files.py check
+uv run --no-project --python 3.12 --with markdown==3.7 python -m unittest discover -s community/tests
 python3 scripts/build_checks.py path/to/build-audit.json
 uv run pytest -q
 ```
 
 Read [build validation](community/build-validation.md) for the checks' precise scope and limitations. These additions are reviewed through [PR #6](https://github.com/sentier-dev/sentier-agribalyse/pull/6); synthetic tests do not establish a newly reproduced licensed baseline or new partner consensus.
 
-## Documentation site
+## The site
 
-The responsive site shares Sentier's visual identity with [the BAFU / UVEK site](https://sentier-dev.github.io/sentier-bafu/). Its public pages cover import, findings, application tests and consensus. To see the site of [PR #6](https://github.com/sentier-dev/sentier-agribalyse/pull/6), build it from its branch with the command below. The address that carried its review preview, `https://mklarmann.github.io/sentier-agribalyse/`, now shows a later state of the workspace, in which the site is built from records; that work follows this pull request and is not part of it.
+The site is built from the records: a page per finding and per contribution, the feedback to ADEME, and how to import and build AGRIBALYSE yourself. It serves no built database. It has the same frame as [the BAFU/UVEK site](https://sentier-dev.github.io/sentier-bafu/) and its own index colour, so that a reader sees which dataset they are on.
 
-The [Documentation workflow](.github/workflows/pages.yml) checks pull requests and is ready to publish from `main` at `https://sentier-dev.github.io/sentier-agribalyse/`. The canonical site becomes available after a maintainer merges this PR and enables **Settings → Pages → Source: GitHub Actions**. Build locally with `uv run --no-project --with markdown==3.7 scripts/build_site.py`; see [site maintenance](site/README.md). Generated pages contain coordination material only, with no licensed inventory downloads.
+The scripts that check the records and build the site are shared with sentier-bafu, and `python3 scripts/shared_files.py check` holds them to the same files. [The Checks workflow](.github/workflows/checks.yml) runs on pull requests, and [the Site workflow](.github/workflows/pages.yml) publishes from `main` at `https://sentier-dev.github.io/sentier-agribalyse/` once a maintainer has enabled **Settings → Pages → Source: GitHub Actions**. Build it on your own machine with the commands in [site maintenance](site/README.md).
 
 ## Data, credit and participation
 

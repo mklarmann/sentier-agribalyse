@@ -1,6 +1,8 @@
 {
   "id": "C000",
+  "issue": null,
   "title": "",
+  "class": "",
   "status": "proposed",
   "baseline": {
     "dataset": "",
@@ -13,7 +15,8 @@
     "kind": "",
     "implementation_url": "",
     "implementation_revision": "",
-    "payloads": []
+    "payloads": [],
+    "file": null
   },
   "evidence": [],
   "required_checks": [],
@@ -21,5 +24,10 @@
   "required_reviewers": [],
   "approvals": [],
   "objections": [],
-  "upstream_project": ""
+  "upstream_project": "",
+  "validation_scope": "",
+  "next_action": "",
+  "review_role": "",
+  "evidence_url": "",
+  "retained": []
 }

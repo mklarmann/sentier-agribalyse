@@ -1,9 +1,18 @@
-# Documentation and contribution CI
+# Checks and automation
 
-The [Documentation workflow](../../.github/workflows/pages.yml) validates contribution records, runs the synthetic community tests and build-audit checks, then builds and checks the public documentation site. Pull requests never deploy. Updates to `main` publish only the generated `_site/` artifact through GitHub Pages, once a repository administrator has enabled **Settings → Pages → Source: GitHub Actions**.
+[The Checks workflow](../../.github/workflows/checks.yml) runs on every pull request and on every push to `main`: the records, the shared files, the unit tests of the workspace, and a build of the site from the records alone with its link check. It needs none of ADEME's data and no ecoinvent licence, and it deploys nothing. The import's own lint and tests stay in [ci.yml](../../.github/workflows/ci.yml).
 
-Run the same contribution checks locally with `python3 scripts/community.py check`, `python3 -m unittest discover -s community/tests` and `python3 scripts/build_checks.py community/templates/build-audit.json`. Site maintenance and hosting links are documented in [site/README.md](../../site/README.md) and the main README.
+Run the same checks on your own machine:
 
-The supplied `github-actions.yml` remains a standalone contribution-check template; the Documentation workflow already runs those checks. The portable `.gitlab-ci.yml` provides equivalent validation and Pages publication for a GitLab mirror.
+```sh
+python3 scripts/community.py check
+python3 scripts/shared_files.py check
+uv run --no-project --python 3.12 --with markdown==3.7 python -m unittest discover -s community/tests
+python3 scripts/build_checks.py community/templates/build-audit.json
+uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+uv run --no-project --python 3.12 python scripts/check_site.py _site
+```
 
-The existing pytest CI also collects the community record and build-audit regressions through `tests/unit/test_community_records.py`. This keeps the collaboration checks connected to the adapter suite.
+[The Site workflow](../../.github/workflows/pages.yml) deploys the site; [site/README.md](../../site/README.md) describes it. [Intake](../../.github/workflows/intake.yml) and [Sync](../../.github/workflows/sync.yml) write to issues: Intake proposes a finding's record as a pull request for a person to review, and Sync writes the labels of finding issues from the records.
+
+`github-actions.yml` here is a standalone copy of the checks for a repository that wants only them. The portable `.gitlab-ci.yml` runs the same checks and publishes the site for a GitLab mirror.

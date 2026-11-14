@@ -1,0 +1,74 @@
+name: Checks
+
+# Every check of the workspace that needs none of ADEME's data and no ecoinvent licence, on
+# every pull request and on every push to main: the records, the unit tests, and a build of the
+# site from the records alone with its link check. Nothing is written and nothing is deployed.
+#
+# The records, the site and their tests run on Python 3.12, outside the import's own project
+# (`uv run --no-project --python 3.12`). The import's lint and tests are in ci.yml.
+#
+# intake.yml calls this workflow for the pull requests it opens, because a pull request opened
+# by a workflow starts no workflow of its own. The job names below are names under which
+# intake.yml reports the result (CHECK_CONTEXTS in scripts/intake.py).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to check. Empty stands for the commit that started the workflow.
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  records:
+    name: Records and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: checks-records-${{ inputs.ref || github.ref }}
+      # A newer push to a pull request replaces its run; runs on main all finish.
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.12"
+          enable-cache: false
+      - name: Check the records
+        run: uv run --no-project --python 3.12 python scripts/community.py check
+      - name: Check that the shared files are the ones named in site/shared.json
+        run: uv run --no-project --python 3.12 python scripts/shared_files.py check
+      - name: Run the unit tests
+        run: uv run --no-project --python 3.12 --with markdown==3.7 python -m unittest discover -s community/tests
+      - name: Check the build audit template
+        run: uv run --no-project --python 3.12 python scripts/build_checks.py community/templates/build-audit.json
+
+  site:
+    name: Site build and links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: checks-site-${{ inputs.ref || github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          python-version: "3.12"
+          enable-cache: false
+      - name: Build the site from the records alone
+        run: uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+      - name: Check links, assets and published file types
+        run: uv run --no-project --python 3.12 python scripts/check_site.py _site

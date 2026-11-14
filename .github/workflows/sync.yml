@@ -1,0 +1,58 @@
+name: Sync
+
+# Issues follow records: labels, one comment when the status of a finding changes, and the
+# issue is closed at a final status. scripts/sync.py compares; nothing else writes labels.
+# Runs after a record changed on main, every night, and on request. A run on request only
+# lists the differences unless "apply" is ticked.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "community/findings/**"
+      - "site/config.json"
+      - "scripts/sync.py"
+      - "scripts/community.py"
+      - ".github/workflows/sync.yml"
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Write the labels, the comments and the state of the issues. Unticked, the differences are only listed.
+        type: boolean
+        default: false
+      comments:
+        description: Post a comment where the status of a finding changed.
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  # One run at a time. A run that has started finishes; of those waiting, the newest runs.
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Issues follow records
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write # labels, comments and the state of finding issues
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Compare the issues with the records
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SYNC_APPLY: ${{ github.event_name != 'workflow_dispatch' || inputs.apply }}
+          SYNC_COMMENTS: ${{ github.event_name != 'workflow_dispatch' || inputs.comments }}
+        run: |
+          set --
+          if [ "$SYNC_APPLY" = "true" ]; then set -- "$@" --apply; fi
+          if [ "$SYNC_COMMENTS" != "true" ]; then set -- "$@" --no-comments; fi
+          python3 -I scripts/sync.py "$@" --summary "$GITHUB_STEP_SUMMARY"

@@ -1,53 +1,143 @@
 {
   "dataset": "AGRIBALYSE",
   "provider": "ADEME",
+  "releases": [
+    {
+      "id": "3.2",
+      "name": "AGRIBALYSE 3.2",
+      "background": "ecoinvent 3.9.1"
+    }
+  ],
+  "older_numbering_until": 0,
+  "index": {
+    "color": "#5d4a66",
+    "dark": "#46384d",
+    "tint": "#e5dce9",
+    "soft": "#a084ae"
+  },
+  "lookup_example": "F1",
+  "finding_label": "agribalyse-finding",
+  "finding_form": "agribalyse-data-finding.yml",
   "repository": "https://github.com/sentier-dev/sentier-agribalyse",
   "site_url": "https://sentier-dev.github.io/sentier-agribalyse/",
   "source_ref": "main",
-  "description": "The public Sentier workspace for AGRIBALYSE imports, partner contributions, application tests, reviewed consensus and recommendations to ADEME.",
-  "sibling_name": "BAFU / UVEK",
+  "home_title": "AGRIBALYSE inventory database: community findings · Sentier",
+  "title_suffix": "AGRIBALYSE findings · Sentier",
+  "description": "Users of the AGRIBALYSE life-cycle inventory database record measured findings here, repeat each other's measurements and report them to ADEME.",
+  "sibling_name": "BAFU/UVEK",
   "sibling_url": "https://sentier-dev.github.io/sentier-bafu/",
-  "validation_note": "Community checks use synthetic fixtures; this work does not claim a newly reproduced licensed AGRIBALYSE baseline or partner consensus.",
+  "nav": [
+    [
+      "index.html",
+      "Overview"
+    ],
+    [
+      "findings.html",
+      "Findings"
+    ],
+    [
+      "feedback.html",
+      "Feedback to ADEME"
+    ],
+    [
+      "contributions.html",
+      "Contributions"
+    ],
+    [
+      "build.html",
+      "Import and build"
+    ],
+    [
+      "take-part.html",
+      "Take part"
+    ]
+  ],
+  "footer": [
+    [
+      "about/terms.html",
+      "Data and terms"
+    ],
+    [
+      "about/checks.html",
+      "How builds are checked"
+    ],
+    [
+      "about/data.html",
+      "Data (JSON)"
+    ],
+    [
+      "housekeeping.html",
+      "Housekeeping"
+    ]
+  ],
   "documents": [
     {
-      "title": "Import & use",
-      "source": "site/import.md",
-      "page": "import.html"
+      "title": "Findings",
+      "source": "site/findings.md",
+      "page": "findings.html",
+      "description": "Measured observations about ADEME's inventory data. Each finding has a status, a record and a public place where it is discussed."
     },
     {
-      "title": "Evidence & testing",
-      "source": "community/build-validation.md",
-      "page": "testing.html"
+      "title": "Feedback to ADEME",
+      "source": "site/feedback.md",
+      "page": "feedback.html",
+      "description": "What was reported to ADEME and when, what ADEME answered, what is resolved, and what is ready to be reported."
     },
     {
-      "title": "Findings & shared lessons",
-      "source": "community/findings.md",
-      "page": "findings.html"
+      "title": "Contributions",
+      "source": "site/contributions.md",
+      "page": "contributions.html",
+      "description": "Proposals that go beyond a single finding: mappings, models, parameter scenarios and method variants, each with its checks and reviewers."
     },
     {
-      "title": "Contribute",
-      "source": "community/README.md",
-      "page": "contribute.html"
+      "title": "Import and build",
+      "source": "site/build.md",
+      "page": "build.html",
+      "description": "How to import AGRIBALYSE 3.2 and build it on your own machine with your own ecoinvent licence. This workspace serves no built database."
     },
     {
-      "title": "Apply a candidate layer",
-      "source": "community/application-and-testing.md",
-      "page": "application.html"
+      "title": "Take part",
+      "source": "site/take-part.md",
+      "page": "take-part.html",
+      "description": "Report a finding, repeat a measurement or propose a contribution. Everything is discussed in public on GitHub."
     },
     {
-      "title": "Consensus & recommendations",
-      "source": "community/workflow.md",
-      "page": "consensus.html"
-    },
-    {
-      "title": "Existing contribution hooks",
-      "source": "community/existing-work-assessment.md",
-      "page": "existing-work.html"
-    },
-    {
-      "title": "Data & attribution",
+      "title": "Data and terms",
       "source": "community/data-and-attribution.md",
-      "page": "terms.html"
+      "page": "about/terms.html",
+      "description": "Which terms apply to ADEME's data, to the ecoinvent background and to what is published here. It is not legal advice."
+    },
+    {
+      "title": "How builds are checked",
+      "source": "community/build-validation.md",
+      "page": "about/checks.html",
+      "description": "What the checks on a build of AGRIBALYSE cover: row accounting, factor coverage and the identity of a build."
+    },
+    {
+      "title": "Data (JSON)",
+      "source": "site/data.md",
+      "page": "about/data.html",
+      "description": "The findings and contributions of this site as JSON files for other tools, with their schemas and a feed of changes."
     }
-  ]
+  ],
+  "assessments": {
+    "C001": [
+      "community/existing-work-assessment.md",
+      "community/application-and-testing.md"
+    ]
+  },
+  "redirects": {
+    "import.html": "build.html",
+    "contribute.html": "take-part.html",
+    "testing.html": "about/checks.html",
+    "terms.html": "about/terms.html",
+    "application.html": "contributions/C001.html",
+    "existing-work.html": "contributions/C001.html",
+    "consensus.html": "contributions.html",
+    "findings/index.html": "findings.html",
+    "contributions/index.html": "contributions.html",
+    "releases/index.html": "findings.html",
+    "feedback/index.html": "feedback.html",
+    "about/index.html": "about/data.html"
+  }
 }

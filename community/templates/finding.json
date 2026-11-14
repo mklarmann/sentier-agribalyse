@@ -1,0 +1,28 @@
+{
+  "schema": 2,
+  "id": "F0",
+  "issue": null,
+  "title": "",
+  "kind": "defect",
+  "datasets": [],
+  "scope": "",
+  "releases": [],
+  "observation": "",
+  "exposure": "",
+  "method": "",
+  "reported": {
+    "by": null,
+    "date": null,
+    "url": ""
+  },
+  "repeated": null,
+  "sent": null,
+  "answer": null,
+  "fixed_in": null,
+  "closed": null,
+  "related": [],
+  "threads": [],
+  "next": null,
+  "retained": [],
+  "notes": ""
+}

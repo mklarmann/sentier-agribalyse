@@ -1,0 +1,75 @@
+name: AGRIBALYSE data finding
+description: Something you measured in ADEME's data that looks wrong, or that you cannot explain
+title: "[Finding] "
+# `needs-triage` means: no record of this finding has been merged yet. A workflow takes it off.
+labels: ["agribalyse-finding", "needs-triage"]
+# The headings below are read by scripts/intake.py. To change one, read the note at the top of
+# that script first; community/tests/test_workspace.py compares the two.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Say in the title, in one line, what you observed. Give numbers with their units.
+        Quote process names and single values of AGRIBALYSE. Never paste values of the ecoinvent background, and nothing from a release that ADEME has not published.
+
+        Something the import does wrong is not a finding about ADEME's data: open an ordinary issue for it.
+
+        **What happens next**
+
+        1. A record of your finding is proposed as a pull request. Its number is the number of this issue: issue 48 is finding F48.
+        2. A maintainer reads the record and merges it. The finding is then listed on the site with the status "Needs a second measurement".
+        3. A second person repeats your measurement on ADEME's release files and comments here, beginning with the line `/repeated reproduced` or `/repeated not-reproduced`.
+        4. Findings are reported to ADEME together. ADEME decides what it changes; its answer is recorded here.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of finding is it?
+      options:
+        - "Defect: something in the data looks wrong (an amount, a unit, a link, a label)"
+        - "Question: what does the data mean or intend?"
+        - "Difference: a difference in method, scope or convention, not an error"
+    validations:
+      required: true
+  - type: dropdown
+    id: releases
+    attributes:
+      label: ADEME release it was observed in
+      description: Choose every release in which you saw it.
+      multiple: true
+      # releases:start (written by `python3 scripts/intake.py form` from site/config.json)
+      options:
+        - "3.2"
+      # releases:end
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: What else it concerns
+      description: "What the finding is about: the process or the group of processes by name, as ADEME's export writes it, with unit and geography; or an elementary flow, a method, a file of the release."
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What the data says
+      description: The value with its unit and the exchange it sits on, what you compared it with, and why it looks wrong. If it is a question to ADEME, put the question here.
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: How you measured it
+      description: Which files you read (ADEME's export, the table of reference results), and the command or script that produced the numbers. Say also what you did not measure.
+    validations:
+      required: true
+  - type: textarea
+    id: exposure
+    attributes:
+      label: What it affects, if known
+      description: Which other processes use this one, and how much of a typical result it changes.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: A suggested correction, links to related discussions.

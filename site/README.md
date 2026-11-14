@@ -1,15 +1,52 @@
-# Public documentation site
+# Public site
 
-The shared design follows [Départ de Sentier's website](https://www.d-d-s.ch/): the unmodified green Départ de Sentier logo, Nunito typography, dark green (`#3C5343`), beige (`#F0EEE1`) and sage (`#84AE99`), an airy header, rounded buttons and a light footer. The logo comes from [Depart-de-Sentier/dds-logo](https://github.com/Depart-de-Sentier/dds-logo), by Sylvain Prevost, under CC BY 4.0 (attribution is waived for unmodified use; the footer credits it nevertheless). Nunito is hosted locally from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/nunito), under the included `site/assets/OFL.txt`. Both sites share the same renderer, CSS and branding assets. Content comes only from the explicit Markdown file list in `site/config.json` and contribution metadata. Inventory directories, licensed backgrounds, private evidence, scoring caches and binary exports are never build inputs.
+The site is built from the records, not written by hand: one page per finding and per contribution, a page per AGRIBALYSE release, the overview, what changed, and the pages of prose named in `site/config.json`.
 
 ```sh
-uv run --no-project --with markdown==3.7 scripts/build_site.py
-python3 scripts/check_site.py _site
+uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
 
-The generated `_site/` directory is ignored. Links, counts and contribution status are generated from repository records. Pages serves `404.html` for every missing path, also nested ones, so that page alone links absolutely, under the path of `site_url` in `site/config.json`; a build served elsewhere passes `--site-url` (the GitLab pipeline passes `$CI_PAGES_URL`), and `check_site.py` refuses a relative link on that page. The site claims no newly accepted consensus or delivered recommendations. The portable GitLab pipeline runs coordination tests and publishes only the site from the default branch. It does not build or upload inventories.
+`_site/` is ignored. ADEME's export, the ecoinvent background, scoring caches and Brightway packages are never build inputs, and `check_site.py` refuses data file types. The site serves no built database: AGRIBALYSE 3.2 is built on a licensed background.
 
-GitHub Pages is deployed by [the Documentation workflow](../.github/workflows/pages.yml) after a push to `main`. Pull requests build and check the site without deploying it. A repository administrator enables Pages once with **Settings → Pages → Source: GitHub Actions**. The workflow uploads only `_site/`, and installs the Markdown builder independently of the inventory adapter. The same generated site also works on GitLab Pages through `.gitlab-ci.yml`. Hosting links and any outstanding maintainer step are recorded in the main README.
+## Shared with sentier-bafu
 
-Update both projects' shared renderer, stylesheet and validation tooling together. Update dataset-specific content in `site/config.json` and the listed Markdown sources. The summary identity is not an inventory hash, and technical validation is not a reviewer approval.
+The scripts that check the records and build the site (`scripts/build_site.py`, `check_site.py`, `community.py`, `triage.py`, `intake.py`, `sync.py`, `github_api.py` and the folder `scripts/sitebuild`), the stylesheet, the script of the lists, the font, the logo and the schemas of the records are the same files as in [sentier-bafu](https://github.com/sentier-dev/sentier-bafu). They are written and tested there. Its site guide, `site/README.md` at the commit that `site/shared.json` names, is the reference for them: the generated blocks a page of prose can ask for, the words for a status, the keys of `site/config.json`, and the data files of the site.
+
+`site/shared.json` names every shared file with its checksum, and the commit of sentier-bafu it was taken from.
+
+```sh
+python3 scripts/shared_files.py check
+python3 scripts/shared_files.py take ../sentier-bafu --commit <commit>
+```
+
+`check` fails when a shared file differs from the one named, or when a shared folder holds a file that is not named. Do not edit a shared file here: change it in sentier-bafu, then `take` it again. The Checks workflow runs `check` on every pull request.
+
+Until the work lands in `sentier-dev/sentier-bafu`, `site/shared.json` names the repository and the branch the commit is in.
+
+## This repository's own
+
+| File | What it is |
+|---|---|
+| `site/config.json` | the dataset and the provider, the releases, the index colour, the navigation, the pages, the old addresses that lead on |
+| `site/findings.md`, `feedback.md`, `contributions.md`, `build.md`, `take-part.md`, `data.md` | the pages of prose |
+| `.github/ISSUE_TEMPLATE/agribalyse-data-finding.yml` | the form for a finding; its headings are read by `scripts/intake.py` |
+| `scripts/shared_files.py`, `scripts/build_checks.py` | the check of the shared files; the checks on a build audit |
+| `community/tests/test_workspace.py` | the tests of this repository's records, forms and site |
+
+What differs from sentier-bafu, and why:
+
+- **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The "Import and build" page says how to build on your own machine.
+- **Releases.** A release is one entry under `releases`, with the background it is built on. Register a release only after ADEME has published it; a test holds the list to the published releases.
+- **Processes have a name and no number.** `dataset_code_pattern` is left out. A finding lists no datasets and says in `scope` what it is about.
+- **Numbers.** `older_numbering_until` is 0: the number of a finding is the number of its issue.
+- **The index colour.** `index` is aubergine, `#5d4a66`, with its dark, soft and tint shades. Every Sentier dataset site has the same frame (the logo, the paper, the type) and its own index colour; BAFU/UVEK has slate blue, `#3e5c76`. The build refuses a colour that cannot be read.
+
+The design follows [Départ de Sentier's website](https://www.d-d-s.ch/): the green logo from [Depart-de-Sentier/dds-logo](https://github.com/Depart-de-Sentier/dds-logo) by Sylvain Prevost (CC BY 4.0), and Nunito from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/nunito) under `site/assets/OFL.txt`.
+
+## Deployment
+
+[The Site workflow](../.github/workflows/pages.yml) deploys to GitHub Pages after a push to `main`, once a day, and when an issue is opened, closed or reopened. It needs **Settings → Pages → Source: GitHub Actions**. Pull requests are built and checked by [the Checks workflow](../.github/workflows/checks.yml), without the network and without deploying. A copy that another repository builds, such as a fork, says on every page that it is not the published site.
+
+Two workflows write to issues and need a maintainer's agreement before they are switched on: [Intake](../.github/workflows/intake.yml) proposes a record as a pull request when an issue is filed with the finding form, and [Sync](../.github/workflows/sync.yml) keeps the labels of finding issues in line with the records.

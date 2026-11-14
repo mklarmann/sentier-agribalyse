@@ -1,164 +1,429 @@
-"""Build the public documentation site from an explicit, inventory-free file list.
+"""Build the public site from the records and an explicit, inventory-free file list.
 
 Run: uv run --no-project --with markdown==3.7 scripts/build_site.py
+
+The site has a page per finding, per contribution, per dataset a finding names and per
+provider release, so it holds thousands of them. Issue details (comment counts, labels) come
+from GitHub when it can be reached; see triage.py. The templates are in scripts/sitebuild/,
+one function per component; this file reads the inputs, decides which pages exist and
+writes them.
+
+The build validates every record first, with the rules of `community.py check`, and writes
+nothing while a record is invalid: what the check would refuse must not reach a page.
 """
 
 import argparse
-import html
+import datetime
 import json
+import os
 import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
-import markdown
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import community  # noqa: E402
+import github_api  # noqa: E402
+import triage  # noqa: E402
+from sitebuild import contributions, data, findings, lastrun, overview, pages, prose, shell, status, theme  # noqa: E402
+from sitebuild.text import esc, plural  # noqa: E402,F401
 
 ROOT = Path(__file__).resolve().parents[1]
+RECORD_PAGES = {"community/findings": "findings", "community/contributions": "contributions"}
+RECORD_FILE = re.compile(r"community/(findings|contributions)/(?:[^/]+/)*([FC][0-9]+)\.json")
+# <!-- findings-list --> or <!-- generated: findings-list -->, alone in a paragraph or not.
+MARKER = re.compile(r"<p>\s*<!--\s*(?:generated:\s*)?([a-z][a-z-]*)\s*-->\s*</p>|<!--\s*(?:generated:\s*)?([a-z][a-z-]*)\s*-->")
+COUNT = re.compile(r"<!--\s*(?:generated:\s*)?count:([a-z:-]+)\s*-->")
+# A block that opens its page: what precedes it and the block itself stand above the page's two
+# columns, over the full width; "On this page" begins below it.
+OPENING = {"last-run"}
+PATCHED_PAGE = "patched-release.html"
+# The blocks that show a release build. A site none of whose pages asks for one reads no run.
+RUN_BLOCKS = re.compile(r"<!--\s*(?:generated:\s*)?(?:last-run|release-packages)\s*-->")
+OPENING_END = "<!-- end of the opening -->"
+SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
 
-def esc(value):
-    return html.escape(str(value), quote=True)
+def revision(root):
+    try:
+        return subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+    except Exception:
+        return None
 
 
-def build(out, source_repository=None, source_ref=None, preview_url=None, site_url=None):
-    config = json.loads((ROOT / "site/config.json").read_text())
-    repo = config["repository"]
-    served_at = urlsplit(site_url or config["site_url"])
-    if served_at.scheme not in ("https", "http") or not served_at.netloc:
-        raise ValueError("site_url must be the full URL the site is served at")
-    # The path the site is served under: "/sentier-agribalyse/" on a project page, "/" on its own host.
-    base_path = "/".join(["", *filter(None, served_at.path.split("/")), ""])
-    source_repo = source_repository or config.get("source_repository", repo)
-    config["source_ref"] = source_ref or config["source_ref"]
-    if preview_url and not preview_url.startswith("https://github.com/"):
-        raise ValueError("Preview notice must link to a GitHub pull request")
-    preview_notice = (
-        '<aside class="preview-notice" aria-label="Review preview"><div class="wrap">'
-        "<strong>Review preview.</strong> These documentation changes are proposed "
-        f'for the shared repository. <a href="{esc(preview_url)}">Review the pull request ↗</a>'
-        "</div></aside>"
-        if preview_url
-        else ""
-    )
-    dataset = config["dataset"]
-    provider = config["provider"]
-    docs = config["documents"]
-    routes = {str(Path(d["source"])): d["page"] for d in docs}
-    pages = [
-        ("index.html", "Overview"),
-        ("import.html", "Import & use"),
-        ("testing.html", "Evidence & testing"),
-        ("findings.html", "Findings"),
-        ("contribute.html", "Contribute"),
-    ]
-    out.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(ROOT / "site/assets", out / "assets", dirs_exist_ok=True)
-    shutil.copyfile(ROOT / "site/style.css", out / "style.css")
-    (out / ".nojekyll").touch()
-    records = [
-        json.loads(p.read_text()) for p in sorted((ROOT / "community/contributions").glob("*.json"))
-    ]
-    packets = json.loads((ROOT / "community/recommendations/tracker.json").read_text())
-    accepted = sum(r["status"] == "accepted" for r in records)
-    delivered = sum(p["status"] in ("sent", "acknowledged", "resolved") for p in packets)
+def build_date():
+    """Today, or the day SOURCE_DATE_EPOCH names: two builds of one revision are then identical."""
+    epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if epoch:
+        return datetime.datetime.fromtimestamp(int(epoch), datetime.timezone.utc).date().isoformat()
+    return datetime.date.today().isoformat()
 
-    def shell(title, body, current, sidebar=False):
-        nav = "".join(
-            f'<a href="{page}"'
-            + (' aria-current="page"' if page == current else "")
-            + f">{label}</a>"
-            for page, label in pages
+
+class Site:
+    def __init__(self, out, source_repository=None, source_ref=None, preview_url=None,
+                 issues_snapshot=None, offline=False, require_issues=False, root=ROOT,
+                 last_run_snapshot=None, built_by=None):
+        self.out = Path(out)
+        self.root = Path(root)
+        # A record that `community.py check` refuses must not be built into a page either.
+        errors, _, _ = community.problems(self.root)
+        if errors:
+            raise SystemExit("The records are not valid; nothing was built.\n" + "\n".join(errors))
+        self.config = json.loads((self.root / "site/config.json").read_text())
+        # The index colour of this dataset's site, checked; None while the site sets none.
+        self.theme = theme.read(self.config)
+        self.repo = self.config["repository"]
+        self.source_repo = source_repository or self.repo
+        self.ref = source_ref or self.config["source_ref"]
+        if preview_url and not preview_url.startswith("https://github.com/"):
+            raise ValueError("Preview notice must link to a GitHub pull request")
+        self.preview_url = preview_url
+        # `built_by` is the repository whose workflow builds this copy ("owner/name"). When it is
+        # not the repository the site belongs to, every page says that it is a copy built elsewhere.
+        own = github_api.repository_slug(self.repo)
+        if built_by and not github_api.REPOSITORY.fullmatch(built_by):
+            raise ValueError("--built-by names a repository as owner/name")
+        self.built_by = built_by or own
+        self.elsewhere = self.built_by != own
+        self.dataset = self.config["dataset"]
+        self.provider = self.config["provider"]
+        self.root_path = urlsplit(self.config["site_url"]).path.rstrip("/") + "/"
+        self.records_config = community.load_config(self.root)
+        self.docs = self.config["documents"]
+        # What differs from one dataset's site to another's (see site/README.md, "A sibling site").
+        self.code_pattern = self.records_config["dataset_code_pattern"]
+        self.lookup_example = self.records_config["lookup_example"]
+        self.finding_form = self.records_config["finding_form"]
+        # The page of the patched release, where this site has one: other pages lead to it.
+        self.patched_page = next((doc["page"] for doc in self.docs if doc["page"] == PATCHED_PAGE), None)
+        # Where a link to a source file leads on the site: the page built from it.
+        self.routes = {"community/findings/README.md": "findings.html"}
+        for doc in self.docs:
+            for source in [doc["source"]] + doc.get("also", []):
+                self.routes[source] = doc["page"]
+        for cid, sources in self.config.get("assessments", {}).items():
+            for source in sources:
+                self.routes.setdefault(source, f"contributions/{cid}.html")
+        self.findings = community.load_findings(self.root)
+        self.contributions = community.load_contributions(self.root)
+        self.patches = community.load_patches(self.root)
+        issues, self.issues_source = triage.load_issues(
+            self.repo, issues_snapshot, offline, require_issues
         )
-        side = (
-            '<aside class="sidebar" aria-label="Documentation"><strong>In this workspace</strong>'
-            + "".join(
-                f'<a href="{d["page"]}"'
-                + (' aria-current="page"' if d["page"] == current else "")
-                + f">{esc(d['title'])}</a>"
-                for d in docs
-            )
-            + "</aside>"
+        self.triage = triage.assemble(self.findings, self.repo, issues, self.patches)
+        # The last release build, read from the runs of the repository that builds this site:
+        # only for a site that has a page for it. A dataset without a release build has none.
+        shows_run = any(
+            RUN_BLOCKS.search((self.root / source).read_text())
+            for doc in self.docs for source in [doc["source"], *doc.get("also", [])]
+            if (self.root / source).is_file()
         )
-        main = (
-            f'<main id="main" class="wrap document">{side}<article class="article">{body}</article></main>'
-            if sidebar
-            else f'<main id="main">{body}</main>'
-        )
-        return f'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)} · {esc(dataset)} · Sentier</title><meta name="description" content="{esc(config["description"])}"><meta name="theme-color" content="#3c5343"><link rel="icon" href="assets/favicon-32x32.png" type="image/png"><link rel="stylesheet" href="style.css"></head><body>
-<a class="skip" href="#main">Skip to content</a><header class="masthead"><div class="wrap top"><div class="brand"><a class="brand-logo" href="https://www.d-d-s.ch/" aria-label="Départ de Sentier"><img src="assets/dds-logo.svg" alt="Départ de Sentier" width="200" height="94"></a><a class="dataset" href="index.html" aria-label="{esc(dataset)} workspace home">{esc(dataset)}</a></div><div class="top-links"><a href="https://www.d-d-s.ch/">Départ de Sentier ↗</a><a href="{esc(config["sibling_url"])}">{esc(config["sibling_name"])} ↗</a><a href="{repo}">Repository ↗</a></div></div><nav class="wrap nav" aria-label="Main navigation">{nav}</nav></header>
-{preview_notice}{main}
-<footer><div class="wrap"><p><strong>A Sentier community workspace.</strong><br>Evidence and contributions toward better {esc(dataset)} data. Reviews and recommendations concern the source dataset; provider endorsement is not implied.<small class="brand-credit"><a href="https://github.com/Depart-de-Sentier/dds-logo">Logo</a> by <a href="https://proov.fr/">Sylvain Prevost</a> · <a href="https://www.d-d-s.ch/">Départ de Sentier</a></small></p><p><a href="terms.html">Data & attribution</a><br><a href="{esc(config["sibling_url"])}">{esc(config["sibling_name"])} ↗</a><br><a href="{repo}/issues/new/choose">Start a discussion ↗</a></p></div></footer></body></html>'''
+        # scripts/last_run.py and scripts/release_build/ belong to the release build: a repository
+        # without one does not have them, so they are loaded here and not with this file.
+        self.last_run = self.run_reader = None
+        if shows_run:
+            import last_run
+            self.run_reader = last_run
+            self.last_run = last_run.load(self.built_by, last_run_snapshot, offline)
+        self.built = build_date()
+        self.revision = revision(self.root)
+        self.written = set()
+        self.pages = {}        # page -> date of its last change, for the sitemap
+        self.site_links = {}   # links from prose to a file of the built site -> the source that asks
 
-    layer_cards = ""
-    for record in records:
-        checks = {c["id"]: c["status"] for run in record["runs"] for c in run.get("checks", [])}
-        passed = sum(checks.get(c) == "passed" for c in record["required_checks"])
-        layer_cards += f'''<div class="record"><div class="record-head"><h3>{esc(record["id"])} · {esc(record["title"])}</h3><span class="badge {esc(record["status"])}">{esc(record["status"])}</span></div><p class="test-result">{passed} / {len(record["required_checks"])} required checks recorded as passed · {len(record["approvals"])} recorded approvals</p><a href="{source_repo}/blob/{config["source_ref"]}/community/contributions/{esc(record["id"])}.json">Open the contribution record ↗</a></div>'''
-    homepage = f'''<section class="wrap hero"><div><p class="eyebrow">Open dataset collaboration / {esc(dataset)}</p><h1>Make the dataset better.<br>Together.</h1><p class="lead">Reproduce the import. Bring partner evidence and hackathon ideas into testable contributions. Build shared understanding, then return actionable recommendations to {esc(provider)}.</p><div class="actions"><a class="button primary" href="import.html">Start with the import →</a><a class="button" href="contribute.html">Bring a contribution</a></div></div><div class="route"><span class="tag">From source to shared understanding</span><ol><li><span>01</span>Canonical import</li><li><span>02</span>Partner contributions</li><li><span>03</span>Application & testing</li><li><span>04</span>Reviewed consensus</li><li><span>05</span>Recommendations to {esc(provider)}</li></ol></div></section>
-<div class="strip"><div class="wrap"><span><strong>Public collaboration</strong> · across dataset releases</span><span><strong>{len(records)} contribution record{"s" if len(records) != 1 else ""}</strong> · {accepted} accepted</span><span><strong>{delivered} recommendations sent</strong> · delivery requires evidence</span></div></div>
-<section class="wrap section"><p class="eyebrow">A shared place to work</p><h2>Keep the evidence connected.</h2><p class="section-intro">A finding about the source data, an importer defect and a new scenario need different evidence. Keep the original reproducible, apply contributions in separate candidates, and make every claim reviewable.</p><div class="cards"><div class="card"><span class="number">01 / REPRODUCE</span><h3>Start from a known baseline</h3><p>Pin the release, source hashes, background and mappings. Understand what the import transforms before comparing results.</p><a href="import.html">Import & use →</a></div><div class="card"><span class="number">02 / INVESTIGATE</span><h3>Findings with a traceable source</h3><p>Connect observations to dataset identities, release files and the discussion where contributors can reproduce them.</p><a href="findings.html">Explore the findings →</a></div><div class="card"><span class="number">03 / VALIDATE</span><h3>Test the contribution's claim</h3><p>Account for changed exchanges, check characterization, and compare equivalent scopes before seeking consensus.</p><a href="testing.html">Evidence & testing →</a></div></div><div class="band"><p><strong>Help improve {esc(dataset)}.</strong><br>Bring a reproducible observation, a model or an application test. A proposal becomes consensus only after the evidence and reviewer decisions are recorded.</p><a class="button" href="{repo}/issues/new/choose">Open a discussion ↗</a></div></section>
-<section class="wrap section" style="padding-top:0"><p class="eyebrow">Work in progress</p><h2>Contributions under review</h2><div class="records">{layer_cards}</div><p class="test-result" style="margin-top:20px">{esc(config["validation_note"])}</p></section>'''
-    (out / "index.html").write_text(shell("Overview", homepage, "index.html"))
-    for doc in docs:
-        source = Path(doc["source"])
-        text = (ROOT / source).read_text()
-        rendered = markdown.markdown(
-            text, extensions=["tables", "fenced_code", "sane_lists", "toc"]
-        )
+    # ------------------------------------------------------------- derived views
 
-        def rewrite(match, source=source):
-            link = html.unescape(match.group(1))
-            if re.match(r"^(https?:|mailto:|#)", link):
+    @property
+    def triage(self):
+        return self._triage
+
+    @triage.setter
+    def triage(self, value):
+        self._triage, self._derived = value, {}
+
+    def derived(self, name, make):
+        if name not in self._derived:
+            self._derived[name] = make()
+        return self._derived[name]
+
+    @property
+    def by_id(self):
+        return self.derived("by_id", lambda: {f["id"]: f for f in self.triage["findings"]})
+
+    @property
+    def changes(self):
+        """Every dated step of every finding, newest first."""
+        return self.derived("changes", lambda: community.changes(self.triage["findings"]))
+
+    @property
+    def datasets(self):
+        return self.derived("datasets", lambda: community.dataset_index(self.triage["findings"], self.patches))
+
+    @property
+    def releases(self):
+        return self.derived("releases", lambda: community.release_index(self.triage["findings"], self.records_config))
+
+    # ------------------------------------------------------------------ helpers
+
+    def label(self, stage):
+        return community.status_label(stage, self.provider)
+
+    def release_name(self, rid):
+        names = {r["id"]: r["name"] for r in self.records_config["releases"]}
+        return names.get(rid, rid)
+
+    def target(self, link, source):
+        """Where a relative link in a source file points on the site (or on GitHub)."""
+        path, sep, fragment = link.partition("#")
+        absolute = (self.root / Path(source).parent / path).resolve()
+        try:
+            relative = absolute.relative_to(self.root.resolve()).as_posix()
+        except ValueError:
+            raise ValueError(f"Link leaves repository: {link}") from None
+        page = self.routes.get(relative)
+        record = RECORD_FILE.fullmatch(relative)
+        if not page and record:
+            # A link to a record names the file's real path, so it also works on GitHub.
+            if not absolute.is_file():
+                raise ValueError(f"{source} links to a record that is not there: {link}")
+            page = f"{record.group(1)}/{record.group(2)}.html"
+        if not page and relative in RECORD_PAGES:
+            page = f"{RECORD_PAGES[relative]}.html"
+        if not page and relative.startswith("site/") and not absolute.exists():
+            # No file of the repository: a file of the built site, named from its root
+            # (site/feed.xml, site/api/v1/findings.json, site/changes.html). Checked after the build.
+            page = relative[len("site/"):]
+            self.site_links.setdefault(page, source)
+        if page:
+            return page + (sep + fragment if sep else ""), True
+        return f"{self.source_repo}/blob/{self.ref}/{relative}" + (sep + fragment if sep else ""), False
+
+    def render(self, text, source, up="", shift=0):
+        """Markdown of a prose source to (html, sections); see sitebuild/prose.py."""
+        return prose.render(self, text, source, up, shift)
+
+    def record_text(self, text, inline=False, **options):
+        """Markdown of a record; see sitebuild/prose.py."""
+        return prose.record_text(self, text, inline, **options)
+
+    def shell(self, title, body, current, **options):
+        return shell.shell(self, title, body, current, **options)
+
+    # ------------------------------------------------------------------ writing
+
+    def write(self, page, text):
+        """Write one file of the site. A path that leaves the output folder is refused."""
+        path = self.out / page
+        if not path.resolve().is_relative_to(self.out.resolve()):
+            raise ValueError(f"Refusing to write outside the output folder: {page}")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+        self.written.add(path)
+
+    def page(self, page, text, changed=None):
+        """Write a page that belongs in the sitemap."""
+        self.write(page, text)
+        self.pages[page] = changed
+
+    def copy(self, source, page):
+        path = self.out / page
+        path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, path)
+        self.written.add(path)
+
+    def write_json(self, page, data, one_per_line=None):
+        """JSON for tools. A list that grows with the records is written one entry per line:
+        a third of the size of an indented file, and still readable and comparable."""
+        if one_per_line is None:
+            self.write(page, json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+            return
+        entries = data[one_per_line]
+        compact = lambda value: json.dumps(value, ensure_ascii=False, separators=(",", ":"))  # noqa: E731
+        if isinstance(entries, dict):
+            body = ",\n".join(f"{json.dumps(key)}:{compact(value)}" for key, value in entries.items())
+            body = "{\n" + body + "\n}"
+        else:
+            body = "[\n" + ",\n".join(compact(value) for value in entries) + "\n]"
+        head = json.dumps({k: v for k, v in data.items() if k != one_per_line}, indent=1, ensure_ascii=False)
+        self.write(page, head[: head.rindex("}")].rstrip() + f',\n "{one_per_line}": {body}\n}}\n')
+
+    # ---------------------------------------------------------------- templates
+
+    def findings_list(self, up=""):
+        return findings.findings_list(self, up)
+
+    def finding_page(self, f):
+        return findings.finding_page(self, f)
+
+    def contributions_list(self, up=""):
+        return contributions.contributions_list(self, up)
+
+    def contribution_page(self, c):
+        return contributions.contribution_page(self, c)
+
+    def overview(self):
+        return overview.overview(self)
+
+    # -------------------------------------------------------------- prose pages
+
+    def blocks(self, up=""):
+        """What a prose page can ask for with a marker, <!-- name -->; listed in site/README.md.
+        (function, takes the full width of the page)."""
+        return {
+            "findings-list": (lambda: findings.findings_list(self, up), True),
+            "contributions-list": (lambda: contributions.contributions_list(self, up), True),
+            "feedback-lists": (lambda: pages.feedback_lists(self, up), True),
+            "status-tracker": (lambda: status.path_with_counts(self, up), True),
+            "status-vocabulary": (lambda: status.vocabulary(self), False),
+            "second-measurement-list": (lambda: overview.second_measurement_list(self, up), False),
+            "recent-changes": (lambda: pages.change_lines(self, self.changes[:5], up), False),
+            "patch-table": (lambda: pages.patch_table(self, up), False),
+            "last-run": (lambda: lastrun.last_run(self, up), False),
+            "release-packages": (lambda: lastrun.packages(self, up), False),
+            "data-files": (lambda: pages.data_files(self, up), False),
+            "lookup": (lambda: shell.lookup(self, up), False),
+        }
+
+    def counts(self):
+        """The numbers a prose page can ask for with <!-- count:name -->, so none is typed by hand."""
+        listed = (self.patches or {}).get("patches", [])
+        numbers = {
+            "findings": len(self.triage["findings"]),
+            "contributions": len(self.contributions),
+            "patches": len(listed),
+            "patches-with-finding": sum(1 for x in listed if x["findings"]),
+            "patches-without-finding": sum(1 for x in listed if not x["findings"]),
+            "findings-with-patch": sum(1 for f in self.triage["findings"] if f["patches"]),
+            "datasets": len(self.datasets),
+            "releases": len(self.records_config["releases"]),
+        }
+        for s in community.STATUSES:
+            numbers[f'status:{s["key"]}'] = self.triage["counts"].get(s["key"], 0)
+        return numbers
+
+    def document(self, doc):
+        """One prose page: counts filled in, Markdown rendered, generated blocks put in place."""
+        source, up = doc["source"], "../" * doc["page"].count("/")
+        numbers = self.counts()
+
+        def count(match):
+            if match.group(1) not in numbers:
+                raise ValueError(f"{source} asks for a count the build does not know: {match.group(1)}")
+            return f"{numbers[match.group(1)]:,}"
+
+        text = COUNT.sub(count, (self.root / source).read_text())
+        rendered, sections = self.render(text, source, up)
+        blocks, wide, used = self.blocks(up), False, set()
+
+        def block(match):
+            nonlocal wide
+            name = match.group(1) or match.group(2)
+            if name not in blocks:
                 return match.group(0)
-            # Resolve against the source document, never the generated URL.
-            path, sep, fragment = link.partition("#")
-            absolute = (ROOT / source.parent / path).resolve()
-            try:
-                relative = absolute.relative_to(ROOT).as_posix()
-            except ValueError:
-                raise ValueError(f"Link leaves repository: {link}") from None
-            target = routes.get(relative) or f"{source_repo}/blob/{config['source_ref']}/{relative}"
-            return f'href="{esc(target + (sep + fragment if sep else ""))}"'
+            make, full = blocks[name]
+            wide = wide or full
+            used.add(name)
+            return make() + (OPENING_END if name in OPENING else "")
 
-        rendered = re.sub(r'href="([^"]+)"', rewrite, rendered)
-        rendered = rendered.replace("<table>", '<div class="table-scroll"><table>').replace(
-            "</table>", "</table></div>"
-        )
-        if doc["page"] == "contribute.html":
-            rendered += "<h2>Recorded contributions</h2>" + layer_cards
-        (out / doc["page"]).write_text(shell(doc["title"], rendered, doc["page"], True))
-    not_found = shell(
-        "Page not found",
-        '<section class="wrap section"><h1>That path is missing.</h1><p><a href="index.html">Return to the workspace →</a></p></section>',
-        "404.html",
-    )
-    # Pages serves this file for every missing path, also nested ones (/base/foo/bar), where a
-    # relative link would resolve against the missing path. Anchor its local links at the base.
-    (out / "404.html").write_text(
-        re.sub(
-            r'\b(href|src)="(?![a-zA-Z][a-zA-Z0-9+.-]*:|#|/)',
-            lambda match: f'{match.group(1)}="{esc(base_path)}',
-            not_found,
-        )
-    )
-    # Public data contains coordination metadata only, never source inventory rows.
-    (out / "status.json").write_text(
-        json.dumps(
-            {
-                "dataset": dataset,
-                "contributions": len(records),
-                "accepted": accepted,
-                "recommendations_sent": delivered,
-                "source_ref": config["source_ref"],
-                "base_path": base_path,
-                "preview": bool(preview_url),
-            },
-            indent=2,
-        )
-        + "\n"
-    )
-    print(f"Built {dataset}: {len(docs) + 2} pages in {out}")
+        rendered = MARKER.sub(block, rendered)
+        opening = ""
+        if OPENING_END in rendered:
+            opening, rendered = rendered.split(OPENING_END, 1)
+        # The packages of a release are also offered beside the text, under "On this page".
+        beside = lastrun.rail_box(self, up) if "release-packages" in used else ""
+        return shell.prose_page(self, doc, rendered, sections, listing=wide, up=up, opening=opening, beside=beside)
+
+    # --------------------------------------------------------------------- build
+
+    def titles(self):
+        """What each page is called, for the text of a redirect."""
+        names = {page: label for page, label in self.config["nav"] + self.config["footer"]}
+        names.update({doc["page"]: doc["title"] for doc in self.docs})
+        names.update({f'contributions/{c["id"]}.html': f'contribution {c["id"]}' for c in self.contributions})
+        return names
+
+    def build(self):
+        out = self.out
+        # status.json marks a folder this build wrote before; only there may files be removed.
+        rebuilt = (out / "status.json").exists()
+        self.written, self.pages, self.site_links = set(), {}, {}
+        out.mkdir(parents=True, exist_ok=True)
+        for asset in sorted((self.root / "site/assets").iterdir()):
+            if asset.is_file():
+                self.copy(asset, f"assets/{asset.name}")
+        self.copy(self.root / "site/style.css", "style.css")
+        (out / ".nojekyll").touch()
+
+        self.page("index.html", self.overview())
+        for doc in self.docs:
+            self.page(doc["page"], self.document(doc))
+        for f in self.triage["findings"]:
+            self.page(f'findings/{f["id"]}.html', self.finding_page(f), f["changed"])
+        self.write_json("findings/index.json", findings.list_index(self), one_per_line="rows")
+        for c in self.contributions:
+            self.page(f'contributions/{c["id"]}.html', self.contribution_page(c))
+        for code, entry in self.datasets.items():
+            self.page(f"datasets/{int(code)}.html", pages.dataset_page(self, int(code), entry))
+        for rid, entry in self.releases.items():
+            if not SAFE_NAME.fullmatch(rid):
+                raise ValueError(f"site/config.json: a release id cannot be a page name: {rid!r}")
+            self.page(f"releases/{rid}.html", pages.release_page(self, rid, entry))
+        for batch, entry in pages.batches(self).items():
+            if not SAFE_NAME.fullmatch(batch):
+                raise ValueError(f"A batch id cannot be a page name: {batch!r}")
+            self.page(f"feedback/{batch}.html", pages.batch_page(self, batch, entry), entry["date"])
+        self.page("changes.html", pages.changes_page(self), self.changes[0]["date"] if self.changes else None)
+        self.page("housekeeping.html", pages.housekeeping(self))
+        self.write("feed.xml", pages.feed(self))
+
+        titles = self.titles()
+        for old, new in self.config.get("redirects", {}).items():
+            if old in self.pages:
+                raise ValueError(f"site/config.json redirects {old}, which is a page of the site")
+            self.write(old, shell.redirect(self, new, titles.get(new, new), "../" * old.count("/")))
+        # GitHub Pages serves 404.html for any missing address, so its links start at the root.
+        self.write("404.html", shell.not_found(self))
+        data.write_data(self)
+        if self.last_run is not None:
+            self.write_json("api/v1/last-run.json", lastrun.public_record(self.last_run))
+        self.write("sitemap.xml", pages.sitemap(self))
+
+        for page, source in self.site_links.items():
+            if not (out / page).is_file() or (out / page) not in self.written:
+                raise ValueError(f"{source} links to {page}, which the site does not have")
+        if rebuilt:
+            # A file of an earlier build that this one no longer writes would stay reachable.
+            for stale in sorted(p for p in out.rglob("*") if p.is_file() and p not in self.written and p.name != ".nojekyll"):
+                stale.unlink()
+            for folder in sorted((p for p in out.rglob("*") if p.is_dir()), reverse=True):
+                if not any(folder.iterdir()):
+                    folder.rmdir()
+        print(f"Built {self.dataset}: {len(self.pages)} pages in {out}")
+        if self.last_run is not None:
+            print(self.run_reader.said(self.last_run))
+        # For maintainers, in the build log only: a public page does not name labels.
+        differences = self.triage["label_differences"]
+        if differences:
+            print(f"Labels of {plural(len(differences), 'issue')} differ from the records:")
+            for d in differences:
+                change = "; ".join(
+                    part for part in (
+                        "add " + ", ".join(d["add"]) if d["add"] else "",
+                        "remove " + ", ".join(d["remove"]) if d["remove"] else "",
+                    ) if part
+                )
+                print(f"  #{d['issue']} ({', '.join(d['findings'])}): {change}")
+
+
+def build(out, source_repository=None, source_ref=None, preview_url=None, issues_snapshot=None,
+          offline=False, require_issues=False, root=ROOT, last_run_snapshot=None, built_by=None):
+    Site(out, source_repository, source_ref, preview_url, issues_snapshot, offline, require_issues, root,
+         last_run_snapshot, built_by).build()
 
 
 if __name__ == "__main__":
@@ -167,8 +432,13 @@ if __name__ == "__main__":
     parser.add_argument("--source-repository", help="Repository containing this build's source")
     parser.add_argument("--source-ref", help="Source branch or revision for repository links")
     parser.add_argument("--preview-url", help="Show a review notice linking to this pull request")
-    parser.add_argument(
-        "--site-url", help="Where this build is served, if not the configured site_url"
-    )
+    parser.add_argument("--issues", type=Path, help="Issue snapshot (JSON) instead of reading GitHub")
+    parser.add_argument("--offline", action="store_true", help="Do not read issues from GitHub")
+    parser.add_argument("--require-issues", action="store_true", help="Fail when GitHub cannot be read")
+    parser.add_argument("--last-run", type=Path, help="Record of the last release build (JSON) instead of reading GitHub")
+    parser.add_argument("--built-by", metavar="OWNER/NAME",
+                        help="The repository whose workflow builds this copy: its release builds are shown, "
+                             "and a copy built by another repository than the site's own says so on every page")
     args = parser.parse_args()
-    build(args.out, args.source_repository, args.source_ref, args.preview_url, args.site_url)
+    build(args.out, args.source_repository, args.source_ref, args.preview_url, args.issues,
+          args.offline, args.require_issues, last_run_snapshot=args.last_run, built_by=args.built_by)

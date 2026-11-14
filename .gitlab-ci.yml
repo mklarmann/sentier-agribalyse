@@ -8,13 +8,15 @@ validate-community:
   stage: test
   script:
     - python3 scripts/community.py check
-    - python3 -m unittest discover -s community/tests
+    - python3 scripts/shared_files.py check
+    - uv run --no-project --with markdown==3.7 python -m unittest discover -s community/tests
     - python3 scripts/build_checks.py community/templates/build-audit.json
 
 publish-pages:
   stage: deploy
   script:
-    - uv run --no-project --with markdown==3.7 scripts/build_site.py --out public --site-url "$CI_PAGES_URL"
+    # A mirror has no access to the issues of the GitHub repository: the site is built from the records alone.
+    - uv run --no-project --with markdown==3.7 python scripts/build_site.py --offline --out public
     - python3 scripts/check_site.py public
   pages:
     publish: public

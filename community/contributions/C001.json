@@ -1,6 +1,8 @@
 {
   "id": "C001",
+  "issue": null,
   "title": "Review parameter scenarios and mapping contributions against the canonical AGRIBALYSE import",
+  "class": "variant",
   "status": "proposed",
   "baseline": {
     "dataset": "AGRIBALYSE",
@@ -13,7 +15,8 @@
     "kind": "parameter-scenario-or-curated-mapping",
     "implementation_url": "https://github.com/sentier-dev/sentier-agribalyse/pull/4",
     "implementation_revision": "f75a44db8ea1e6a06094d151012706b9ec6daa8d",
-    "payloads": []
+    "payloads": [],
+    "file": null
   },
   "evidence": [
     "https://github.com/sentier-dev/sentier-agribalyse/pull/4",
@@ -29,5 +32,10 @@
   "required_reviewers": [],
   "approvals": [],
   "objections": [],
-  "upstream_project": "ADEME / AGRIBALYSE"
+  "upstream_project": "ADEME / AGRIBALYSE",
+  "validation_scope": "Fixture tests of the parameter tools and the export parity reported in pull requests 4 and 2. The full parameter rescore on the real data was deferred in pull request 4 and has not been run here.",
+  "next_action": "Contributor: run the full parameter rescore that pull request 4 deferred, on a licensed build, and attach the result as a run.",
+  "review_role": "reviewer",
+  "evidence_url": "https://github.com/sentier-dev/sentier-agribalyse/pull/4",
+  "retained": []
 }

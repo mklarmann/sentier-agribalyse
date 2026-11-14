@@ -13,9 +13,6 @@ def load(name, filename):
     return module
 
 
-TestContributionRecords = load("community_record_tests", "test_records.py").ContributionTests
+# The records, the site and what is shared with sentier-bafu are checked by the Checks workflow
+# on Python 3.12 (community/tests/test_workspace.py). The build audit has no such need.
 TestBuildAudit = load("community_build_tests", "test_build_checks.py").BuildChecks
-TestCiConfig = load("community_ci_tests", "test_ci_config.py").CiConfigTests
-_site_tests = load("community_site_tests", "test_site.py")
-TestNotFoundPage = _site_tests.NotFoundPageTests
-TestSiteCheck = _site_tests.SiteCheckTests

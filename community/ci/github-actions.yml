@@ -1,16 +1,16 @@
-name: Validate community contribution records
+name: Check the workspace records and the site
 on: [push, pull_request]
 jobs:
   records:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.12'
-      - run: python3 scripts/community.py check
-      - run: python3 -m unittest discover -s community/tests
-      - run: python3 scripts/build_checks.py community/templates/build-audit.json
-      - uses: astral-sh/setup-uv@v6
-      - run: uv run --no-project --with markdown==3.7 scripts/build_site.py
-      - run: python3 scripts/check_site.py _site
+      - run: uv run --no-project --python 3.12 python scripts/community.py check
+      - run: uv run --no-project --python 3.12 python scripts/shared_files.py check
+      - run: uv run --no-project --python 3.12 --with markdown==3.7 python -m unittest discover -s community/tests
+      - run: uv run --no-project --python 3.12 python scripts/build_checks.py community/templates/build-audit.json
+      - run: uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+      - run: uv run --no-project --python 3.12 python scripts/check_site.py _site
