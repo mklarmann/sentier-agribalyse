@@ -161,7 +161,8 @@ def findings_list(site, up=""):
         + '<button type="button" class="button more-filters" id="more-filters" aria-expanded="false">More filters</button>'
         + select("release", f"{esc(p)} release", [("", "All releases")] + [(r["id"], r["name"]) for r in config["releases"]], "field extra")
         + select("kind", "Kind", [("", "All kinds")] + [(k, v["label"]) for k, v in community.KINDS.items()], "field extra")
-        + select("patch", "Community patch", [("", "With or without"), ("1", "Has a patch")], "field extra")
+        + (select("patch", "Community patch", [("", "With or without"), ("1", "Has a patch")], "field extra")
+           if (site.patches or {}).get("patches") else "")
         + select("sort", "Sort by", SORTS, "field extra")
         + "</form>"
     )

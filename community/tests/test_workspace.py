@@ -98,6 +98,61 @@ class Forms(unittest.TestCase):
                 self.assertNotIn(word, text, name)
 
 
+class Intake(unittest.TestCase):
+    """An issue filed with this repository's form, taken through the shared intake: the form
+    has no field for dataset numbers, so the record must come out complete without one."""
+
+    REPO = CONFIG["repository"]
+
+    def issue(self, number=48, **changed):
+        import intake
+        answers = {
+            "kind": "Defect: something in the data looks wrong (an amount, a unit, a link, a label)",
+            "releases": "3.2",
+            "scope": "A made-up process, 1 kg, FR",
+            "observation": "A made-up amount of 10 kg where 1 kg is expected.",
+            "method": "Read in a made-up export with a text editor.",
+            "exposure": "_No response_",
+            "notes": "_No response_",
+        }
+        answers.update(changed)
+        form = (ROOT / intake.FORM_FILE).read_text(encoding="utf-8")
+        asked = [(field, heading) for field, heading, _ in intake.FORM if f"label: {heading}" in form]
+        body = "\n\n".join(f"### {heading}\n\n{answers[field]}" for field, heading in asked)
+        return {"number": number, "title": "[Finding] A made-up amount ten times too high", "body": body,
+                "created_at": "2026-11-02T09:00:00Z", "user": {"login": "reporter"},
+                "html_url": f"{self.REPO}/issues/{number}"}
+
+    def test_an_issue_filed_with_the_form_becomes_a_record_numbered_by_its_issue(self):
+        import intake
+        made = intake.record_from_issue(self.issue(), community.load_config(ROOT))
+        self.assertEqual(made["result"], "record", made)
+        record = made["record"]
+        self.assertEqual((record["id"], record["issue"], record["releases"], record["datasets"]), ("F48", 48, ["3.2"], []))
+        self.assertEqual(record["scope"], "A made-up process, 1 kg, FR")
+        self.assertEqual(record["reported"]["url"], f"{self.REPO}/issues/48")
+        self.assertEqual(community.stage(record), "filed")
+
+    def test_an_issue_that_says_nothing_about_what_it_concerns_is_sent_back(self):
+        import intake
+        made = intake.record_from_issue(self.issue(scope="_No response_"), community.load_config(ROOT))
+        self.assertEqual(made["result"], "incomplete", made)
+        made = intake.record_from_issue(self.issue(releases="4.0"), community.load_config(ROOT))
+        self.assertEqual(made["result"], "incomplete", "a release that is not registered is refused")
+
+    def test_a_second_person_repeats_it_and_the_reporter_cannot(self):
+        import intake
+        record = intake.record_from_issue(self.issue(), community.load_config(ROOT))["record"]
+        comment = {"id": 7, "created_at": "2026-11-05T10:00:00Z", "user": {"login": "second-person"},
+                   "body": "/repeated reproduced\n\nI read 10 kg in the same place."}
+        self.assertEqual(intake.command(comment["body"])[:2], ("repeated", "reproduced"))
+        made = intake.second_measurement(record, comment, 48, self.REPO, "reproduced")
+        self.assertEqual(made["result"], "repeated", made)
+        self.assertEqual(community.stage(made["record"]), "confirmed")
+        own = dict(comment, user={"login": "reporter"})
+        self.assertEqual(intake.second_measurement(record, own, 48, self.REPO, "reproduced")["result"], "refused")
+
+
 @unittest.skipIf(build_site is None, "the site build needs the markdown package")
 class Site(unittest.TestCase):
     @classmethod

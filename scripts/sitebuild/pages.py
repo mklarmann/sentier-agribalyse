@@ -323,9 +323,11 @@ def housekeeping(site):
     source = {None: "Issues were not read for this build, so the first and third list are empty.",
               "live": "Issues were read from GitHub when the site was built."}.get(
         site.issues_source, "Issues were read from a snapshot.")
+    patched = bool((site.patches or {}).get("patches"))
+    what = "the records, the issues and the community patches" if patched else "the records and the issues"
     body = (
         "<h1>Housekeeping</h1>"
-        "<p>For maintainers: what in the records, the issues and the community patches needs a hand. "
+        f"<p>For maintainers: what in {what} needs a hand. "
         f"Everything here is computed when the site is built. {source}</p>"
         + section("reports", "Reports without a record",
                   "An issue filed as a finding gets its number when its record is written.", unlisted)
@@ -337,12 +339,13 @@ def housekeeping(site):
         + section("check", "Answered, not yet resolved",
                   f"{p} has answered these findings, and none of them is recorded as resolved.",
                   f"<p>{ids(sorted(to_check, key=community.finding_number))}</p>" if to_check else "")
-        + section("patches", "Community patches that name no finding",
-                  "A patch should name the finding it answers, so that its page can show the patch.", patches)
+        + (section("patches", "Community patches that name no finding",
+                   "A patch should name the finding it answers, so that its page can show the patch.", patches)
+           if patched else "")
     )
     return shell.generated_page(
         site, "Housekeeping", body, "housekeeping.html",
-        description="For maintainers: what in the records, the issues and the community patches needs a hand.",
+        description=f"For maintainers: what in {what} needs a hand.",
     )
 
 
@@ -378,7 +381,7 @@ def patch_table(site, up=""):
 
 DATA_FILES = (
     ("api/v1/findings.json", "The status vocabulary and one entry per finding: number, title, kind, status, dataset codes, releases, patches, the date of each step."),
-    ("api/v1/findings/F1.json", "One file per finding: the full record and what is derived from it. Replace F1 by any finding's number."),
+    ("api/v1/findings/{finding}.json", "One file per finding: the full record and what is derived from it. Replace {finding} by any finding's number."),
     ("api/v1/datasets.json", "For every dataset code a finding names: its name and location, the findings with their role, the patches."),
     ("api/v1/contributions.json", "The classes and one entry per contribution."),
     ("api/v1/status.json", "The number of findings by status and the identity of the build."),
@@ -393,10 +396,15 @@ DATA_FILES = (
 
 def data_files(site, up=""):
     """The machine-readable files of the site, each with a link and what it holds."""
+    # The file of one finding is shown by a finding the site has: the one with the lowest number.
+    # A site whose findings follow their issues may have no F1, and a new site has none at all.
+    found = sorted(site.triage["findings"], key=community.finding_number)
+    example = found[0]["id"] if found else None
     lines = "".join(
         f'<tr role="row"><td role="cell" data-label="File"><a href="{up}{esc(path)}"><code>{esc(path)}</code></a></td>'
         f'<td role="cell" data-label="What it holds">{esc(text)}</td></tr>'
-        for path, text in DATA_FILES
+        for path, text in ((p.format(finding=example), t.format(finding=example)) for p, t in DATA_FILES
+                           if "{finding}" not in p or example)
         # the record of the last release build is a file of a site that shows one
         if path != "api/v1/last-run.json" or site.last_run is not None
     )

@@ -13,7 +13,8 @@ import community
 
 from .text import day, esc, thousands
 
-# (evidence key, name of the step, what happens). {p} is the provider's name.
+# (evidence key, name of the step, what happens). {p} is the provider's name, {a_p} the name
+# with its article ("A ..." or "An ...").
 # The feedback is continuous: the path ends when a release of the provider covers the point,
 # and nothing here frames it as waiting for a release.
 STEPS = (
@@ -21,7 +22,7 @@ STEPS = (
     ("repeated", "Repeated", "A second person repeats the measurement."),
     ("sent", "Reported to {p}", "The finding is reported to {p}."),
     ("answer", "Answered by {p}", "{p} answers."),
-    ("fixed_in", "Resolved", "A {p} release covers the point."),
+    ("fixed_in", "Resolved", "{a_p} release covers the point."),
 )
 # The status of the findings that wait after each step, and the words under their count.
 AFTER = {
@@ -164,7 +165,7 @@ def path_with_counts(site, up=""):
         stage, one, many = AFTER[key]
         n = counts.get(stage, 0)
         caption = esc((one if n == 1 else many).format(p=p))
-        box = f'<span class="path-desc">{esc(text.format(p=p))}</span>' + (
+        box = f'<span class="path-desc">{esc(text.format(p=p, a_p=community.with_article(p)))}</span>' + (
             f'<a class="path-count{" help" if stage == "filed" else ""}" href="{up}findings.html#stage-{stage}">'
             f"<strong>{thousands(n)}</strong> <span>{caption}</span></a>"
             if n else f'<span class="path-count none"><strong>0</strong> <span>{caption}</span></span>'

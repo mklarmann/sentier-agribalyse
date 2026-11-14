@@ -170,7 +170,7 @@ STATUSES = [
     {
         "key": "fixed",
         "label": "Resolved",
-        "description": "A {provider} release covers this point; the release is named below.",
+        "description": "{a_provider} release covers this point; the release is named below.",
     },
     {
         "key": "not-a-defect",
@@ -278,9 +278,15 @@ MARKDOWN_REFERENCE = re.compile(r"(?m)^ {0,3}\[[^\]\n]+\]:")
 HTTPS_URL = re.compile(r"https://[^\s()<>\"|]+")
 
 
+def with_article(name):
+    """A name with its article at the start of a sentence: "A" before a consonant letter,
+    "An" before a vowel letter."""
+    return ("An " if str(name)[:1].lower() in "aeiou" else "A ") + str(name)
+
+
 def statuses(provider):
     """The status vocabulary with the provider's name filled in."""
-    return [{k: v.format(provider=provider) for k, v in s.items()} for s in STATUSES]
+    return [{k: v.format(provider=provider, a_provider=with_article(provider)) for k, v in s.items()} for s in STATUSES]
 
 
 def status_label(key, provider):
@@ -288,7 +294,7 @@ def status_label(key, provider):
 
 
 def status_description(key, provider):
-    return STATUSES[STAGE_ORDER[key]]["description"].format(provider=provider)
+    return STATUSES[STAGE_ORDER[key]]["description"].format(provider=provider, a_provider=with_article(provider))
 
 
 # ------------------------------------------------------------------------------ JSON Schema
