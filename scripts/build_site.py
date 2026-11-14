@@ -26,6 +26,7 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import community  # noqa: E402
 import github_api  # noqa: E402
+import last_run  # noqa: E402
 import triage  # noqa: E402
 from sitebuild import contributions, data, findings, lastrun, overview, pages, prose, shell, status, theme  # noqa: E402
 from sitebuild.text import esc, plural  # noqa: E402,F401
@@ -39,9 +40,8 @@ COUNT = re.compile(r"<!--\s*(?:generated:\s*)?count:([a-z:-]+)\s*-->")
 # A block that opens its page: what precedes it and the block itself stand above the page's two
 # columns, over the full width; "On this page" begins below it.
 OPENING = {"last-run"}
-PATCHED_PAGE = "patched-release.html"
 # The blocks that show a release build. A site none of whose pages asks for one reads no run.
-RUN_BLOCKS = re.compile(r"<!--\s*(?:generated:\s*)?(?:last-run|release-packages)\s*-->")
+RUN_BLOCKS = re.compile(r"<!--\s*(?:generated:\s*)?(?:last-run|build-files)\s*-->")
 OPENING_END = "<!-- end of the opening -->"
 SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
@@ -99,8 +99,11 @@ class Site:
         self.code_pattern = self.records_config["dataset_code_pattern"]
         self.lookup_example = self.records_config["lookup_example"]
         self.finding_form = self.records_config["finding_form"]
-        # The page of the patched release, where this site has one: other pages lead to it.
-        self.patched_page = next((doc["page"] for doc in self.docs if doc["page"] == PATCHED_PAGE), None)
+        # The page of the patched copy, where this site has one ("patched_page" in the
+        # configuration names it): other pages lead to it.
+        self.patched_page = self.config.get("patched_page")
+        if self.patched_page is not None and self.patched_page not in {doc["page"] for doc in self.docs}:
+            raise ValueError(f'site/config.json: "patched_page" is {self.patched_page}, which is no page of "documents"')
         # Where a link to a source file leads on the site: the page built from it.
         self.routes = {"community/findings/README.md": "findings.html"}
         for doc in self.docs:
@@ -116,20 +119,20 @@ class Site:
             self.repo, issues_snapshot, offline, require_issues
         )
         self.triage = triage.assemble(self.findings, self.repo, issues, self.patches)
-        # The last release build, read from the runs of the repository that builds this site:
-        # only for a site that has a page for it. A dataset without a release build has none.
+        # The last run of the workflow that site/config.json names under "run", read from the
+        # runs of the repository that builds this site: only for a site that has a page for it.
         shows_run = any(
             RUN_BLOCKS.search((self.root / source).read_text())
             for doc in self.docs for source in [doc["source"], *doc.get("also", [])]
             if (self.root / source).is_file()
         )
-        # scripts/last_run.py and scripts/release_build/ belong to the release build: a repository
-        # without one does not have them, so they are loaded here and not with this file.
+        self.run = last_run.settings(self.config)
         self.last_run = self.run_reader = None
         if shows_run:
-            import last_run
+            if self.run is None:
+                raise ValueError('a page shows the last run, and site/config.json has no "run" that says which workflow')
             self.run_reader = last_run
-            self.last_run = last_run.load(self.built_by, last_run_snapshot, offline)
+            self.last_run = last_run.load(self.built_by, self.run, last_run_snapshot, offline)
         self.built = build_date()
         self.revision = revision(self.root)
         self.written = set()
@@ -284,7 +287,7 @@ class Site:
             "recent-changes": (lambda: pages.change_lines(self, self.changes[:5], up), False),
             "patch-table": (lambda: pages.patch_table(self, up), False),
             "last-run": (lambda: lastrun.last_run(self, up), False),
-            "release-packages": (lambda: lastrun.packages(self, up), False),
+            "build-files": (lambda: lastrun.packages(self, up), False),
             "data-files": (lambda: pages.data_files(self, up), False),
             "lookup": (lambda: shell.lookup(self, up), False),
         }
@@ -335,7 +338,7 @@ class Site:
         if OPENING_END in rendered:
             opening, rendered = rendered.split(OPENING_END, 1)
         # The packages of a release are also offered beside the text, under "On this page".
-        beside = lastrun.rail_box(self, up) if "release-packages" in used else ""
+        beside = lastrun.rail_box(self, up) if "build-files" in used else ""
         return shell.prose_page(self, doc, rendered, sections, listing=wide, up=up, opening=opening, beside=beside)
 
     # --------------------------------------------------------------------- build
@@ -435,9 +438,9 @@ if __name__ == "__main__":
     parser.add_argument("--issues", type=Path, help="Issue snapshot (JSON) instead of reading GitHub")
     parser.add_argument("--offline", action="store_true", help="Do not read issues from GitHub")
     parser.add_argument("--require-issues", action="store_true", help="Fail when GitHub cannot be read")
-    parser.add_argument("--last-run", type=Path, help="Record of the last release build (JSON) instead of reading GitHub")
+    parser.add_argument("--last-run", type=Path, help="Record of the last build (JSON) instead of reading GitHub")
     parser.add_argument("--built-by", metavar="OWNER/NAME",
-                        help="The repository whose workflow builds this copy: its release builds are shown, "
+                        help="The repository whose workflow builds this copy: its builds are shown, "
                              "and a copy built by another repository than the site's own says so on every page")
     args = parser.parse_args()
     build(args.out, args.source_repository, args.source_ref, args.preview_url, args.issues,

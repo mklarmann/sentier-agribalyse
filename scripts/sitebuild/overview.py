@@ -1,5 +1,5 @@
 """The overview: what happens here and why, the five steps with their counts, what needs a
-second measurement now, what changed recently, the ways to take part, the patched release.
+second measurement now, what changed recently, the ways to take part, the patched copy.
 Each thing is said once."""
 
 from . import findings, pages, shell, status
@@ -64,7 +64,7 @@ def overview(site):
     part = (
         '<section class="wrap section" aria-labelledby="part"><div class="section-head"><h2 id="part">Take part</h2></div>'
         + ways(site)
-        + (f'<p class="aside">For those who need a change now, the <a href="{site.patched_page}">patched release</a> '
+        + (f'<p class="aside">For those who need a change now, the <a href="{site.patched_page}">patched copy</a> '
            f"applies community patches to a copy of {p}'s files. A community patch is not {p}'s correction.</p>"
            if site.patched_page else "")
         + "</section>"

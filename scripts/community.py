@@ -211,10 +211,10 @@ CLOSED_AS = ("withdrawn", "not-a-defect")
 REPEAT_RESULTS = ("reproduced", "not-reproduced")
 ROLES = {"data user", "partner", "reviewer", "maintainer", "flow curator", "importer maintainer"}
 RETAINED_KINDS = {"ask", "objection", "earlier-interpretation"}
-# What a contribution is. The first group can enter the patched release; the second stands
+# What a contribution is. The first group can enter the patched copy; the second stands
 # beside the provider's numbers under its own name and never replaces them.
 CONTRIBUTION_GROUPS = {
-    "patched-release": "Can enter the patched release",
+    "patched-release": "Can enter the patched copy",
     "beside": "Stands beside {provider}'s numbers",
 }
 CONTRIBUTION_CLASSES = [
@@ -803,7 +803,7 @@ def dataset_index(findings, patches=None):
     """{code: {name, location, findings: [{id, role}], patches: [ids]}} for every dataset a finding lists.
 
     A dataset's patches are those that answer a finding the dataset is the subject of. The
-    datasets a patch really changes will come from the run manifest of the patched release.
+    datasets a patch really changes will come from the run manifest of the patched copy.
     """
     by_finding = patches_by_finding(patches)
     index = {}
@@ -1126,9 +1126,9 @@ def layer_errors(root, contributions):
     """Errors of the layer files in community/layers and of the records that name them.
 
     A contribution that changes the inventory is built as a database of its own, beside the
-    patched release, from a file in community/layers. Its record names that file in
+    patched copy, from a file in community/layers. Its record names that file in
     `layer.file`. The file must be there, pass the rules of the build and name the record's
-    contribution. The release build builds every file of the folder, so a file that no record
+    contribution. The build takes every file of the folder, so a file that no record
     names is an error as well.
     """
     root, errors, named = Path(root), [], {}
@@ -1161,7 +1161,7 @@ def layer_errors(root, contributions):
         if path.name not in named:
             errors.append(
                 f"{LAYERS_FOLDER}/{path.name}: no contribution record names this file in layer.file; "
-                "the release build would build it all the same"
+                "the build would build it all the same"
             )
     return errors
 

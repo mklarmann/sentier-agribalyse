@@ -296,7 +296,7 @@ def panel(site, f, up):
         )
         rows_ += (
             f'<div><dt>Community patch</dt><dd>{ext(x["url"], "Patch " + esc(x["id"]))}: {text(x["description"])}'
-            + (f'<p class="note">Applied in the <a href="{up}{site.patched_page}">patched release</a>, for those who need '
+            + (f'<p class="note">Applied in the <a href="{up}{site.patched_page}">patched copy</a>, for those who need '
                f"the change now. {who} " if site.patched_page else f'<p class="note">{who} ')
             + f"A community patch is not {esc(p)}'s correction and does not change the status.</p></dd></div>"
         )

@@ -226,7 +226,7 @@ def release_page(site, rid, entry):
         f"<p>{plural(len(observed), 'finding was', 'findings were')} observed in {name}"
         + (f"; {thousands(len(here))} of the findings {'is' if len(here) == 1 else 'are'} resolved in it" if here else "")
         + f". Only what someone has reported is listed here. {p} decides what it changes"
-        + (f'; a community patch in the <a href="{up}{site.patched_page}">patched release</a> is not {p}\'s correction'
+        + (f'; a community patch in the <a href="{up}{site.patched_page}">patched copy</a> is not {p}\'s correction'
            if site.patched_page else "")
         + ".</p>"
         + (f"<p>{name} is built on {esc(entry['background'])}.</p>" if entry.get("background") else "")
@@ -258,7 +258,7 @@ def dataset_page(site, code, entry):
     )
     if patches:
         sections += (f'<h2>Community patches</h2><ul class="plain">{patches}</ul>'
-                     + (f'<p>They are applied in the <a href="{up}{site.patched_page}">patched release</a>. '
+                     + (f'<p>They are applied in the <a href="{up}{site.patched_page}">patched copy</a>. '
                         if site.patched_page else "<p>")
                      + f"A patch is not {p}'s correction.</p>")
     report = f"{site.repo}/issues/new?template={site.finding_form}&dataset={quote(title)}"
@@ -385,7 +385,7 @@ DATA_FILES = (
     ("api/v1/datasets.json", "For every dataset code a finding names: its name and location, the findings with their role, the patches."),
     ("api/v1/contributions.json", "The classes and one entry per contribution."),
     ("api/v1/status.json", "The number of findings by status and the identity of the build."),
-    ("api/v1/last-run.json", "The last release build: GitHub's record of the run, the manifest it kept and every line it printed."),
+    ("api/v1/last-run.json", "The last build: GitHub's record of the run, the manifest it kept and every line it printed."),
     ("schema/finding.schema.json", "The JSON Schema of a finding record."),
     ("schema/contribution.schema.json", "The JSON Schema of a contribution record."),
     ("ledger.md", "The findings as one table, one line each, in Markdown."),
@@ -405,7 +405,7 @@ def data_files(site, up=""):
         f'<td role="cell" data-label="What it holds">{esc(text)}</td></tr>'
         for path, text in ((p.format(finding=example), t.format(finding=example)) for p, t in DATA_FILES
                            if "{finding}" not in p or example)
-        # the record of the last release build is a file of a site that shows one
+        # the record of the last build is a file of a site that shows one
         if path != "api/v1/last-run.json" or site.last_run is not None
     )
     return (

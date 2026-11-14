@@ -15,7 +15,7 @@
     "title": {"type": "string"},
     "class": {
       "enum": ["import-fix", "linking-repair", "re-declaration", "variant", "model", "mapping"],
-      "description": "What the contribution is. import-fix, linking-repair and re-declaration can enter the patched release. variant, model and mapping stand beside the provider's numbers under their own name."
+      "description": "What the contribution is. import-fix, linking-repair and re-declaration can enter the patched copy. variant, model and mapping stand beside the provider's numbers under their own name."
     },
     "status": {"enum": ["proposed", "testing", "reviewing", "accepted", "rejected", "superseded"]},
     "baseline": {
@@ -31,7 +31,7 @@
         "file": {
           "type": ["string", "null"],
           "pattern": "^community/layers/C[0-9]{3,}-[a-z0-9]+(-[a-z0-9]+)*\\.json$",
-          "description": "For a contribution that changes the inventory: the file that states its changes, from which the release build makes a database of its own beside the patched release. Null or absent for any other contribution."
+          "description": "For a contribution that changes the inventory: the file that states its changes, from which the build makes a database of its own beside the patched copy. Null or absent for any other contribution."
         }
       }
     },

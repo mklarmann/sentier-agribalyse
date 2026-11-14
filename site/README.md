@@ -12,7 +12,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 
 ## Shared with sentier-bafu
 
-The scripts that check the records and build the site (`scripts/build_site.py`, `check_site.py`, `community.py`, `triage.py`, `intake.py`, `sync.py`, `github_api.py` and the folder `scripts/sitebuild`), the stylesheet, the script of the lists, the font, the logo and the schemas of the records are the same files as in [sentier-bafu](https://github.com/sentier-dev/sentier-bafu). They are written and tested there. Its site guide, `site/README.md` at the commit that `site/shared.json` names, is the reference for them: the generated blocks a page of prose can ask for, the words for a status, the keys of `site/config.json`, and the data files of the site.
+The scripts that check the records and build the site (`scripts/build_site.py`, `check_site.py`, `community.py`, `triage.py`, `intake.py`, `sync.py`, `github_api.py`, `last_run.py` and the folders `scripts/sitebuild` and `scripts/runrecord`), the stylesheet, the two scripts of the pages, the font, the logo and the schemas of the records are the same files as in [sentier-bafu](https://github.com/sentier-dev/sentier-bafu). They are written and tested there. Its site guide, `site/README.md` at the commit that `site/shared.json` names, is the reference for them: the generated blocks a page of prose can ask for, the words for a status, the keys of `site/config.json`, and the data files of the site.
 
 `site/shared.json` names every shared file with its checksum, and the commit of sentier-bafu it was taken from.
 

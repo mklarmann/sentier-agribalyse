@@ -723,11 +723,23 @@ td:first-child { font-weight: 600; }
 /* ------------------------------------------------------------ the last run */
 /* The opening of "Patch and release": three answers, then the run as a stage. The stage is
    the one dark surface of the site; its colours are fixed here, on the dark green. */
-.prose.wide > .run { max-width: none; }
+.prose.wide > .run, .prose.wide > .run-view, .prose.wide > .run-view > .run { max-width: none; }
 .page-opening { padding-top: var(--s6); }
 .page-opening .prose > h1 + p { max-width: 58rem; margin-top: var(--s3); }
 .page.after-opening { padding-top: var(--s7); }
-.run { margin-top: var(--s5); --on: #f0eee1; --on-soft: var(--stage-soft); --on-quiet: var(--stage-quiet); --well: var(--stage-well); --rule: rgba(255, 255, 255, .13); --bad: #f4b3a9; }
+.run { margin-top: var(--s5); --on: #f0eee1; --on-soft: var(--stage-soft); --on-quiet: var(--stage-quiet); --well: var(--stage-well); --rule: rgba(255, 255, 255, .13); --bad: #f4b3a9; --ok: #a8d5ba; }
+/* two runs on one page: which one is shown */
+.run-switch { display: inline-flex; flex-wrap: wrap; gap: 3px; margin-top: var(--s5); padding: 3px; border-radius: 12px; background: var(--paper-deep); }
+.run-switch-btn { display: grid; gap: .05rem; flex: 1 1 11rem; padding: .45rem .95rem .5rem; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; text-align: left; line-height: 1.3; cursor: pointer; transition: background-color .15s ease; }
+.run-switch-btn strong { font-size: var(--t-sm); font-weight: 800; color: var(--ink); }
+.run-switch-btn span { font-size: var(--t-xs); font-variant-numeric: tabular-nums; }
+.run-switch-btn:hover { background: rgba(255, 255, 255, .5); }
+.run-switch-btn[aria-pressed="true"] { background: var(--surface); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
+.run-switch-btn[aria-pressed="true"] strong { color: var(--index); }
+.run-switch + .run-view .run, .run-switch + .run-view + .run-view .run { margin-top: var(--s3); }
+.run-view[hidden] { display: none; }
+.run-view + .run-view { margin-top: var(--s7); }
+.run-view[hidden] + .run-view { margin-top: 0; }
 .run-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); }
 .prose .run-title { margin: 0; font-size: var(--t-xs); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); line-height: 1.4; }
 .run-verdict { display: inline-flex; align-items: center; gap: .45rem; padding: .25rem .8rem .25rem .6rem; border-radius: 999px; font-size: var(--t-sm); font-weight: 800; line-height: 1.4; }
@@ -745,11 +757,11 @@ td:first-child { font-weight: 600; }
 .run-no strong { color: var(--fail); }
 .run-more { white-space: nowrap; font-weight: 700; }
 
-.run-stage { margin-top: var(--s3); padding: var(--s4); border-radius: 14px; background: var(--index-dark); color: var(--on); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+.run-stage { scroll-margin-top: var(--s4); margin-top: var(--s3); padding: var(--s4); border-radius: 14px; background: var(--index-dark); color: var(--on); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
 .run-stage :focus-visible { outline: 2px solid var(--on); outline-offset: 2px; }
 .run-stage a { color: #fff; text-decoration-color: var(--on-quiet); }
 .run-stage code { background: rgba(255, 255, 255, .1); color: inherit; }
-.run-tabs { list-style: none; margin: 0; padding: 0 0 2px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(8.25rem, 1fr); gap: var(--s2); overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--on-quiet) transparent; }
+.run-tabs { list-style: none; margin: 0; padding: 0 0 2px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(8.6rem, 1fr); gap: var(--s2); overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--on-quiet) transparent; }
 .run-stage a.run-tab { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: .5rem; row-gap: .1rem; align-items: baseline; height: 100%; padding: .6rem .75rem .65rem; border-radius: 9px; background: rgba(255, 255, 255, .06); color: var(--on-soft); text-decoration: none; }
 .run-stage a.run-tab:hover { background: rgba(255, 255, 255, .12); color: #fff; }
 .run-tab-n { grid-row: 1 / span 2; align-self: start; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1.5px solid currentColor; font-size: var(--t-xs); font-weight: 800; line-height: 1; }
@@ -771,6 +783,16 @@ td:first-child { font-weight: 600; }
 .run-tab[aria-current].is-failed .run-tab-n { background: var(--fail); border-color: var(--fail); color: #fff; }
 .run-tab[aria-current].is-failed .run-tab-bar > span { background: var(--fail); }
 
+.run.is-ready .run-stage a.run-tab { transition: background-color .2s ease, color .2s ease, opacity .3s ease; }
+.run.is-ready .run-tab-bar > span { transition: width .6s cubic-bezier(.2, .7, .2, 1); }
+.run.is-playing .run-tab.is-ahead { opacity: .5; }
+.run.is-playing .run-tab.is-ahead .run-tab-n { background: transparent; border-color: currentColor; color: inherit; }
+.run.is-playing .run-tab.is-ahead .run-tab-time { visibility: hidden; }
+.run.is-playing .run-tab.is-ahead .run-tab-bar > span { width: 0 !important; }
+.run.is-playing .run-tab[aria-current] .run-tab-n { animation: run-breathe 1.4s ease-in-out infinite; }
+@keyframes run-breathe { 50% { box-shadow: 0 0 0 5px rgba(62, 92, 118, 0); } 0%, 100% { box-shadow: 0 0 0 0 var(--index-soft); } }
+@media (prefers-reduced-motion: reduce) { .run.is-playing .run-tab[aria-current] .run-tab-n { animation: none; } .run-tab-bar > span, .run-progress > span { transition: none; } }
+
 .run-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
 .run-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s5); padding: var(--s3) var(--s3) var(--s2); }
 .run-panels { display: grid; gap: var(--s6); }
@@ -789,29 +811,68 @@ td:first-child { font-weight: 600; }
 .run-notes { list-style: none; margin: 0; padding: var(--s3) 0 0; border-top: 1px solid var(--rule); font-size: var(--t-sm); line-height: 1.5; color: var(--on-soft); }
 .run-notes > li + li { margin-top: .4rem; }
 .run-said { font-family: var(--mono); font-size: .78rem; }
-.run-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin: 0; }
-.run-btn { min-height: 2.25rem; padding: .35rem .9rem; border: 1.5px solid rgba(255, 255, 255, .42); border-radius: var(--radius); background: transparent; color: var(--on); font: 800 var(--t-sm)/1.3 var(--font); cursor: pointer; transition: background-color .15s ease; }
-.run-btn:hover { background: rgba(255, 255, 255, .13); }
-.run-btn[disabled] { opacity: .38; cursor: default; background: transparent; }
-.run-btn.primary { background: var(--on); border-color: var(--on); color: var(--index-dark); min-width: 8.5rem; }
-.run-btn.primary:hover { background: #fff; }
-
 .run-term { min-width: 0; display: flex; flex-direction: column; border-radius: 10px; background: var(--well); overflow: hidden; }
-.run-term-bar { display: flex; justify-content: space-between; gap: var(--s3); padding: .55rem .9rem; border-bottom: 1px solid var(--rule); font-size: var(--t-xs); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--on-quiet); line-height: 1.5; }
+.run-term-bar { position: relative; display: flex; align-items: center; gap: .6rem; padding: .45rem .55rem .45rem .6rem; border-bottom: 1px solid var(--rule); font-size: var(--t-xs); color: var(--on-quiet); line-height: 1.5; }
+.run-term-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .run-term-id { font-weight: 400; letter-spacing: 0; text-transform: none; font-family: var(--mono); }
-.run-clock { font-weight: 400; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.prose pre.transcript { position: relative; flex: 1 1 auto; margin: 0; padding: var(--s3) var(--s4) var(--s4); border: 0; border-radius: 0; background: transparent; color: var(--on); max-height: 32rem; overflow: auto; font-size: var(--t-xs); line-height: 1.65; white-space: pre; tab-size: 4; scrollbar-width: thin; scrollbar-color: var(--on-quiet) transparent; }
-.transcript .tl::before { content: attr(data-clock); display: inline-block; width: 4.2em; color: var(--stage-clock); -webkit-user-select: none; user-select: none; }
-.transcript .tl-step { color: #fff; font-weight: 700; }
+.run-clock { flex: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.run-icon { display: block; flex: none; }
+/* the one button of the run: replay it; while it plays, go to its end */
+.run-play { flex: none; display: inline-flex; align-items: center; gap: .4rem; min-height: 1.9rem; padding: .2rem .75rem .2rem .55rem; border: 0; border-radius: 999px; background: var(--on); color: var(--index-dark); font: 800 var(--t-xs)/1.2 var(--font); letter-spacing: .01em; cursor: pointer; transition: background-color .15s ease, transform .15s ease; }
+.run-play:hover { background: #fff; }
+.run-play:active { transform: scale(.97); }
+.run-when-playing, .run.is-playing .run-when-idle, .run-when-full, .run.is-full .run-when-small { display: none; }
+.run.is-playing .run-when-playing, .run.is-full .run-when-full { display: block; }
+.run.is-playing .run-play { background: rgba(255, 255, 255, .14); color: var(--on); }
+.run.is-playing .run-play:hover { background: rgba(255, 255, 255, .24); }
+/* how the lines are laid out: three small switches */
+.run-term-tools { flex: none; display: flex; gap: .15rem; }
+.run-tool { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; padding: 0; border: 0; border-radius: 7px; background: transparent; color: var(--on-quiet); cursor: pointer; transition: background-color .15s ease, color .15s ease; }
+.run-tool:hover { background: rgba(255, 255, 255, .12); color: var(--on); }
+.run-tool[aria-pressed="true"] { background: rgba(255, 255, 255, .16); color: var(--on); }
+.run-tool.is-done { color: var(--ok); }
+/* how far the replay is: a line along the foot of the bar, there only while the run plays */
+.run-progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; overflow: hidden; opacity: 0; transition: opacity .3s ease; }
+.run-progress > span { display: block; height: 100%; background: var(--index-soft); transform-origin: left; transform: scaleX(0); transition: transform .25s linear; }
+.run.is-playing .run-progress { opacity: 1; }
+.run-term-body { position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.prose pre.transcript { position: relative; flex: 1 1 auto; margin: 0; padding: var(--s3) var(--s4) var(--s4); border: 0; border-radius: 0; background: transparent; color: var(--on); max-height: 32rem; overflow: auto; overflow-x: hidden; font-size: var(--t-xs); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 4; scrollbar-width: thin; scrollbar-color: var(--on-quiet) transparent; }
+.transcript .tl { display: block; padding-left: 4.4em; text-indent: -4.4em; }
+.transcript .tl-at { display: inline-block; width: 4.4em; text-indent: 0; color: var(--stage-clock); text-decoration: none; background: none; padding: 0; -webkit-user-select: none; user-select: none; }
+.transcript .tl-at::before { content: attr(data-clock); }
+.transcript .tl-at:hover { color: var(--on); text-decoration: underline; }
+/* a line someone pointed at */
+.run:not(.is-live) .transcript .tl:target, .transcript .tl.is-marked { background: rgba(255, 255, 255, .1); box-shadow: inset 2px 0 0 var(--index-soft); }
+.run.is-live .transcript .tl.is-marked { color: var(--on); }
+/* the reader's other choice: every line on one line, and the block scrolls sideways */
+.prose .run.no-wrap pre.transcript { white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+.run.no-wrap .transcript .tl { padding-left: 0; text-indent: 0; }
+/* The parts of a line, told apart quietly. The run prints no colour: these are the page's marks. */
+.transcript b, .transcript i { font: inherit; }
+.transcript .tk-ok { color: var(--ok); }
+.transcript .tk-bad { color: var(--bad); font-weight: 700; }
+.transcript .tk-sum { color: var(--stage-clock); }
+.transcript .tk-prompt { color: var(--index-soft); }
+.transcript .tl-cmd { color: var(--on-quiet); }
+.transcript .tl-step .tk-step { color: #fff; font-weight: 700; }
 .transcript [hidden] { display: none; }
 .run.is-live .transcript .tl { color: var(--stage-dim); transition: color .25s ease; }
 .run.is-live .transcript .tl.is-on { color: var(--on); }
-.run.is-live .transcript .tl-step.is-on { color: #fff; }
+.run.is-live .transcript .tl:not(.is-on) :is(.tk-ok, .tk-bad, .tk-prompt, .tk-step) { color: inherit; }
+.run.is-live .transcript .tl-cmd.is-on { color: var(--on-quiet); }
+/* while the run is replayed, a cursor waits where the next line will come */
+.run.is-playing .transcript .tl.is-last::after { content: "\258d"; color: var(--on); animation: run-cursor 1s steps(2, start) infinite; }
+@keyframes run-cursor { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .run.is-playing .transcript .tl.is-last::after { animation: none; } }
 /* with the script: one step at a time. The steps share one place, so that the stage keeps
    its height from step to step, and the transcript takes the height the step beside it has */
 .run.is-live .run-panels { gap: 0; }
-.run.is-live .run-panel { grid-area: 1 / 1; visibility: hidden; }
-.run.is-live .run-panel.is-shown { visibility: visible; }
+.run.is-live .run-panel { grid-area: 1 / 1; visibility: hidden; opacity: 0; }
+.run.is-live .run-panel.is-shown { visibility: visible; opacity: 1; }
+/* one step fades into the next, once the page stands: not while the script first sets it up */
+.run.is-ready .run-panel { transition: opacity .28s ease, visibility 0s linear .28s; }
+.run.is-ready .run-panel.is-shown { transition: opacity .28s ease; }
+@media (prefers-reduced-motion: reduce) { .run.is-ready .run-panel, .run.is-ready .run-panel.is-shown { transition: none; } }
 .prose .run.is-live pre.transcript { height: 21rem; max-height: none; }
 .run-note { margin-top: var(--s3); max-width: var(--measure); }
 
@@ -819,6 +880,7 @@ td:first-child { font-weight: 600; }
 .packages > * + * { margin-top: var(--s4); }
 .packages .table-wrap { margin-top: var(--s3); }
 .releases > li + li { margin-top: var(--s3); }
+.toc .downloads { margin-top: var(--s6); }
 .downloads { padding: var(--s4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .downloads ul { list-style: none; margin: var(--s3) 0; padding: 0; border-top: 1px solid var(--line); }
 .downloads li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s3); align-items: baseline; padding: .45rem 0; border-bottom: 1px solid var(--line); line-height: 1.35; }
@@ -837,20 +899,39 @@ tr.run-failed td:nth-child(2) { color: var(--fail); font-weight: 700; }
   .run-stage { padding: var(--s4) var(--s5) var(--s5); gap: var(--s4); }
   .run-body { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s5); align-items: stretch; }
   .run-side { padding: var(--s2) var(--s3) 0 var(--s2); }
-  .run.is-live .run-term { position: relative; min-height: 20rem; }
-  .prose .run.is-live pre.transcript { position: absolute; inset: 2.35rem 0 0 0; height: auto; }
+  .run.is-live .run-term { min-height: 20rem; }
+  .prose .run.is-live pre.transcript { position: absolute; inset: 0; height: auto; }
+}
+/* The whole screen for the run: the steps along the top, the step beside its lines, and the
+   lines down to the foot of the window. Escape, or the same button, gives the page back. */
+html.run-has-full { overflow: hidden; }
+.run.is-full .run-stage { position: fixed; inset: 0; z-index: 1000; margin: 0; border-radius: 0; padding: var(--s4) var(--s5) var(--s5); grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+.run.is-full .run-body { min-height: 0; grid-template-rows: auto minmax(0, 1fr); }
+.run.is-full .run-side { overflow: auto; max-height: 34vh; padding-bottom: 0; }
+.run.is-full .run-term { min-height: 0; }
+.prose .run.is-live.is-full pre.transcript { position: absolute; inset: 0; height: auto; max-height: none; }
+@media (min-width: 62rem) {
+  .run.is-full .run-body { grid-template-columns: minmax(19rem, 27rem) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .run.is-full .run-side { max-height: none; }
 }
 @media (max-width: 39.99rem) {
   .run-stage { margin-inline: calc(var(--gutter) * -.5); border-radius: 12px; padding: var(--s3); }
+  .run.is-full .run-stage { margin: 0; border-radius: 0; padding: var(--s3); }
+  .run.is-full .run-side { display: none; }
+  .run.is-full .run-body { grid-template-rows: minmax(0, 1fr); }
+  .run-term-title { visibility: hidden; }
   .run-figures dd { font-size: 1.625rem; }
   .prose pre.transcript { max-height: 22rem; }
   .prose .run.is-live pre.transcript { height: 19rem; }
+  .run-term-id { display: none; }
 }
 @media print {
   .run-stage { background: none; color: #000; padding: 0; }
   .run-stage a, .prose .run-panel h3, .run-figures dd, .run-panel > p, .run-notes, .run-step, .run-figures dt, .run-tab-time { color: #000; }
   .run-term { background: none; border: 1px solid #999; }
   .prose pre.transcript { max-height: none; height: auto; color: #000; }
-  .transcript .tl, .transcript .tl-step, .transcript .tl::before { color: #000 !important; }
-  .run-controls, .run-tabs { display: none; }
+  .transcript .tl, .transcript .tl *, .transcript .tl-at::before { color: #000 !important; }
+  .run .transcript .tl:target, .transcript .tl.is-marked { background: none; box-shadow: none; }
+  .run-term-tools, .run-play, .run-progress, .run-clock, .run-switch { display: none; }
+  .run-tabs { display: none; }
 }
