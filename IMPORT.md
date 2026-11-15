@@ -90,7 +90,7 @@ Run every script as `uv run <script>`.
 | `dds-build-ecoinvent-catalog` | Write `registry/ecoinvent_catalog.parquet` from the activity snapshot. |
 | `dds-build-parameters` | Write `registry/parameters.parquet` and `registry/exchange_formulas.parquet` from the CSV. |
 | `dds-build-packages` | Author the randonneur datapackages in `source/randonneur_packages/` and the residuals review xlsx. |
-| `dds-link-all` | Full link pipeline. Writes the scoring package and `dashboard/run_report.json`. |
+| `dds-link-all` | Full link pipeline. Writes the scoring package, with `rebuilt_recipe.parquet` inside its directory, and `dashboard/run_report.json`. |
 | `dds-run-end-to-end` | Smoke test: link, register LCIA, score a small sample. |
 | `dds-backtest` | Score every mapped product against ADEME. Writes `dashboard/backtest/` and `dashboard/backtest_pass1.csv`. |
 | `dds-compare-cfs` | SimaPro-vs-registry per-flow CF comparison. Writes `dashboard/cf_comparison.csv`. |
@@ -99,7 +99,7 @@ Run every script as `uv run <script>`.
 | `dds-build-product-reasons` | LLM outlier notes in `dashboard/product_reasons.json`. Needs the `claude` binary or `--use-api`. |
 | `dds-decompose-score` | Explain one `(product, method)` score: top biosphere-flow contributions. |
 | `dds-build-bw-package` | Export `bw_package/`: bw_processing datapackages plus a standalone Brightway importer. Needs the `bw` extra. |
-| `dds-build-skeleton` | Strip ecoinvent amounts from a scoring package into an AGB-only skeleton. |
+| `dds-build-skeleton` | Strip ecoinvent amounts from a scoring package into an AGB-only skeleton: ecoinvent's columns and the processes rebuilt from ecoinvent are zeroed, and the recipe that refills the rebuilt ones ships with it, without amounts. Needs a package linked from the shipped CSV and the licensed snapshot in `source/`; it refuses a package built from ADEME's full export. |
 | `dds-mappings-comparison` | Regenerate `to_review/mappings_comparison.xlsx` from the cached link. |
 | `dds-llm-suggest-mappings` | LLM picks for residual unlinked flows. Appends accepted rows to the reviewed xlsx. |
 | `dds-set-parameter` | Override a SimaPro input parameter, then relink and rescore. `--fast`, `--no-rescore`. |
