@@ -72,7 +72,8 @@ class Paths:
 
     @property
     def agribalyse_csv_ecoinvent_free_xz(self) -> Path:
-        """The committed export without the ``Copied from Ecoinvent`` blocks.
+        """The committed export without the ``Copied from Ecoinvent`` and
+        ``Adapted from Ecoinvent`` blocks.
         Written by ``dds-strip-ecoinvent``; read when the full CSV is absent."""
         return self.source / "AGB32_ecoinvent_free.CSV.xz"
 
@@ -179,6 +180,17 @@ class Paths:
     def biosphere3_flows_json(self) -> Path:
         """One-time snapshot of biosphere3 flows lifted from bw2io (F6)."""
         return self.source / "biosphere3-flows.json"
+
+    @property
+    def ecoinvent_activities_json(self) -> Path:
+        """Snapshot of ecoinvent activity labels (``dds-bootstrap-ecoinvent``)."""
+        return self.source / "ecoinvent-3.9.1-cutoff-activities.json"
+
+    @property
+    def bootstrap_brightway_dir(self) -> Path:
+        """Private Brightway data directory used by ``dds-bootstrap-ecoinvent``.
+        Lives under ``cache/`` so it never touches the user's own projects."""
+        return self.cache / "bootstrap-brightway"
 
     @property
     def ecoinvent_biosphere_flows_json(self) -> Path:
