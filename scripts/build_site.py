@@ -28,7 +28,8 @@ import community  # noqa: E402
 import github_api  # noqa: E402
 import last_run  # noqa: E402
 import triage  # noqa: E402
-from sitebuild import contributions, data, findings, lastrun, overview, pages, prose, shell, status, theme  # noqa: E402
+from sitebuild import review as sitebuild_review  # noqa: E402
+from sitebuild import beforeafter, contributions, data, findings, lastrun, overview, pages, prose, shell, status, theme  # noqa: E402
 from sitebuild.text import esc, plural  # noqa: E402,F401
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +43,7 @@ COUNT = re.compile(r"<!--\s*(?:generated:\s*)?count:([a-z:-]+)\s*-->")
 OPENING = {"last-run"}
 # The blocks that show a release build. A site none of whose pages asks for one reads no run.
 RUN_BLOCKS = re.compile(r"<!--\s*(?:generated:\s*)?(?:last-run|build-files)\s*-->")
+WALK_BLOCK = re.compile(r"<!--\s*(?:generated:\s*)?last-run\s*-->")
 OPENING_END = "<!-- end of the opening -->"
 SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
@@ -114,7 +116,9 @@ class Site:
                 self.routes.setdefault(source, f"contributions/{cid}.html")
         self.findings = community.load_findings(self.root)
         self.contributions = community.load_contributions(self.root)
-        self.patches = community.load_patches(self.root)
+        self.patches = self.patches_as_built(community.load_patches(self.root))
+        # How a file of a build is handed out: after a question, where the site sets "download".
+        self.download = lastrun.download_settings(self.config, {doc["page"] for doc in self.docs})
         issues, self.issues_source = triage.load_issues(
             self.repo, issues_snapshot, offline, require_issues
         )
@@ -126,6 +130,11 @@ class Site:
             for doc in self.docs for source in [doc["source"], *doc.get("also", [])]
             if (self.root / source).is_file()
         )
+        # The page that walks through the run: a page about what the run compared leads back to it.
+        self.walk_page = next(
+            (doc["page"] for doc in self.docs for source in [doc["source"], *doc.get("also", [])]
+             if (self.root / source).is_file() and WALK_BLOCK.search((self.root / source).read_text())), None)
+        self.compared = {}
         self.run = last_run.settings(self.config)
         self.last_run = self.run_reader = None
         if shows_run:
@@ -133,6 +142,7 @@ class Site:
                 raise ValueError('a page shows the last run, and site/config.json has no "run" that says which workflow')
             self.run_reader = last_run
             self.last_run = last_run.load(self.built_by, self.run, last_run_snapshot, offline)
+        self.build_views, self.build_sections = shell.build_views(self)
         self.built = build_date()
         self.revision = revision(self.root)
         self.written = set()
@@ -205,6 +215,24 @@ class Site:
         if page:
             return page + (sep + fragment if sep else ""), True
         return f"{self.source_repo}/blob/{self.ref}/{relative}" + (sep + fragment if sep else ""), False
+
+    def patches_as_built(self, data):
+        """The patches with their links leading to the source that is built. The record names
+        each patch's file in the repository the site belongs to. A copy built from another
+        repository or branch links to that one, like every other link to a source file: a patch
+        that only a fork's branch has is then found. Built from the repository and branch the
+        record names, nothing changes."""
+        if not data:
+            return data
+        source = data["source"]
+        recorded = f'{source["repository"]}/blob/{source["ref"]}/'
+        built = f"{self.source_repo}/blob/{self.ref}/"
+        if recorded == built:
+            return data
+        return data | {"patches": [
+            patch | {"url": built + patch["url"][len(recorded):]} if patch["url"].startswith(recorded) else patch
+            for patch in data["patches"]
+        ]}
 
     def render(self, text, source, up="", shift=0):
         """Markdown of a prose source to (html, sections); see sitebuild/prose.py."""
@@ -339,6 +367,10 @@ class Site:
             opening, rendered = rendered.split(OPENING_END, 1)
         # The packages of a release are also offered beside the text, under "On this page".
         beside = lastrun.rail_box(self, up) if "build-files" in used else ""
+        # A file offered under terms asks first: the question, once on the page that offers it,
+        # wherever on the page the link is (the run that opens the page, the text, beside it).
+        if "data-download=" in opening + rendered + beside:
+            rendered += lastrun.download_dialog(self, up)
         return shell.prose_page(self, doc, rendered, sections, listing=wide, up=up, opening=opening, beside=beside)
 
     # --------------------------------------------------------------------- build
@@ -349,6 +381,70 @@ class Site:
         names.update({doc["page"]: doc["title"] for doc in self.docs})
         names.update({f'contributions/{c["id"]}.html': f'contribution {c["id"]}' for c in self.contributions})
         return names
+
+    def comparison_pages(self):
+        """A page for what each run of the record compared, before and after (`before-after.json`
+        of the run), and, where the run reviewed several pairs of builds, the page of that review
+        with access to each pair. The build step and the optional build navigation use
+        the resulting addresses."""
+        record, found = self.last_run, {}
+        if not record or record.get("state") != "read":
+            return found
+        back = self.walk_page
+        taken = {"index.html", *(doc["page"] for doc in self.docs)}
+
+        def free(name):
+            # a page of a run's comparison never stands in the place of a page of the site
+            if name in taken or self.out / name in self.written:
+                raise ValueError(f"What the run compared would be written over the page {name}")
+            return name
+
+        runs = [("", record)] + ([(lastrun.TAG_IDS, record["of_tag"])] if record.get("of_tag") else [])
+        for ids, run in runs:
+            pages = found.setdefault(ids, {})
+            data, index = run.get("before_after"), run.get("review")
+            step = lastrun.step_number(run, (data or {}).get("step"))
+            where = (f"{back}#{ids}run-step-{step}" if step else back) if back else None
+            label = f"Step {step} of the {lastrun.lower(lastrun.named(record))}" if step else "The run"
+            walk = (where, label) if where else None
+            diagnostics = run.get("diagnostics") if self.build_views else None
+            comparison = free(f"{ids}before-after.html") if data is not None or diagnostics is not None else None
+            embedded = ""
+            if index is not None:
+                named = {page: f"{ids}{page}" for page in run.get("pairs") or {}}
+                named["before-after.html"] = comparison
+                shown = index | {"pairs": [pair | {"page": named.get(pair.get("page"))} for pair in index["pairs"]]}
+                review_page = free(f"{ids}review.html")
+                review_json = f"api/v1/{ids}review.json"
+                self.write_json(review_json, shown)
+                if comparison and self.build_views:
+                    embedded = sitebuild_review.body(shown, said=lambda text: lastrun.inline(self, text, ""),
+                                                     file=review_json, embedded=True)
+                    self.write(review_page, shell.redirect(self, comparison, "the comparison review",
+                                                           fragments={"": "#review", "#notes": "#review-notes"}))
+                    pages["review"] = comparison + "#review"
+                elif self.build_views:
+                    primary = free(f"{ids}before-after.html")
+                    self.page(primary, sitebuild_review.page(self, shown, primary, walk, current=back,
+                                                             file=review_json))
+                    self.write(review_page, shell.redirect(self, primary, "the comparison review"))
+                    pages["review"] = primary
+                else:
+                    self.page(review_page, sitebuild_review.page(self, shown, review_page, walk, current=back))
+                    pages["review"] = review_page
+            if comparison:
+                self.page(comparison, beforeafter.page(self, data, comparison, walk, current=back,
+                                                       review_section=embedded, diagnostics=diagnostics))
+                if data is not None:
+                    self.write_json(f"api/v1/{ids}before-after.json", data)
+                if diagnostics:
+                    self.write(free(f"{ids}diagnostics.html"), shell.redirect(self, comparison, "build-step diagnostics",
+                                                                              fragments={"": "#diagnostics"}))
+                pages["compared"] = comparison
+            for page, pair in (run.get("pairs") or {}).items():
+                self.page(free(named[page]), beforeafter.page(self, pair, named[page], (pages["review"], "The review"), current=back))
+                self.write_json(f"api/v1/{named[page].removesuffix('.html')}.json", pair)
+        return found
 
     def build(self):
         out = self.out
@@ -362,6 +458,8 @@ class Site:
         self.copy(self.root / "site/style.css", "style.css")
         (out / ".nojekyll").touch()
 
+        # The overview and the walk through the run link to the comparison when it exists.
+        self.compared = self.comparison_pages()
         self.page("index.html", self.overview())
         for doc in self.docs:
             self.page(doc["page"], self.document(doc))
@@ -393,12 +491,18 @@ class Site:
         self.write("404.html", shell.not_found(self))
         data.write_data(self)
         if self.last_run is not None:
-            self.write_json("api/v1/last-run.json", lastrun.public_record(self.last_run))
+            self.write_json("api/v1/last-run.json", lastrun.public_record(self.last_run, self))
         self.write("sitemap.xml", pages.sitemap(self))
 
         for page, source in self.site_links.items():
             if not (out / page).is_file() or (out / page) not in self.written:
                 raise ValueError(f"{source} links to {page}, which the site does not have")
+        # A file handed out only after the question is never reachable from the site without it.
+        if self.last_run is not None and (found := lastrun.direct_links(self, out)):
+            raise ValueError(
+                "The built site leads to a file around the question that hands it out: "
+                + "; ".join(f"{page}: {address}" for page, address in found[:5])
+            )
         if rebuilt:
             # A file of an earlier build that this one no longer writes would stay reachable.
             for stale in sorted(p for p in out.rglob("*") if p.is_file() and p not in self.written and p.name != ".nojekyll"):

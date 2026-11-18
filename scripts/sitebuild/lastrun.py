@@ -14,6 +14,12 @@ hold the page to the run:
   unchanged; a step only groups them, in their order. A test compares the page with the
   transcript line by line.
 
+A file of a run is offered for download only where a build with a tag holds the very same
+bytes (GitHub gives each file it keeps its SHA-256). Where the site hands its files out under
+terms (site/config.json "download"), every such link asks first: it leads to the terms, and
+the script (assets/download.js) shows them in a dialog and hands out the file only when the
+reader accepts. Nothing about the click is recorded.
+
 Nothing here knows a dataset or a tool: a step is what the run names, with the words the
 site's own file has for it. The page adds no step of its own. A step the run says it could not run
 in this place ("not run here") is drawn as open, with the run's reason, and is no failure. A run that did not happen
@@ -54,7 +60,7 @@ SHOWN_STEPS = ("Set up job", "Complete job")  # GitHub's own two; the rest are t
 # page are the run's own, and where a run stands as to its tag is said with the answers.
 TAG = {
     "nothing blocks": "Nothing in this run.",
-    "is kept": "It is kept under the tag <code>{tag}</code>: its manifest, and no file of the data.",
+    "is kept": "It is kept under the tag <code>{tag}</code>.",
     "was not kept": "It was made for the tag <code>{tag}</code>, and it was not kept.",
     "no tag": "It has no tag. A maintainer gives a tag to the build that others should use.",
     "none yet": "No build has a tag yet.",
@@ -62,6 +68,7 @@ TAG = {
     "on GitHub": "the tag on GitHub",
     "box": "Files of the last build", "box of": "Build <code>{tag}</code>", "about": "About tagged builds",
     "where not": "not offered",
+    "listed below": "and the {files} listed below",
 }
 NO_FAILURE = ("completed", "skipped", "not run here")
 DRAWN = {"not run here": "open"}               # a step this place can't run is open, not left undone
@@ -194,10 +201,12 @@ def short(checksum, length=12):
     return f'<code title="{esc(checksum)}">{esc(str(checksum)[:length])}</code>'
 
 
-def inline(site, text, up=""):
+def inline(site, text, up="", files=None):
     """A text of the run as HTML. It is plain and is escaped; two things in it are read:
     `a name` between backquotes is shown as code (a whole SHA-256 shortened, with all of it in
-    the title), and the number of a finding this site holds becomes a link to the finding."""
+    the title), and the number of a finding this site holds becomes a link to the finding.
+    `files` are the files of the run that can be downloaded ({name: file kept under a tag}):
+    a name of one of them becomes its download link."""
     def words(part):
         out, at = "", 0
         for found in FINDING.finditer(part):
@@ -210,10 +219,15 @@ def inline(site, text, up=""):
     parts = str(text).split("`")
     if len(parts) % 2 == 0:  # a backquote without its partner is a character like any other
         return words(str(text))
-    return "".join(
-        words(part) if n % 2 == 0 else (short(part) if SHA256.fullmatch(part) else f"<code>{esc(part)}</code>")
-        for n, part in enumerate(parts)
-    )
+    def code(part):
+        if SHA256.fullmatch(part):
+            return short(part)
+        if files and part in files:
+            asset = files[part]
+            return download(site, asset["url"], part, megabytes(asset.get("size")), f"<code>{esc(part)}</code>", up)
+        return f"<code>{esc(part)}</code>"
+
+    return "".join(words(part) if n % 2 == 0 else code(part) for n, part in enumerate(parts))
 
 
 def sentence(site, text, up=""):
@@ -289,6 +303,9 @@ def worked(record):
     if account["status"] == "completed":
         return "no", (f"<strong>No.</strong> The {plural(len(done), 'step')} of the run completed, "
                       f"but GitHub records that the run {ended}{at}.")
+    if steps and len(done) == len(steps):
+        reason = " See what blocked the build below." if account.get("blocking") else ""
+        return "no", f"<strong>No.</strong> All {plural(len(done), 'step')} completed. The overall run failed.{reason}"
     failed = [s for s in wrong if s["status"] == "failed"]
     names = ", ".join(f"<strong>{esc(s['name'])}</strong>" for s in failed) or "none"
     return "no", (f"<strong>No.</strong> {len(done)} of {len(steps)} steps completed. "
@@ -389,6 +406,34 @@ def steps_of(lines, names, closing=None):
     return found
 
 
+def step_number(record, name):
+    """Which step of a run has this name, counted from 1; None where none has."""
+    steps = (record.get("summary") or {}).get("steps") or ()
+    return next((n for n, step in enumerate(steps, 1) if step.get("name") == name), None)
+
+
+def compared_link(site, record, up, ids):
+    """Where a run compared results before and after a change: the link to the page of that
+    comparison, and the step it belongs to (None where the run names none of its steps)."""
+    pages = getattr(site, "compared", {}).get(ids) or {}
+    data, page = record.get("before_after"), pages.get("compared")
+    if data is None and (destination := page or pages.get("review")):
+        return None, f'<p class="run-compared"><a class="button" href="{up}{esc(destination)}">Compare results</a></p>'
+    if data is None or page is None:
+        return None, ""
+    moved, one, many = data["items"]["moved"], data["items"]["one"], data["items"]["many"]
+    said = f"{plural(moved, one, many)} moved" if moved else f"no {one} moved"
+    # where the run compared several pairs of builds, the review of them stands beside it
+    review = ""
+    if pages.get("review") and not pages["review"].startswith(page + "#"):
+        review = f'<a class="button" href="{up}{esc(pages["review"])}">One cause at a time</a>'
+    link = (
+        f'<p class="run-compared"><a class="button" href="{up}{esc(page)}">What changed, {esc(one)} by {esc(one)}</a>'
+        f'{review}<span>{esc(said)}</span></p>'
+    )
+    return step_number(record, data.get("step")), link
+
+
 def figure(value):
     """A figure as the run states it: a count with its thousands apart, a text as it is."""
     return thousands(value) if isinstance(value, int) and not isinstance(value, bool) else str(value)
@@ -421,7 +466,11 @@ def showcase(site, record, up, title="The last run", ids=""):
         f'<p class="run-when">{run_line(site, record)}</p></div>'
     )
     below = '<dl class="run-answers">' + "".join(f"<div><dt>{label}</dt><dd>{value}</dd></div>" for label, value in answers) + "</dl>"
+    compared_step, compared = compared_link(site, record, up, ids)
+    if compared and compared_step is None:  # the comparison names no step of this run
+        below += compared
 
+    files = offered(record)
     tabs, panels = "", ""
     for n, step in enumerate(steps, start=1):
         name, words = step["name"], text_for(texts, endings, step["name"])
@@ -441,7 +490,7 @@ def showcase(site, record, up, title="The last run", ids=""):
             f'<div><dt>{esc(one["label"])}</dt><dd>{esc(figure(one["value"]))}</dd></div>' for one in step.get("figures") or ()
         )
         reason = f'<p class="run-reason">{sentence(site, step["reason"], up)}</p>' if step.get("reason") else ""
-        more = "".join(f"<li>{inline(site, note, up)}</li>" for note in step.get("notes") or ())
+        more = "".join(f"<li>{inline(site, note, up, files)}</li>" for note in step.get("notes") or ())
         about = f'<p>{esc(words["text"])}</p>' if words.get("text") else ""
         panels += (
             f'<article class="run-panel" id="{ids}run-step-{n}" data-step="{n - 1}">'
@@ -449,6 +498,7 @@ def showcase(site, record, up, title="The last run", ids=""):
             f'<h3>{esc(words["title"])}</h3>{about}{reason}'
             + (f'<dl class="run-figures">{shown}</dl>' if shown else "")
             + (f'<ul class="run-notes">{more}</ul>' if more else "")
+            + (compared if n == compared_step else "")
             + "</article>"
         )
 
@@ -622,20 +672,108 @@ def last_run(site, up=""):
 
 
 def megabytes(size):
-    return f"{size / 1e6:,.1f} MB" if isinstance(size, (int, float)) and not isinstance(size, bool) else ""
+    """A size as a reader takes it in: megabytes, or kilobytes where that would read 0.0 MB."""
+    if not isinstance(size, (int, float)) or isinstance(size, bool):
+        return ""
+    return f"{size / 1e6:,.1f} MB" if size >= 50_000 else f"{max(1, round(size / 1e3)):,} kB"
+
+
+def tagged_files(record):
+    """Every file kept under a tag, by its SHA-256, the newest first: {sha256: file}. A file
+    whose address the record does not give can't be offered and is left out."""
+    held = {}
+    for release in record.get("releases") or ():
+        for asset in release.get("assets") or ():
+            if SHA256.fullmatch(str(asset.get("sha256") or "")) and asset.get("url"):
+                held.setdefault(asset["sha256"], asset)
+    return held
+
+
+def offered(record):
+    """The files of a run that can be downloaded: {name: file kept under a tag}. A file is
+    offered only where a build with a tag holds the very same bytes, so what a reader gets is
+    what the run lists, checked by its checksum. The file of a newer run with the same name
+    is other bytes, and is not offered in its place."""
+    held = tagged_files(record)
+    return {
+        file["name"]: held[file["sha256"]]
+        for file in (record.get("summary") or {}).get("files") or ()
+        if file.get("sha256") in held
+    }
+
+
+def download(site, url, name, size, label, up=""):
+    """A link to a file kept under a tag. Where the site hands its files out under terms
+    (site/config.json "download"), the link leads to the terms and carries the file's address:
+    the script asks the reader to accept the terms first, and only then hands out the file.
+    Without the script the link hands out nothing. A file the configuration names as holding
+    no data ("free") is linked as it is."""
+    terms = getattr(site, "download", None)
+    if not terms or name in terms["free"]:
+        return ext(url, label)
+    return (
+        f'<a class="download" href="{up}{esc(terms["page"])}#{esc(terms["anchor"])}" data-download="{esc(url)}" '
+        f'data-download-name="{esc(name)}" data-download-size="{esc(size)}">{label}</a>'
+    )
+
+
+DOWNLOAD_TEXTS = ("title", "intro", "more", "accept", "cancel")
+
+
+def download_settings(config, pages):
+    """How a site hands out a file of a build, from site/config.json "download", checked; None
+    when it sets none (a file is then linked as it is). `pages` are the pages of the site."""
+    terms = config.get("download")
+    if terms is None:
+        return None
+    wrong = 'site/config.json: "download" is {title, intro, points, more, accept, cancel, page, anchor, free}'
+    if not isinstance(terms, dict) or set(terms) != {*DOWNLOAD_TEXTS, "points", "page", "anchor", "free"}:
+        raise ValueError(wrong)
+    texts = [terms[key] for key in DOWNLOAD_TEXTS] + list(terms["points"] if isinstance(terms["points"], list) else [None])
+    if not all(isinstance(t, str) and t.strip() and len(t) <= 400 for t in texts) or not 1 <= len(terms["points"]) <= 6:
+        raise ValueError(wrong + ": texts of up to 400 characters, one to six points")
+    if terms["page"] not in pages:
+        raise ValueError(f'site/config.json: download.page is not a page of the site: {terms["page"]}')
+    if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", str(terms["anchor"])):
+        raise ValueError("site/config.json: download.anchor is the id of a heading on that page")
+    if not isinstance(terms["free"], list) or not all(isinstance(n, str) and n for n in terms["free"]):
+        raise ValueError("site/config.json: download.free lists the names of files that hold no data")
+    return terms
+
+
+def download_dialog(site, up=""):
+    """The question a download asks first, once on a page that offers a file under terms. The
+    site's own words; the script fills in which file it is."""
+    terms = getattr(site, "download", None)
+    if not terms:
+        return ""
+    points = "".join(f"<li>{esc(point)}</li>" for point in terms["points"])
+    page = f'{up}{esc(terms["page"])}'
+    return (
+        '<dialog class="download-terms" id="download-terms" aria-labelledby="download-terms-title"><div class="download-box">'
+        f'<p class="download-title" id="download-terms-title" tabindex="-1" autofocus>{esc(terms["title"])}</p>'
+        '<p class="download-file"><code data-download-file></code> <span class="quiet" data-download-bytes></span></p>'
+        f'<p>{esc(terms["intro"])}</p><ul>{points}</ul>'
+        f'<p class="download-more"><a href="{page}">{esc(terms["more"])}</a></p>'
+        '<form method="dialog" class="actions">'
+        f'<a class="button primary" data-download-accept href="{page}#{esc(terms["anchor"])}">{esc(terms["accept"])}</a>'
+        f'<button class="button" value="cancel">{esc(terms["cancel"])}</button>'
+        "</form></div></dialog>"
+        f'<script src="{up}assets/download.js" defer></script>'
+    )
 
 
 def package_rows(record):
     """The files the last run made, each with where it can be had:
-    [{label, name, size, sha256, same, url}]. `url` is a file of the newest tagged build with
-    the same name, or None: a file that no tagged build holds can't be downloaded."""
+    [{label, name, size, sha256, same, url}]. `url` is the file a tagged build holds with the
+    same bytes, or None: a file that no tagged build holds can't be downloaded."""
     account = record.get("summary") or {}
-    newest = (record.get("releases") or [{}])[0]
-    held = {asset.get("name"): asset.get("url") for asset in newest.get("assets") or ()}
+    files = offered(record)
     return [
         {
             "label": file["label"], "name": file["name"], "size": megabytes(file["bytes"]),
-            "sha256": file.get("sha256"), "same": file.get("same"), "url": held.get(file["name"]),
+            "sha256": file.get("sha256"), "same": file.get("same"),
+            "url": (files.get(file["name"]) or {}).get("url"),
         }
         for file in account.get("files") or ()
     ]
@@ -650,28 +788,39 @@ def packages(site, up=""):
         return ('<div class="packages" id="build-files" data-packages><p class="list-none">'
                 f"{TAG['not read']}</p></div>")
     releases = record.get("releases") or []
+    rows = package_rows(record)
+    # a file the table below offers is not listed a second time under its tag
+    below = {row["url"] for row in rows if row["url"]}
     if releases:
-        listed_ = '<ul class="plain releases">' + "".join(
-            f'<li><strong><code>{esc(release["tag"])}</code></strong> <span class="quiet">· {day(release["published"], long=True)}</span> · '
-            f'{ext(release["url"], TAG["on GitHub"])}'
-            + "".join(f'<br>{ext(asset["url"], "<code>" + esc(asset["name"]) + "</code>")} <span class="quiet">{megabytes(asset["size"])}</span>'
-                      for asset in release["assets"])
-            + "</li>"
-            for release in releases
-        ) + "</ul>"
+        listed_ = '<ul class="plain releases">'
+        for release in releases:
+            own = [asset for asset in release["assets"] if asset.get("url") not in below]
+            shared = len(release["assets"]) - len(own)
+            listed_ += (
+                f'<li><strong><code>{esc(release["tag"])}</code></strong> <span class="quiet">· {day(release["published"], long=True)}</span> · '
+                f'{ext(release["url"], TAG["on GitHub"])}'
+                + "".join(f'<br>{download(site, asset["url"], asset["name"], megabytes(asset["size"]), "<code>" + esc(asset["name"]) + "</code>", up) if asset.get("url") else "<code>" + esc(asset["name"]) + "</code>"}'
+                          f' <span class="quiet">{megabytes(asset["size"])}</span>'
+                          for asset in own)
+                + (f'<br><span class="quiet">{TAG["listed below"].format(files=plural(shared, "file"))}</span>' if shared else "")
+                + "</li>"
+            )
+        listed_ += "</ul>"
     else:
         listed_ = f'<p class="list-none">{TAG["none yet"]}</p>'
-    rows = package_rows(record)
     table = ""
     if rows:
         run = record.get("run")
-        head = ("File", "For", "Size", "SHA-256", "Where")
+        # three columns that fit the text's width: what the file is for, the file with its
+        # size and checksum beneath, and where it can be had
+        head = ("For", "File", "Where")
         lines = ""
         for row in rows:
-            where = ext(row["url"], "Download") if row["url"] else TAG["where not"]
+            where = download(site, row["url"], row["name"], row["size"], "Download", up) if row["url"] else TAG["where not"]
             read = "" if row["same"] is not False else ' <span class="run-no"><strong>did not read back the same</strong></span>'
-            checksum = short(row["sha256"]) if row["sha256"] else ""
-            cells = (f'<code>{esc(row["name"])}</code>{read}', esc(row["label"]), esc(row["size"]), checksum, where)
+            facts = " · ".join(part for part in (esc(row["size"]), f'SHA-256 {short(row["sha256"])}' if row["sha256"] else "") if part)
+            file = f'<code>{esc(row["name"])}</code>{read}' + (f'<span class="file-facts">{facts}</span>' if facts else "")
+            cells = (esc(row["label"]), file, where)
             lines += '<tr role="row">' + "".join(
                 f'<td role="cell" data-label="{label}">{cell}</td>' for label, cell in zip(head, cells)
             ) + "</tr>"
@@ -679,7 +828,7 @@ def packages(site, up=""):
         which = (f"run{number_of(run)}, " if number_of(run) else "") + when(started)
         table = (
             f"<p>The files of the last run ({which}), each read back after it was written:</p>"
-            '<div class="table-wrap"><table role="table" class="cols-5 key-short"><thead role="rowgroup"><tr role="row">'
+            '<div class="table-wrap"><table role="table" class="cols-3 key-short files"><thead role="rowgroup"><tr role="row">'
             + "".join(f'<th role="columnheader" scope="col">{label}</th>' for label in head)
             + f'</tr></thead><tbody role="rowgroup">{lines}</tbody></table></div>'
         )
@@ -697,7 +846,7 @@ def rail_box(site, up=""):
     title = TAG["box of"].format(tag=esc(newest["tag"])) if newest.get("tag") else TAG["box"]
     items = "".join(
         f'<li><span class="downloads-name">{esc(row["label"])}</span><span class="quiet">{esc(row["size"])}</span>'
-        + (ext(row["url"], "Download") if row["url"] else f'<span class="quiet">{TAG["where not"]}</span>')
+        + (download(site, row["url"], row["name"], row["size"], "Download", up) if row["url"] else f'<span class="quiet">{TAG["where not"]}</span>')
         + "</li>"
         for row in rows
     )
@@ -708,6 +857,38 @@ def rail_box(site, up=""):
     )
 
 
-def public_record(record):
-    """The record as a file of the site: as it was read."""
-    return record
+def asked(site, asset):
+    """Whether a file kept under a tag is handed out only after the question."""
+    terms = getattr(site, "download", None)
+    return bool(terms) and asset.get("name") not in terms["free"]
+
+
+def public_record(record, site=None):
+    """The record as a file of the site: as it was read, except that where the site asks
+    before a download, a file it asks about is named without its address. The page leads to
+    each such file through the question; its own copy of the record must not lead around it."""
+    if not any(asked(site, a) for release in record.get("releases") or () for a in release.get("assets") or ()):
+        return record
+    return record | {"releases": [
+        release | {"assets": [asset | {"url": None} if asked(site, asset) else asset for asset in release.get("assets") or ()]}
+        for release in record["releases"]
+    ]}
+
+
+def direct_links(site, out):
+    """Where the built site holds the plain address of a file it hands out only after the
+    question: [(file of the site, address)]. Read from the built files, every page and every
+    data file, so that a link written by hand into a page is found too."""
+    addresses = {
+        asset["url"] for release in (site.last_run or {}).get("releases") or ()
+        for asset in release.get("assets") or () if asset.get("url") and asked(site, asset)
+    }
+    found = []
+    for path in sorted(p for p in out.rglob("*") if p.suffix in (".html", ".json", ".xml") and p.is_file()):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for address in addresses:
+            # inside data-download="…" the address is what the question hands out: allowed
+            plain = text.replace(f'data-download="{esc(address)}"', "")
+            if address in plain or esc(address) in plain:
+                found.append((str(path.relative_to(out)), address))
+    return found

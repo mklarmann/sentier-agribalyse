@@ -1,10 +1,8 @@
 # Import and build
 
-The import takes ADEME's export to a scored and linked system in six stages. One of them runs here, in public, on every change. The other five need an ecoinvent 3.9.1 licence: they run on your own machine, with the import this repository gives you. This is the last run, as it happened.
+Follow AGRIBALYSE 3.2 from ADEME’s export to a scored inventory on ecoinvent 3.9.1. Select a stage to read the terminal output recorded on the licensed machine. The Score stage shows how closely the results reproduce ADEME’s reference values. Export shows what happens when the licensed background is stripped and restored.
 
 <!-- generated: last-run -->
-
-This workspace serves no built database. AGRIBALYSE 3.2 is built on ecoinvent 3.9.1, which is licensed data, so nothing built from it can be published here. The findings and the feedback to ADEME do not depend on a build: a finding is measured on the files that ADEME published.
 
 ## What you need
 
@@ -30,28 +28,16 @@ Then follow the steps below. [BOOTSTRAP.md](../BOOTSTRAP.md) covers the files th
 
 | Stage | What happens | What it needs |
 |---|---|---|
-| 1. ADEME's export | The shipped export is unpacked, compared with the checksum recorded beside it, and its processes are counted. This is the stage that runs here. | Nothing but the repository |
-| 2. Licensed files | Once: the files of the ecoinvent background are made on your machine from your own licence, as [BOOTSTRAP.md](../BOOTSTRAP.md) describes. | An ecoinvent 3.9.1 licence |
+| 1. ADEME's export | The shipped export is unpacked, compared with the checksum recorded beside it, and its processes are counted. The checksum and process count are checked against the manifest. | Nothing but the repository |
+| 2. Licensed files | The run reads the background and method snapshots prepared under the local licence, as [BOOTSTRAP.md](../BOOTSTRAP.md) describes. | An ecoinvent 3.9.1 licence |
 | 3. Registry | `dds-build-registry` and the four builders after it put every mapping, flow list and factor table under `source/` into one registry. Every later stage reads the registry. | The files of stage 2 |
-| 4. Link | `dds-link-all` reads ADEME's export, applies the curated changes listed below and links every input to its supplier and every elementary flow to its flow in the method. It writes the linked system and a report of the run. | The registry |
+| 4. Link | `dds-link-all` reads ADEME's export, applies the curated mappings and resolves supplier and elementary-flow links. It writes the linked system and a report of the run. | The registry |
 | 5. Score | `dds-backtest` scores every mapped product with the 19 headline EF 3.1 methods and compares each score with ADEME's reference value. `dds-compare-cfs` and `dds-build-flow-decomp` write the data of the dashboard, which shows each score beside ADEME's. | The linked system |
-| 6. Export | Optional: `dds-build-bw-package` writes the linked system as a Brightway package with its own importer. The package holds ecoinvent data and stays on your machine. | The linked system |
+| 6. Export | `dds-build-bw-package` writes a local Brightway package. `dds-build-skeleton` strips the licensed columns from a separate scoring package. The run refills it and compares its matrices and scores with the original. | The linked system |
 
 Keep what the build was made from beside it: the release, the hashes of the source files, the background version, the method source, the mappings and any parameter overrides. [How builds are checked](../community/build-validation.md) says what the checks on a build cover and what they do not.
 
-GitHub has no ecoinvent licence, so it runs the first stage and no later one: on every change to the export or to the run, once a month, and when a maintainer asks for it. The run at the top of this page is the last of those, also when it failed. Nothing in it is written by hand: the numbers come from the account the run kept, and the lines are the lines it printed. On every change GitHub also runs the import's own tests, on made-up data, and the checks of this workspace.
-
-## What the import changes in ADEME's export
-
-The import does not use the export as it is. Its curated changes are files in the repository, each with a description of its own, and each open to review:
-
-- [`agribalyse-3.2-delete-aggregated-ecoinvent-processes.json`](../source/agribalyse-3.2-delete-aggregated-ecoinvent-processes.json) and [`agribalyse-3.2-delete-aggregated-ecoinvent-products.json`](../source/agribalyse-3.2-delete-aggregated-ecoinvent-products.json) take out the aggregated ecoinvent processes that the export carries, and their products. Your own ecoinvent takes their place.
-- [`agribalyse-3.2-correct-ecoinvent-edge-labels.json`](../source/agribalyse-3.2-correct-ecoinvent-edge-labels.json) corrects the labels of inputs that name such a process, so that they link to ecoinvent.
-- [`agribalyse-3.2-extra-unit-conversions.json`](../source/agribalyse-3.2-extra-unit-conversions.json) holds unit conversions that inputs of AGRIBALYSE need and the general list does not have.
-- [`curated_overrides.json`](../source/curated_overrides.json) holds hand-curated synonyms for elementary flows that link by no other rule.
-- [`agribalyse-3.2-activity-location-overrides.json`](../source/agribalyse-3.2-activity-location-overrides.json) names the location of a few activities whose name in the export gives another one than ADEME's reference results use. Each entry says why.
-
-None of these is ADEME's correction. A change of this sort is proposed as a pull request to the import; an observation about ADEME's data is a [finding](findings.md).
+See [Mapping](mapping.md) for the rules the import applies and [Inventory quality](../community/build-validation.md) for the evidence about the resulting inventory.
 
 ## What stays on your machine
 

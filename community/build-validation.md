@@ -1,6 +1,21 @@
-# Evidence and build validation
+# Inventory quality
 
-An import that links every exchange can still score incorrectly. Use three separate checks: **exchange reconciliation**, **characterization coverage**, and **equivalent-scope result comparison**. These checks transfer the engineering lessons from [lci-bafu-catalog's importer-parity discussion](https://github.com/sentier-dev/sentier-bafu/issues/2) and [method/build-identity findings](https://github.com/sentier-dev/sentier-bafu/issues/5).
+How well does the rebuilt inventory represent one kilogram of the product it describes? A link identifies a supplier. The resulting inventory also depends on the amount purchased, the unit conversion, the choice of geography, any added or amended exchanges and the factors applied to emissions.
+
+## Evidence from this build
+
+| Question | Evidence to review |
+|---|---|
+| Did the import preserve the intended exchanges? | The [mapping record](../site/mapping.md) gives supplier-link counts, unit conversions and exchanges dropped. Review the identity, quantity and destination of changed exchanges. |
+| Are the climate factors present? | The final inventory passed the build’s check for required core greenhouse-gas flows under its climate method. Other indicators and exclusions need their own coverage evidence. |
+| Do the impact results reproduce ADEME’s values? | Of 2,450 climate scores with a non-zero reference after the near-zero rule, 2,163 (88.3%) fall within 5% of ADEME. The review target is 99%. The [Score stage](../site/build.md#run-step-5) records the test. |
+| Does the stripped export reconstruct the same inventory? | The [Export stage](../site/build.md#run-step-6) records the checks on the stripped columns, the refilled matrices and the recalculated scores. |
+
+## What an Inventory Quality Score would assess
+
+A product-level Inventory Quality Score (IQS) would trace the reference unit through the final inventory. For each material input, it would examine the supplier’s technological and geographical fit, the amount and unit, the source of the evidence and its uncertainty. An amendment or an added dataset needs the same review, including the exchanges it changes downstream.
+
+A defensible assessment identifies the exact inventory revision, the criterion, the observed value, the expected value and its source. Missing evidence stays visible. This build publishes measured checks. A product-level IQS assessment remains open.
 
 ## Account for every changed row
 
@@ -21,8 +36,6 @@ python3 scripts/build_checks.py path/to/build-audit.json
 ```
 
 Start with [the synthetic audit example](../community/templates/build-audit.json). It demonstrates the format; its values and hashes are synthetic and certify no dataset build. A failed audit exits nonzero.
-
-An audit of the final biosphere inside the adapter's emit stage continues on a branch of its own, and a pull request for it follows this one; it is not part of the adapter yet.
 
 ## Pin the inputs and the outputs
 

@@ -8,8 +8,8 @@
     },
     "Licensed files": {
       "short": "Licensed files",
-      "title": "The files of your ecoinvent licence",
-      "text": "Once, on your machine: the files of the ecoinvent 3.9.1 background are made from your own licence. They never leave your machine."
+      "title": "Read the licensed inputs",
+      "text": "The run reads the ecoinvent 3.9.1 and method snapshots already prepared on the licensed machine, plus the harmonised flow list. It computes a checksum for each."
     },
     "Registry": {
       "short": "Registry",
@@ -18,8 +18,8 @@
     },
     "Link": {
       "short": "Link",
-      "title": "Every input linked",
-      "text": "The export is read, the curated changes are applied, and every input is linked to its supplier and every elementary flow to its flow in the method."
+      "title": "Assemble the linked inventory",
+      "text": "The import applies the curated changes, resolves supplier and elementary-flow links and records how many exchanges reach the scoring package."
     },
     "Score": {
       "short": "Score",
@@ -28,8 +28,8 @@
     },
     "Export": {
       "short": "Export",
-      "title": "A Brightway package, on your machine",
-      "text": "Optional: the linked system is written as a Brightway package with its own importer. The package holds ecoinvent data and stays on your machine."
+      "title": "Export, strip and refill",
+      "text": "The run creates a local Brightway package, strips licensed columns from the scoring package, and checks the refilled matrices and impact scores against the original."
     }
   }
 }

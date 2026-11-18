@@ -47,7 +47,7 @@ jobs:
       - name: Check that the shared files are the ones named in site/shared.json
         run: uv run --no-project --python 3.12 python scripts/shared_files.py check
       - name: Run the unit tests
-        run: uv run --no-project --python 3.12 --with markdown==3.7 python -m unittest discover -s community/tests
+        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@d8dd120afb4837778d9ef51d3cb43be572216d0a' python -m unittest discover -s community/tests
       - name: Check the build audit template
         run: uv run --no-project --python 3.12 python scripts/build_checks.py community/templates/build-audit.json
 
@@ -68,6 +68,6 @@ jobs:
           python-version: "3.12"
           enable-cache: false
       - name: Build the site from the records alone
-        run: uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@d8dd120afb4837778d9ef51d3cb43be572216d0a' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
       - name: Check links, assets and published file types
         run: uv run --no-project --python 3.12 python scripts/check_site.py _site

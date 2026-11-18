@@ -5,8 +5,46 @@ import json
 from . import theme
 from .text import day, esc, ext
 
-NAV_SCRIPT = ("<script>(function(){var a=document.querySelector('.nav [aria-current]');"
-              "if(a&&a.scrollIntoView)a.scrollIntoView({block:'nearest',inline:'center'});})();</script>")
+NAV_SCRIPT = """<script>
+(function () {
+  var current = document.querySelector('.nav [aria-current]');
+  if (current) current.scrollIntoView({block: 'nearest', inline: 'center'});
+  var views = document.querySelector('.subnav-in');
+  if (views) views.addEventListener('focusin', function (event) {
+    if (views.scrollWidth > views.clientWidth) {
+      event.target.scrollIntoView({block: 'nearest', inline: 'nearest'});
+    }
+  });
+})();
+</script>"""
+
+
+def build_views(site):
+    """The build's second navigation row and the section each result belongs to."""
+    config = site.config.get("build_navigation")
+    if not config or site.walk_page not in dict(site.config["nav"]):
+        return {}, {}
+    views = {site.walk_page: "Overview"}
+    sections = {site.walk_page: site.walk_page}
+    run = site.last_run or {}
+    if run.get("state") == "read":
+        from .lastrun import TAG_IDS
+
+        for prefix, record in (("", run), (TAG_IDS, run.get("of_tag") or {})):
+            if not any(record.get(key) for key in ("before_after", "diagnostics", "review")):
+                continue
+            page = prefix + "before-after.html"
+            views[page] = config["comparison"] if not prefix else "Tagged build comparison"
+            sections[page] = page
+            for pair in record.get("pairs") or {}:
+                sections[prefix + pair] = page
+    documents = {doc["page"] for doc in site.docs}
+    for page, label in config.get("pages", {}).items():
+        if page in documents:
+            views[page] = label
+            sections[page] = page
+    order = [site.walk_page, *config.get("order", []), *views]
+    return {page: views[page] for page in order if page in views}, sections
 
 
 def shell(site, title, body, current, up="", page=None, description=None, head=""):
@@ -16,6 +54,18 @@ def shell(site, title, body, current, up="", page=None, description=None, head="
     home = page == "index.html"
     full = c["home_title"] if home else f'{title} · {c["title_suffix"]}'
     described = description or c["description"]
+    section = None if home else site.build_sections.get(page)
+    subnav = ""
+    if section:
+        current = site.walk_page
+    if section or (home and site.build_views and c["build_navigation"].get("on_home")):
+        links = "".join(
+            f'<a href="{up}{esc(href)}"'
+            + (' aria-current="page"' if section and href == page else ' aria-current="location"' if href == section else "")
+            + f'>{esc(label)}</a>' for href, label in site.build_views.items()
+        )
+        parent = dict(c["nav"])[site.walk_page]
+        subnav = f'<nav class="subnav" aria-label="{esc(parent)}: its parts"><div class="wrap subnav-in">{links}</div></nav>'
     nav = "".join(
         f'<a href="{up}{href}"' + (' aria-current="page"' if href == current else "") + f">{esc(label)}</a>"
         for href, label in c["nav"]
@@ -52,7 +102,7 @@ def shell(site, title, body, current, up="", page=None, description=None, head="
 <html lang="en"{marked}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(full)}</title><meta name="description" content="{esc(described)}"><meta name="theme-color" content="{tint}">{canonical}<meta property="og:title" content="{esc(title if not home else full)}"><meta property="og:description" content="{esc(described)}"><meta property="og:type" content="website"><link rel="icon" href="{up}assets/favicon-32x32.png" type="image/png"><link rel="preload" href="{up}assets/nunito-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="{up}style.css">{tokens}<link rel="alternate" type="application/atom+xml" title="Changes to the findings" href="{up}feed.xml">{head}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead"><div class="wrap masthead-in"><a class="logo" href="https://www.d-d-s.ch/"><img src="{up}assets/dds-logo.svg" alt="Départ de Sentier" width="120" height="56"></a><a class="site-name" href="{up}index.html"><strong>{esc(site.dataset)}</strong><span>Community workspace</span></a><nav class="nav" aria-label="Main navigation">{nav}</nav>{ext(site.repo, "GitHub", "repo ext")}</div></header>
-{notice}<main id="main">{body}</main>
+{subnav}{notice}<main id="main">{body}</main>
 <footer class="footer"><div class="wrap footer-in"><p class="footer-about"><strong>A Sentier community workspace.</strong> This site is not run by {p}, and nothing on it implies {p}'s endorsement. {p} publishes the {esc(site.dataset)} inventory database under its own Terms of Use.</p><nav class="footer-links" aria-label="Footer">{footer}</nav><p class="footer-build">{built} <a href="https://github.com/Depart-de-Sentier/dds-logo">Logo</a> by Sylvain Prevost · <a href="https://www.d-d-s.ch/">Départ de Sentier</a></p></div></footer>
 {NAV_SCRIPT}
 </body></html>
@@ -104,15 +154,20 @@ def lookup(site, up="", field="lookup"):
     )
 
 
-def redirect(site, target, label, up=""):
+def redirect(site, target, label, up="", fragments=None):
     """An old address: it leads on at once, keeps a fragment, and says where it leads."""
     here = up + target
+    hash_js = "location.hash"
+    default = here
+    if fragments:
+        hash_js = f"({json.dumps(fragments)}[location.hash] || location.hash)"
+        default += fragments.get("", "")
     return (
         '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><title>Moved: '
         f'{esc(label)}</title><meta name="robots" content="noindex"><link rel="canonical" href="{esc(site.config["site_url"] + target)}">'
-        f'<meta http-equiv="refresh" content="0; url={esc(here)}">'
-        f"<script>location.replace({json.dumps(here)} + location.hash);</script></head>"
-        f'<body><p>This page has moved. <a href="{esc(here)}">Continue to {esc(label)}</a>.</p></body></html>\n'
+        f'<meta http-equiv="refresh" content="0; url={esc(default)}">'
+        f"<script>location.replace({json.dumps(here)} + {hash_js});</script></head>"
+        f'<body><p>This page has moved. <a href="{esc(default)}">Continue to {esc(label)}</a>.</p></body></html>\n'
     )
 
 

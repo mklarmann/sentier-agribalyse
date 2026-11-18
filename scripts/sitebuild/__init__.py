@@ -8,6 +8,8 @@
     contributions.py  a contribution as a row, the list, the contribution page
     overview.py       the overview
     pages.py          feedback, releases, datasets, changes and feed, housekeeping, sitemap
+    lastrun.py        the walk through the last run of a workflow, and the files of a build
+    beforeafter.py    the page of what a run compared, before and after; also without a frame
     data.py           the machine-readable outputs
 
 Every function takes the `Site` of scripts/build_site.py as its first argument and returns

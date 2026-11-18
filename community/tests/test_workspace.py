@@ -55,7 +55,7 @@ class Records(unittest.TestCase):
         manifest = shared_files.read_manifest(ROOT)
         self.assertRegex(manifest["commit"], r"^[0-9a-f]{40}$")
         # what is this repository's own is not in the list of copies
-        for own in ("site/config.json", "scripts/shared_files.py", "scripts/build_checks.py"):
+        for own in ("site/config.json", "site/licensed-run.json", "scripts/build_checks.py"):
             self.assertNotIn(own, manifest["files"])
 
     def test_only_published_releases_are_registered(self):
@@ -86,7 +86,7 @@ class Forms(unittest.TestCase):
         self.assertIn(f'labels: ["{intake.FINDING_LABEL}", "needs-triage"]', form)
         self.assertEqual(intake.form_with_releases(form, community.load_config(ROOT)), form)
 
-    def test_no_workflow_builds_a_release_writes_to_issues_or_reads_a_local_run(self):
+    def test_site_workflows_use_only_the_public_run_record(self):
         workflows = sorted(path.name for path in (ROOT / ".github/workflows").glob("*.yml"))
         # ci.yml is the import's own. Intake and Sync, which write to issues, are not here yet.
         self.assertEqual(workflows, ["checks.yml", "ci.yml", "import-run.yml", "pages.yml"])
@@ -95,9 +95,8 @@ class Forms(unittest.TestCase):
             for word in ("upload-release", "gh release", "softprops/action-gh-release", "ECOINVENT_", "uv sync", "dds-",
                          "issues: write", "pull-requests: write", "contents: write"):
                 self.assertNotIn(word, text, name)
-            # A record of a run on a licensed machine is shown in a local build only: the
-            # published site is never built from a file somebody hands it.
-            self.assertNotIn("--last-run", text, name)
+            if name in ("pages.yml", "checks.yml"):
+                self.assertIn("--last-run site/licensed-run.json", text, name)
 
 
 class ImportRun(unittest.TestCase):
@@ -249,7 +248,7 @@ class Site(unittest.TestCase):
         cls.temp = tempfile.TemporaryDirectory()
         cls.out = Path(cls.temp.name) / "site"
         with Quiet():
-            build_site.build(cls.out, offline=True, root=ROOT)
+            build_site.build(cls.out, offline=True, root=ROOT, last_run_snapshot=ROOT / "site/licensed-run.json")
         cls.pages = {p.relative_to(cls.out).as_posix(): p.read_text(encoding="utf-8") for p in cls.out.rglob("*.html")}
         cls.framed = {name: text for name, text in cls.pages.items() if 'http-equiv="refresh"' not in text}
 
@@ -279,13 +278,16 @@ class Site(unittest.TestCase):
 
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)
-        # built without GitHub and without a record: the file of the last run holds no run
+        # This review records a licensed run completed outside GitHub.
         record = json.loads((self.out / "api/v1/last-run.json").read_text(encoding="utf-8"))
         self.assertIsNone(record.get("run"))
-        self.assertIsNone(record.get("summary"))
+        self.assertIsNotNone(record.get("local"))
+        self.assertEqual([s["name"] for s in record["summary"]["steps"]], ["ADEME's export", "Licensed files", "Registry", "Link", "Score", "Export"])
+        self.assertEqual(record["diagnostics"]["tier"], "counts")
+        self.assertEqual(record["diagnostics"]["items"], [])
         for name, text in self.pages.items():
             self.assertNotIn("patched-release.html", text, name)
-            if name not in ("build.html", "about/data.html"):
+            if name not in ("build.html", "about/data.html", "runs.html"):
                 self.assertNotIn("replay.js", text, name)
                 self.assertNotIn("last-run.json", text, name)
 

@@ -3,7 +3,7 @@
 The site is built from the records, not written by hand: one page per finding and per contribution, a page per AGRIBALYSE release, the overview, what changed, and the pages of prose named in `site/config.json`.
 
 ```sh
-uv run --no-project --python 3.12 --with markdown==3.7 python scripts/build_site.py --offline --out _site
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@d8dd120afb4837778d9ef51d3cb43be572216d0a' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
@@ -37,7 +37,7 @@ Until the work lands in `sentier-dev/sentier-bafu`, `site/shared.json` names the
 
 What differs from sentier-bafu, and why:
 
-- **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The "Import and build" page says how to build on your own machine.
+- **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The Build page replays the reviewed local import from `site/licensed-run.json`. That public record contains stage timings, terminal output and aggregate diagnostics.
 - **Releases.** A release is one entry under `releases`, with the background it is built on. Register a release only after ADEME has published it; a test holds the list to the published releases.
 - **Processes have a name and a process identifier of letters and digits, and no number.** The shared record format lists datasets by number, so `dataset_code_pattern` is left out. A finding lists no datasets and says in `scope` what it is about, for a single process with its process identifier.
 - **Numbers.** `older_numbering_until` is 0: the number of a finding is the number of its issue.

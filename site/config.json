@@ -45,7 +45,7 @@
     ],
     [
       "build.html",
-      "Import and build"
+      "Build"
     ],
     [
       "take-part.html",
@@ -93,7 +93,7 @@
       "title": "Import and build",
       "source": "site/build.md",
       "page": "build.html",
-      "description": "How to import AGRIBALYSE 3.2 and build it on your own machine with your own ecoinvent licence. This workspace serves no built database."
+      "description": "Follow the six stages of a licensed local build of AGRIBALYSE 3.2 on ecoinvent 3.9.1, from ADEME’s export to the stripped scoring package."
     },
     {
       "title": "Take part",
@@ -108,16 +108,28 @@
       "description": "Which terms apply to ADEME's data, to the ecoinvent background and to what is published here. It is not legal advice."
     },
     {
-      "title": "How builds are checked",
+      "title": "Inventory quality",
       "source": "community/build-validation.md",
       "page": "about/checks.html",
-      "description": "What the checks on a build of AGRIBALYSE cover: row accounting, factor coverage and the identity of a build."
+      "description": "Evidence about the resulting inventory, including supplier links, amendments, impact factors and agreement with ADEME."
     },
     {
       "title": "Data (JSON)",
       "source": "site/data.md",
       "page": "about/data.html",
       "description": "The findings and contributions of this site as JSON files for other tools, with their schemas and a feed of changes."
+    },
+    {
+      "title": "Mapping the inventory",
+      "source": "site/mapping.md",
+      "page": "mapping.html",
+      "description": "How AGRIBALYSE inputs are linked to ecoinvent suppliers and elementary flows to EF 3.1."
+    },
+    {
+      "title": "Build runs",
+      "source": "site/runs.md",
+      "page": "runs.html",
+      "description": "The licensed local import and the automated checks that accompany it."
     }
   ],
   "assessments": {
@@ -144,5 +156,20 @@
     "name": "Import run",
     "workflow": "import-run.yml",
     "artifact": "import-run-results"
+  },
+  "build_navigation": {
+    "comparison": "Comparison",
+    "pages": {
+      "mapping.html": "Mapping",
+      "about/checks.html": "Quality",
+      "runs.html": "Runs"
+    },
+    "on_home": true,
+    "order": [
+      "mapping.html",
+      "about/checks.html",
+      "before-after.html",
+      "runs.html"
+    ]
   }
 }

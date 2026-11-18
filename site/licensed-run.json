@@ -1,0 +1,5629 @@
+{
+ "format": "sentier/last-run/2",
+ "state": "read",
+ "note": null,
+ "repository": null,
+ "workflow": "import-run.yml",
+ "name": "Import run",
+ "read": null,
+ "run": null,
+ "local": {
+  "started": "2026-11-18T12:49:58+00:00",
+  "seconds": 349.4,
+  "commit": "2f7f8f3ecbf8886eef1152bf24bcd5276b04a5bc"
+ },
+ "newer": null,
+ "jobs": [],
+ "kept": "read",
+ "kept_note": null,
+ "summary": {
+  "format": "sentier/run/1",
+  "status": "failed",
+  "tag": null,
+  "closing": "Import run:",
+  "steps": [
+   {
+    "name": "ADEME's export",
+    "status": "completed",
+    "seconds": 0.5,
+    "reason": null,
+    "figures": [
+     {
+      "value": 17966,
+      "label": "processes"
+     },
+     {
+      "value": 2474,
+      "label": "ecoinvent datasets taken out"
+     },
+     {
+      "value": 3079372,
+      "label": "bytes shipped"
+     }
+    ],
+    "notes": [
+     "Checked against `source/agribalyse-3.2-stripped-ecoinvent-processes.json`: checksum `54dc5fcd61f65bdbd0f73fbf7aded26f964f73ea2efcb93f7d741cdc87cdf559`. Nothing in the export is changed."
+    ]
+   },
+   {
+    "name": "Licensed files",
+    "status": "completed",
+    "seconds": 0.0,
+    "reason": null,
+    "figures": [
+     {
+      "value": 4,
+      "label": "local background and method files"
+     },
+     {
+      "value": 1,
+      "label": "harmonised flow list"
+     }
+    ],
+    "notes": []
+   },
+   {
+    "name": "Registry",
+    "status": "completed",
+    "seconds": 115.8,
+    "reason": null,
+    "figures": [],
+    "notes": []
+   },
+   {
+    "name": "Link",
+    "status": "completed",
+    "seconds": 85.5,
+    "reason": null,
+    "figures": [
+     {
+      "value": 40359,
+      "label": "activities"
+     },
+     {
+      "value": 40359,
+      "label": "products"
+     },
+     {
+      "value": 4221,
+      "label": "biosphere flows"
+     }
+    ],
+    "notes": []
+   },
+   {
+    "name": "Score",
+    "status": "completed",
+    "seconds": 53.2,
+    "reason": null,
+    "figures": [
+     {
+      "value": 2163,
+      "label": "climate scores within 5%"
+     },
+     {
+      "value": 2450,
+      "label": "climate scores compared"
+     }
+    ],
+    "notes": [
+     "2,163 of 2,450 climate scores are within 5% of ADEME (88.3%). The acceptance target is 99%."
+    ]
+   },
+   {
+    "name": "Export",
+    "status": "completed",
+    "seconds": 94.2,
+    "reason": null,
+    "figures": [],
+    "notes": [
+     "Passed — stripped package: nothing on the columns to refill, no copied ecoinvent block.",
+     "Passed — stripped package: no correction value on the columns to refill.",
+     "Passed — refilled package equals the original, entry for entry.",
+     "Passed — bundle scores equal adapter scores within 1e-05."
+    ]
+   }
+  ],
+  "contents": [
+   "AGRIBALYSE 3.2 with ecoinvent 3.9.1 cut-off, scored against ADEME’s EF 3.1 reference results."
+  ],
+  "blocking": [
+   "climate change within 5% of ADEME for at least 99% of products"
+  ],
+  "remarks": [
+   "The full Brightway package was written locally. The stripped scoring package was refilled from the licensed snapshot and checked against the original."
+  ],
+  "files": []
+ },
+ "transcript": {
+  "format": "sentier/transcript/1",
+  "command": [
+   "python3",
+   "record_build.py"
+  ],
+  "started": "2026-11-18T12:49:58+00:00",
+  "seconds": 349.4,
+  "exit_code": 1,
+  "stopped_by": null,
+  "cut": false,
+  "lines": [
+   [
+    0.2,
+    "[ADEME's export] source/AGB32_ecoinvent_free.CSV.xz: 3,079,372 bytes as shipped"
+   ],
+   [
+    0.5,
+    "[ADEME's export] unpacked: 94,867,858 bytes, sha256 54dc5fcd61f65bdbd0f73fbf7aded26f964f73ea2efcb93f7d741cdc87cdf559"
+   ],
+   [
+    0.6,
+    "[ADEME's export] 17,966 processes in the export; 2,474 ecoinvent datasets were taken out before it was shipped"
+   ],
+   [
+    0.6,
+    "[ADEME's export] the export is the file its manifest records"
+   ],
+   [
+    0.7,
+    "[Licensed files] Read ecoinvent-3.9.1-cutoff-exchanges.parquet (SHA-256 aed537db96dcba777522f38ba682e7e4a26f295dd9454256a08aa730cd6c5497)."
+   ],
+   [
+    0.7,
+    "[Licensed files] Read ecoinvent-3.9.1-cutoff-activities.json (SHA-256 bf11607864959d8d59f62bdec9f6cc4f8181a28d9951aeb29d635a6413ba2fae)."
+   ],
+   [
+    0.7,
+    "[Licensed files] Read ecoinvent-3.9.1-biosphere-flows.json (SHA-256 452361c68319f705f3154b3879925cf6e4774ab81a13e63e7783de403f8e7bd6)."
+   ],
+   [
+    0.7,
+    "[Licensed files] Read ef-v31-methods.json (SHA-256 e32076acde952f90a1995f9cbff3a28a5e4b8b8680ae3cd4a5326e6d14c29edd)."
+   ],
+   [
+    0.7,
+    "[Licensed files] Read harmonised-flows-simple.json.gz (SHA-256 47850016a251ca00d4f806f305293eaa735e3cb59219ea2a27ef7ceb12028271)."
+   ],
+   [
+    0.7,
+    "[Registry] worktree adapter"
+   ],
+   [
+    2.9,
+    "[Registry] worktree adapter finished in 2.2 s (exit 0)."
+   ],
+   [
+    2.9,
+    "[Registry] environment adapter"
+   ],
+   [
+    26.2,
+    "[Registry] environment adapter finished in 23.3 s (exit 0)."
+   ],
+   [
+    26.2,
+    "[Registry] imports own code adapter"
+   ],
+   [
+    26.3,
+    "[Registry] imports own code adapter finished in 0.1 s (exit 0)."
+   ],
+   [
+    26.3,
+    "[Registry] umfpack adapter"
+   ],
+   [
+    26.9,
+    "[Registry] umfpack adapter finished in 0.6 s (exit 0)."
+   ],
+   [
+    26.9,
+    "[Registry] dds-fetch-harmonised-flows"
+   ],
+   [
+    70.1,
+    "[Registry] dds-fetch-harmonised-flows finished in 43.2 s (exit 0)."
+   ],
+   [
+    70.1,
+    "[Registry] dds-build-registry"
+   ],
+   [
+    93.4,
+    "[Registry] dds-build-registry finished in 23.3 s (exit 0)."
+   ],
+   [
+    93.4,
+    "[Registry] dds-build-ef-flows-registry"
+   ],
+   [
+    96.6,
+    "[Registry] dds-build-ef-flows-registry finished in 3.1 s (exit 0)."
+   ],
+   [
+    96.6,
+    "[Registry] dds-build-biosphere-catalog"
+   ],
+   [
+    98.4,
+    "[Registry] dds-build-biosphere-catalog finished in 1.8 s (exit 0)."
+   ],
+   [
+    98.4,
+    "[Registry] dds-build-method-cfs-registry"
+   ],
+   [
+    115.1,
+    "[Registry] dds-build-method-cfs-registry finished in 16.8 s (exit 0)."
+   ],
+   [
+    115.1,
+    "[Registry] dds-build-ecoinvent-catalog"
+   ],
+   [
+    116.5,
+    "[Registry] dds-build-ecoinvent-catalog finished in 1.3 s (exit 0)."
+   ],
+   [
+    116.5,
+    "[Link] dds-link-all"
+   ],
+   [
+    202.0,
+    "[Link] dds-link-all finished in 85.5 s (exit 0)."
+   ],
+   [
+    202.0,
+    "[Link] 40,359 activities"
+   ],
+   [
+    202.0,
+    "[Link] 40,359 products"
+   ],
+   [
+    202.0,
+    "[Link] 4,221 biosphere flows"
+   ],
+   [
+    202.0,
+    "[Score] dds-backtest --solver scipy"
+   ],
+   [
+    254.8,
+    "[Score] dds-backtest --solver scipy finished in 52.8 s (exit 0)."
+   ],
+   [
+    254.8,
+    "[Score] backtest summary"
+   ],
+   [
+    255.2,
+    "[Score] backtest summary finished in 0.3 s (exit 0)."
+   ],
+   [
+    255.2,
+    "[Score] FAIL  climate change within 5% of ADEME for at least 99% of products"
+   ],
+   [
+    255.2,
+    "[Score] 2,163 of 2,450 climate scores are within 5% of ADEME (88.3%). The acceptance target is 99%."
+   ],
+   [
+    255.2,
+    "[Export] dds-build-bw-package"
+   ],
+   [
+    265.5,
+    "[Export] dds-build-bw-package finished in 10.3 s (exit 0)."
+   ],
+   [
+    265.5,
+    "[Export] worktree bundle"
+   ],
+   [
+    275.3,
+    "[Export] worktree bundle finished in 9.8 s (exit 0)."
+   ],
+   [
+    275.3,
+    "[Export] environment bundle"
+   ],
+   [
+    292.2,
+    "[Export] environment bundle finished in 17.0 s (exit 0)."
+   ],
+   [
+    292.2,
+    "[Export] imports own code bundle"
+   ],
+   [
+    322.1,
+    "[Export] imports own code bundle finished in 29.9 s (exit 0)."
+   ],
+   [
+    322.1,
+    "[Export] umfpack bundle"
+   ],
+   [
+    322.2,
+    "[Export] umfpack bundle finished in 0.1 s (exit 0)."
+   ],
+   [
+    322.2,
+    "[Export] dds-build-skeleton"
+   ],
+   [
+    324.4,
+    "[Export] dds-build-skeleton finished in 2.2 s (exit 0)."
+   ],
+   [
+    324.4,
+    "[Export] check skeleton"
+   ],
+   [
+    324.8,
+    "[Export] check skeleton finished in 0.3 s (exit 0)."
+   ],
+   [
+    324.8,
+    "[Export] PASS  stripped package: nothing on the columns to refill, no copied ecoinvent block"
+   ],
+   [
+    324.8,
+    "[Export] PASS  stripped package: no correction value on the columns to refill"
+   ],
+   [
+    324.8,
+    "[Export] refill"
+   ],
+   [
+    329.1,
+    "[Export] refill finished in 4.3 s (exit 0)."
+   ],
+   [
+    329.1,
+    "[Export] compare refilled with original"
+   ],
+   [
+    331.8,
+    "[Export] compare refilled with original finished in 2.7 s (exit 0)."
+   ],
+   [
+    331.8,
+    "[Export] PASS  refilled package equals the original, entry for entry"
+   ],
+   [
+    331.8,
+    "[Export] bundle dashboard build"
+   ],
+   [
+    349.1,
+    "[Export] bundle dashboard build finished in 17.3 s (exit 0)."
+   ],
+   [
+    349.1,
+    "[Export] compare bundle scores with adapter scores"
+   ],
+   [
+    349.4,
+    "[Export] compare bundle scores with adapter scores finished in 0.3 s (exit 0)."
+   ],
+   [
+    349.4,
+    "[Export] PASS  bundle scores equal adapter scores within 1e-05"
+   ],
+   [
+    349.4,
+    "Import run: 6 stages completed, 1 acceptance checks failed."
+   ]
+  ],
+  "sha256": "0e4c73ef0bd595e02247172fbe22b1541827497b704d59c16735b392f57f7609"
+ },
+ "before_after": null,
+ "diagnostics": {
+  "format": "sentier-diagnostics/1",
+  "tier": "counts",
+  "audience": "public",
+  "title": "From ADEME’s results to the integrated build",
+  "about": "Follow the same reference products through the ecoinvent 3.9.1 cut-off rebuild. Select an indicator or a build step to see where its results change.",
+  "item": {
+   "one": "product",
+   "many": "products"
+  },
+  "indicator": {
+   "one": "indicator",
+   "many": "indicators"
+  },
+  "indicators": [
+   {
+    "id": "climate",
+    "name": "Climate change",
+    "short": "Climate change",
+    "unit": "kg CO2 eq"
+   },
+   {
+    "id": "ozone",
+    "name": "Ozone depletion",
+    "short": "Ozone depletion",
+    "unit": "kg CVC11 eq"
+   },
+   {
+    "id": "radiation",
+    "name": "Ionising radiation: human health",
+    "short": "Ionising radiation: human he",
+    "unit": "kBq U-235 eq"
+   },
+   {
+    "id": "photo_ox",
+    "name": "Photochemical oxidant formation: human health",
+    "short": "Photochemical oxidant format",
+    "unit": "kg NMVOC eq"
+   },
+   {
+    "id": "pm",
+    "name": "Particulate matter formation",
+    "short": "Particulate matter formation",
+    "unit": "disease inc."
+   },
+   {
+    "id": "ht_nc",
+    "name": "Human toxicity: non-carcinogenic",
+    "short": "Human toxicity: non-carcinog",
+    "unit": "CTUh"
+   },
+   {
+    "id": "ht_c",
+    "name": "Human toxicity: carcinogenic",
+    "short": "Human toxicity: carcinogenic",
+    "unit": "CTUh"
+   },
+   {
+    "id": "acid",
+    "name": "Acidification",
+    "short": "Acidification",
+    "unit": "mol H+ eq"
+   },
+   {
+    "id": "e_fw",
+    "name": "Eutrophication: freshwater",
+    "short": "Eutrophication: freshwater",
+    "unit": "kg P eq"
+   },
+   {
+    "id": "e_m",
+    "name": "Eutrophication: marine",
+    "short": "Eutrophication: marine",
+    "unit": "kg N eq"
+   },
+   {
+    "id": "e_t",
+    "name": "Eutrophication: terrestrial",
+    "short": "Eutrophication: terrestrial",
+    "unit": "mol N eq"
+   },
+   {
+    "id": "ecotox",
+    "name": "Ecotoxicity: freshwater",
+    "short": "Ecotoxicity: freshwater",
+    "unit": "CTUe"
+   },
+   {
+    "id": "land",
+    "name": "Land use",
+    "short": "Land use",
+    "unit": "Pt"
+   },
+   {
+    "id": "water",
+    "name": "Water use",
+    "short": "Water use",
+    "unit": "m3 depriv."
+   },
+   {
+    "id": "energy",
+    "name": "Energy resources: non-renewable",
+    "short": "Energy resources: non-renewa",
+    "unit": "MJ"
+   },
+   {
+    "id": "mater",
+    "name": "Material resources: metals/minerals",
+    "short": "Material resources: metals/m",
+    "unit": "kg Sb eq"
+   },
+   {
+    "id": "cc_bio",
+    "name": "Climate change: biogenic",
+    "short": "Climate change: biogenic",
+    "unit": "kg CO2 eq"
+   },
+   {
+    "id": "cc_fos",
+    "name": "Climate change: fossil",
+    "short": "Climate change: fossil",
+    "unit": "kg CO2 eq"
+   },
+   {
+    "id": "cc_luc",
+    "name": "Climate change: land use and land use change",
+    "short": "Climate change: land use and",
+    "unit": "kg CO2 eq"
+   }
+  ],
+  "rule": {
+   "floor_factor": 0.01,
+   "floors_from": "ademe",
+   "beyond": 10.0,
+   "total_tolerance": 0.05,
+   "total_noise": {},
+   "floors": [
+    {
+     "indicator": "climate",
+     "unit": "kg of product",
+     "value": 0.027400000000000004,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "ozone",
+     "unit": "kg of product",
+     "value": 8.65e-10,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "radiation",
+     "unit": "kg of product",
+     "value": 0.0062900000000000005,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "photo_ox",
+     "unit": "kg of product",
+     "value": 8.7e-05,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "pm",
+     "unit": "kg of product",
+     "value": 2.33e-09,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "ht_nc",
+     "unit": "kg of product",
+     "value": 4.48e-10,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "ht_c",
+     "unit": "kg of product",
+     "value": 2.11e-11,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "acid",
+     "unit": "kg of product",
+     "value": 0.000302,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "e_fw",
+     "unit": "kg of product",
+     "value": 4.68e-06,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "e_m",
+     "unit": "kg of product",
+     "value": 0.000132,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "e_t",
+     "unit": "kg of product",
+     "value": 0.0011899999999999999,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "ecotox",
+     "unit": "kg of product",
+     "value": 0.41200000000000003,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "land",
+     "unit": "kg of product",
+     "value": 1.25,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "water",
+     "unit": "kg of product",
+     "value": 0.010400000000000001,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "energy",
+     "unit": "kg of product",
+     "value": 0.36200000000000004,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "mater",
+     "unit": "kg of product",
+     "value": 1.29e-07,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "cc_bio",
+     "unit": "kg of product",
+     "value": 0.00233,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "cc_fos",
+     "unit": "kg of product",
+     "value": 0.0196,
+     "basis": "median",
+     "n": 2451
+    },
+    {
+     "indicator": "cc_luc",
+     "unit": "kg of product",
+     "value": 0.0011200000000000001,
+     "basis": "median",
+     "n": 2451
+    }
+   ]
+  },
+  "states": [
+   {
+    "id": "ademe",
+    "label": "ADEME reference",
+    "about": "Published impact scores per kilogram of food in AGRIBALYSE 3.2.",
+    "kind": "published",
+    "identity": {},
+    "join": null
+   },
+   {
+    "id": "baseline",
+    "label": "Release rebuild",
+    "about": "AGRIBALYSE 3.2 rebuilt from the distributable export.",
+    "kind": "build",
+    "identity": {
+     "Adapter revision": "e99ef6bb6d17e6edd8d4170a2b67f1879c9d1461",
+     "Export SHA-256": "9324bcc93971bb1babf9f0e12c55d44e13f14da1c7e576cfe244c0fc1d50892e"
+    },
+    "join": {
+     "compared": 2451,
+     "unmatched": 0,
+     "ambiguous": 0,
+     "note": null
+    },
+    "noise": {
+     "measured": true,
+     "between": [
+      "First execution",
+      "Repeat execution"
+     ],
+     "by": {
+      "climate": 1.3590011539620014e-15,
+      "ozone": 6.754628667807314e-16,
+      "radiation": 1.1244526738327177e-15,
+      "photo_ox": 2.0124311593546337e-15,
+      "pm": 2.2646052443218747e-15,
+      "ht_nc": 9.081070460866875e-16,
+      "ht_c": 1.691506440237886e-15,
+      "acid": 2.2406187358304654e-15,
+      "e_fw": 1.2158632849428196e-15,
+      "e_m": 1.3025730227361785e-15,
+      "e_t": 2.401649373159745e-15,
+      "ecotox": 8.762284997607787e-06,
+      "land": 5.801765426700045e-15,
+      "water": 0.20786202037660634,
+      "energy": 7.096661213057112e-16,
+      "mater": 7.152024598101562e-16,
+      "cc_bio": 2.57235557804411e-15,
+      "cc_fos": 1.3535605661203808e-15,
+      "cc_luc": 2.6828586303177134e-14
+     },
+     "note": null
+    }
+   },
+   {
+    "id": "codes",
+    "label": "Stable identifiers",
+    "about": "Assign stable identifiers to the same source activities and products.",
+    "kind": "build",
+    "identity": {
+     "Adapter revision": "c1d442fc9040f94ee5ae6ee39d8d0738af0fa1cc",
+     "Export SHA-256": "9324bcc93971bb1babf9f0e12c55d44e13f14da1c7e576cfe244c0fc1d50892e"
+    },
+    "join": {
+     "compared": 2451,
+     "unmatched": 0,
+     "ambiguous": 0,
+     "note": null
+    },
+    "noise": {
+     "measured": true,
+     "between": [
+      "First execution",
+      "Repeat execution"
+     ],
+     "by": {
+      "climate": 0.0,
+      "ozone": 0.0,
+      "radiation": 0.0,
+      "photo_ox": 0.0,
+      "pm": 0.0,
+      "ht_nc": 0.0,
+      "ht_c": 0.0,
+      "acid": 0.0,
+      "e_fw": 0.0,
+      "e_m": 0.0,
+      "e_t": 0.0,
+      "ecotox": 0.0,
+      "land": 0.0,
+      "water": 0.0,
+      "energy": 0.0,
+      "mater": 0.0,
+      "cc_bio": 0.0,
+      "cc_fos": 0.0,
+      "cc_luc": 0.0
+     },
+     "note": null
+    }
+   },
+   {
+    "id": "flows",
+    "label": "Flow compartment matching",
+    "about": "Resolve elementary flows using their environmental subcompartment.",
+    "kind": "build",
+    "identity": {
+     "Adapter revision": "d77e5044955993b800acb5d8a1dab710fe2c5235",
+     "Export SHA-256": "9324bcc93971bb1babf9f0e12c55d44e13f14da1c7e576cfe244c0fc1d50892e"
+    },
+    "join": {
+     "compared": 2451,
+     "unmatched": 0,
+     "ambiguous": 0,
+     "note": null
+    },
+    "noise": {
+     "measured": false,
+     "between": null,
+     "by": null,
+     "note": null
+    }
+   },
+   {
+    "id": "water",
+    "label": "Regional water use",
+    "about": "Apply the water-use correction to the reconstructed system.",
+    "kind": "build",
+    "identity": {
+     "Adapter revision": "b8ed9cd9ae2e57d9b42d4e349e696b572bbec308",
+     "Export SHA-256": "9324bcc93971bb1babf9f0e12c55d44e13f14da1c7e576cfe244c0fc1d50892e"
+    },
+    "join": {
+     "compared": 2451,
+     "unmatched": 0,
+     "ambiguous": 0,
+     "note": null
+    },
+    "noise": {
+     "measured": false,
+     "between": null,
+     "by": null,
+     "note": null
+    }
+   },
+   {
+    "id": "integrated",
+    "label": "Integrated review build",
+    "about": "Apply the remaining import, coverage, reconstruction and export changes together.",
+    "kind": "build",
+    "identity": {
+     "Adapter revision": "2f7f8f3ecbf8886eef1152bf24bcd5276b04a5bc",
+     "Export SHA-256": "9324bcc93971bb1babf9f0e12c55d44e13f14da1c7e576cfe244c0fc1d50892e"
+    },
+    "join": {
+     "compared": 2451,
+     "unmatched": 0,
+     "ambiguous": 0,
+     "note": null
+    },
+    "noise": {
+     "measured": false,
+     "between": null,
+     "by": null,
+     "note": null
+    }
+   }
+  ],
+  "steps": [
+   {
+    "id": "baseline",
+    "from": "ademe",
+    "to": "baseline",
+    "label": "Reproduce ADEME’s results",
+    "about": "AGRIBALYSE 3.2 rebuilt from the distributable export.",
+    "kind": "reproduction",
+    "explained": false,
+    "link": null,
+    "claim": null,
+    "tolerance": {
+     "value": 0.05,
+     "basis": "declared",
+     "note": "Review band for agreement with ADEME."
+    },
+    "noise": {
+     "measured": true,
+     "between": null,
+     "by": {
+      "climate": 1.3590011539620014e-15,
+      "ozone": 6.754628667807314e-16,
+      "radiation": 1.1244526738327177e-15,
+      "photo_ox": 2.0124311593546337e-15,
+      "pm": 2.2646052443218747e-15,
+      "ht_nc": 9.081070460866875e-16,
+      "ht_c": 1.691506440237886e-15,
+      "acid": 2.2406187358304654e-15,
+      "e_fw": 1.2158632849428196e-15,
+      "e_m": 1.3025730227361785e-15,
+      "e_t": 2.401649373159745e-15,
+      "ecotox": 8.762284997607787e-06,
+      "land": 5.801765426700045e-15,
+      "water": 0.20786202037660634,
+      "energy": 7.096661213057112e-16,
+      "mater": 7.152024598101562e-16,
+      "cc_bio": 2.57235557804411e-15,
+      "cc_fos": 1.3535605661203808e-15,
+      "cc_luc": 2.6828586303177134e-14
+     },
+     "note": null
+    }
+   },
+   {
+    "id": "codes",
+    "from": "baseline",
+    "to": "codes",
+    "label": "Stable identifiers",
+    "about": "Assign stable identifiers to the same source activities and products.",
+    "kind": "build change",
+    "explained": true,
+    "link": null,
+    "claim": null,
+    "tolerance": {
+     "value": 1e-06,
+     "basis": "declared",
+     "note": "Relative tolerance for two computed results."
+    },
+    "noise": {
+     "measured": true,
+     "between": null,
+     "by": {
+      "climate": 1.3590011539620014e-15,
+      "ozone": 6.754628667807314e-16,
+      "radiation": 1.1244526738327177e-15,
+      "photo_ox": 2.0124311593546337e-15,
+      "pm": 2.2646052443218747e-15,
+      "ht_nc": 9.081070460866875e-16,
+      "ht_c": 1.691506440237886e-15,
+      "acid": 2.2406187358304654e-15,
+      "e_fw": 1.2158632849428196e-15,
+      "e_m": 1.3025730227361785e-15,
+      "e_t": 2.401649373159745e-15,
+      "ecotox": 8.762284997607787e-06,
+      "land": 5.801765426700045e-15,
+      "water": 0.20786202037660634,
+      "energy": 7.096661213057112e-16,
+      "mater": 7.152024598101562e-16,
+      "cc_bio": 2.57235557804411e-15,
+      "cc_fos": 1.3535605661203808e-15,
+      "cc_luc": 2.6828586303177134e-14
+     },
+     "note": null
+    }
+   },
+   {
+    "id": "flows",
+    "from": "codes",
+    "to": "flows",
+    "label": "Flow compartment matching",
+    "about": "Resolve elementary flows using their environmental subcompartment.",
+    "kind": "build change",
+    "explained": true,
+    "link": null,
+    "claim": null,
+    "tolerance": {
+     "value": 1e-06,
+     "basis": "declared",
+     "note": "Relative tolerance for two computed results."
+    },
+    "noise": {
+     "measured": true,
+     "between": null,
+     "by": {
+      "climate": 0.0,
+      "ozone": 0.0,
+      "radiation": 0.0,
+      "photo_ox": 0.0,
+      "pm": 0.0,
+      "ht_nc": 0.0,
+      "ht_c": 0.0,
+      "acid": 0.0,
+      "e_fw": 0.0,
+      "e_m": 0.0,
+      "e_t": 0.0,
+      "ecotox": 0.0,
+      "land": 0.0,
+      "water": 0.0,
+      "energy": 0.0,
+      "mater": 0.0,
+      "cc_bio": 0.0,
+      "cc_fos": 0.0,
+      "cc_luc": 0.0
+     },
+     "note": null
+    }
+   },
+   {
+    "id": "water",
+    "from": "flows",
+    "to": "water",
+    "label": "Regional water use",
+    "about": "Apply the water-use correction to the reconstructed system.",
+    "kind": "build change",
+    "explained": true,
+    "link": null,
+    "claim": null,
+    "tolerance": {
+     "value": 1e-06,
+     "basis": "declared",
+     "note": "Relative tolerance for two computed results."
+    },
+    "noise": {
+     "measured": false,
+     "between": null,
+     "by": null,
+     "note": null
+    }
+   },
+   {
+    "id": "integrated",
+    "from": "water",
+    "to": "integrated",
+    "label": "Integrated review build",
+    "about": "Apply the remaining import, coverage, reconstruction and export changes together.",
+    "kind": "build change",
+    "explained": false,
+    "link": null,
+    "claim": null,
+    "tolerance": {
+     "value": 1e-06,
+     "basis": "declared",
+     "note": "Relative tolerance for two computed results."
+    },
+    "noise": {
+     "measured": false,
+     "between": null,
+     "by": null,
+     "note": null
+    }
+   }
+  ],
+  "counts": {
+   "steps": {
+    "baseline": {
+     "climate": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2167,
+       "within noise": 0,
+       "differs": 283,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 84,
+       "down": 199
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 14,
+       "down, factor 1.25-2": 14,
+       "down, factor 1.1-1.25": 105,
+       "down, factor 1-1.1": 66,
+       "up, factor 1-1.1": 47,
+       "up, factor 1.1-1.25": 29,
+       "up, factor 1.25-2": 8,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "ozone": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 1723,
+       "within noise": 0,
+       "differs": 727,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 679,
+       "down": 48
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 2,
+       "down, factor 1.25-2": 5,
+       "down, factor 1.1-1.25": 22,
+       "down, factor 1-1.1": 19,
+       "up, factor 1-1.1": 349,
+       "up, factor 1.1-1.25": 282,
+       "up, factor 1.25-2": 46,
+       "up, factor 2-10": 2,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "radiation": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2162,
+       "within noise": 0,
+       "differs": 288,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 39,
+       "down": 249
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 16,
+       "down, factor 1.25-2": 23,
+       "down, factor 1.1-1.25": 68,
+       "down, factor 1-1.1": 142,
+       "up, factor 1-1.1": 29,
+       "up, factor 1.1-1.25": 9,
+       "up, factor 1.25-2": 1,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "photo_ox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2152,
+       "within noise": 0,
+       "differs": 298,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 163,
+       "down": 135
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 13,
+       "down, factor 1.25-2": 8,
+       "down, factor 1.1-1.25": 14,
+       "down, factor 1-1.1": 100,
+       "up, factor 1-1.1": 113,
+       "up, factor 1.1-1.25": 49,
+       "up, factor 1.25-2": 1,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "pm": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2280,
+       "within noise": 0,
+       "differs": 168,
+       "beyond 10x": 2,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 86,
+       "down": 84
+      },
+      "bands": {
+       "down, factor over 10": 2,
+       "down, factor 2-10": 11,
+       "down, factor 1.25-2": 9,
+       "down, factor 1.1-1.25": 17,
+       "down, factor 1-1.1": 45,
+       "up, factor 1-1.1": 55,
+       "up, factor 1.1-1.25": 31,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "ht_nc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 991,
+       "within noise": 0,
+       "differs": 1425,
+       "beyond 10x": 1,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 28,
+       "near zero": 6,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 1193,
+       "down": 261
+      },
+      "bands": {
+       "down, factor over 10": 1,
+       "down, factor 2-10": 50,
+       "down, factor 1.25-2": 33,
+       "down, factor 1.1-1.25": 119,
+       "down, factor 1-1.1": 30,
+       "up, factor 1-1.1": 384,
+       "up, factor 1.1-1.25": 543,
+       "up, factor 1.25-2": 266,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "ht_c": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 853,
+       "within noise": 0,
+       "differs": 1587,
+       "beyond 10x": 5,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 5,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 1364,
+       "down": 233
+      },
+      "bands": {
+       "down, factor over 10": 5,
+       "down, factor 2-10": 22,
+       "down, factor 1.25-2": 30,
+       "down, factor 1.1-1.25": 47,
+       "down, factor 1-1.1": 124,
+       "up, factor 1-1.1": 512,
+       "up, factor 1.1-1.25": 679,
+       "up, factor 1.25-2": 172,
+       "up, factor 2-10": 1,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "acid": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2138,
+       "within noise": 0,
+       "differs": 299,
+       "beyond 10x": 13,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 255,
+       "down": 57
+      },
+      "bands": {
+       "down, factor over 10": 13,
+       "down, factor 2-10": 2,
+       "down, factor 1.25-2": 8,
+       "down, factor 1.1-1.25": 14,
+       "down, factor 1-1.1": 20,
+       "up, factor 1-1.1": 123,
+       "up, factor 1.1-1.25": 113,
+       "up, factor 1.25-2": 19,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "e_fw": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 1702,
+       "within noise": 0,
+       "differs": 748,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 606,
+       "down": 142
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 15,
+       "down, factor 1.25-2": 32,
+       "down, factor 1.1-1.25": 27,
+       "down, factor 1-1.1": 68,
+       "up, factor 1-1.1": 256,
+       "up, factor 1.1-1.25": 264,
+       "up, factor 1.25-2": 68,
+       "up, factor 2-10": 18,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "e_m": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2173,
+       "within noise": 0,
+       "differs": 269,
+       "beyond 10x": 8,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 17,
+       "down": 260
+      },
+      "bands": {
+       "down, factor over 10": 8,
+       "down, factor 2-10": 22,
+       "down, factor 1.25-2": 22,
+       "down, factor 1.1-1.25": 141,
+       "down, factor 1-1.1": 67,
+       "up, factor 1-1.1": 15,
+       "up, factor 1.1-1.25": 1,
+       "up, factor 1.25-2": 1,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "e_t": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2230,
+       "within noise": 0,
+       "differs": 207,
+       "beyond 10x": 13,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 145,
+       "down": 75
+      },
+      "bands": {
+       "down, factor over 10": 13,
+       "down, factor 2-10": 2,
+       "down, factor 1.25-2": 10,
+       "down, factor 1.1-1.25": 19,
+       "down, factor 1-1.1": 31,
+       "up, factor 1-1.1": 84,
+       "up, factor 1.1-1.25": 57,
+       "up, factor 1.25-2": 4,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "ecotox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 1042,
+       "within noise": 0,
+       "differs": 1402,
+       "beyond 10x": 6,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 1306,
+       "down": 102
+      },
+      "bands": {
+       "down, factor over 10": 6,
+       "down, factor 2-10": 30,
+       "down, factor 1.25-2": 24,
+       "down, factor 1.1-1.25": 17,
+       "down, factor 1-1.1": 25,
+       "up, factor 1-1.1": 69,
+       "up, factor 1.1-1.25": 47,
+       "up, factor 1.25-2": 348,
+       "up, factor 2-10": 842,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "land": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2240,
+       "within noise": 0,
+       "differs": 181,
+       "beyond 10x": 13,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 15,
+       "near zero": 2,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 110,
+       "down": 99
+      },
+      "bands": {
+       "down, factor over 10": 13,
+       "down, factor 2-10": 13,
+       "down, factor 1.25-2": 4,
+       "down, factor 1.1-1.25": 12,
+       "down, factor 1-1.1": 42,
+       "up, factor 1-1.1": 62,
+       "up, factor 1.1-1.25": 39,
+       "up, factor 1.25-2": 9,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "water": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 557,
+       "within noise": 858,
+       "differs": 1016,
+       "beyond 10x": 18,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 1,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 768,
+       "down": 267
+      },
+      "bands": {
+       "down, factor over 10": 17,
+       "down, factor 2-10": 100,
+       "down, factor 1.25-2": 150,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 621,
+       "up, factor 2-10": 145,
+       "up, factor over 10": 1
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "energy": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2251,
+       "within noise": 0,
+       "differs": 199,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 146,
+       "down": 53
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 10,
+       "down, factor 1.25-2": 13,
+       "down, factor 1.1-1.25": 10,
+       "down, factor 1-1.1": 20,
+       "up, factor 1-1.1": 100,
+       "up, factor 1.1-1.25": 37,
+       "up, factor 1.25-2": 8,
+       "up, factor 2-10": 1,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "mater": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2174,
+       "within noise": 0,
+       "differs": 276,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 115,
+       "down": 161
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 23,
+       "down, factor 1.25-2": 4,
+       "down, factor 1.1-1.25": 57,
+       "down, factor 1-1.1": 77,
+       "up, factor 1-1.1": 56,
+       "up, factor 1.1-1.25": 42,
+       "up, factor 1.25-2": 16,
+       "up, factor 2-10": 1,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "cc_bio": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2255,
+       "within noise": 0,
+       "differs": 153,
+       "beyond 10x": 13,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 30,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 9,
+       "down": 157
+      },
+      "bands": {
+       "down, factor over 10": 13,
+       "down, factor 2-10": 25,
+       "down, factor 1.25-2": 16,
+       "down, factor 1.1-1.25": 61,
+       "down, factor 1-1.1": 42,
+       "up, factor 1-1.1": 3,
+       "up, factor 1.1-1.25": 5,
+       "up, factor 1.25-2": 1,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "cc_fos": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2166,
+       "within noise": 0,
+       "differs": 284,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 155,
+       "down": 129
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 9,
+       "down, factor 1.25-2": 12,
+       "down, factor 1.1-1.25": 11,
+       "down, factor 1-1.1": 97,
+       "up, factor 1-1.1": 112,
+       "up, factor 1.1-1.25": 27,
+       "up, factor 1.25-2": 16,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     },
+     "cc_luc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 1539,
+       "within noise": 0,
+       "differs": 693,
+       "beyond 10x": 21,
+       "zero reference": 1,
+       "zero result": 6,
+       "sign change": 3,
+       "near zero": 188,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 170,
+       "down": 554
+      },
+      "bands": {
+       "down, factor over 10": 20,
+       "down, factor 2-10": 134,
+       "down, factor 1.25-2": 39,
+       "down, factor 1.1-1.25": 62,
+       "down, factor 1-1.1": 290,
+       "up, factor 1-1.1": 49,
+       "up, factor 1.1-1.25": 49,
+       "up, factor 1.25-2": 50,
+       "up, factor 2-10": 20,
+       "up, factor over 10": 1
+      },
+      "verdicts": null,
+      "closer": null,
+      "further": null
+     }
+    },
+    "codes": {
+     "climate": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ozone": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "radiation": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "photo_ox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "pm": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_nc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2445,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 6,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_c": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "acid": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_fw": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_m": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_t": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ecotox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2384,
+       "within noise": 8,
+       "differs": 58,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 58
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 58,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 43,
+      "further": 15
+     },
+     "land": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2449,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 2,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "water": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2217,
+       "within noise": 233,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "energy": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "mater": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_bio": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2421,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 30,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_fos": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_luc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2255,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 196,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     }
+    },
+    "flows": {
+     "climate": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ozone": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "radiation": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2180,
+       "within noise": 0,
+       "differs": 270,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 270
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 270,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 62,
+      "further": 208
+     },
+     "photo_ox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "pm": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 1821,
+       "within noise": 0,
+       "differs": 629,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 629,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 629,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 549,
+      "further": 80
+     },
+     "ht_nc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 327,
+       "within noise": 0,
+       "differs": 2118,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 6,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 317,
+       "down": 1801
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 1801,
+       "up, factor 1-1.1": 316,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 1,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 1598,
+      "further": 520
+     },
+     "ht_c": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 291,
+       "within noise": 0,
+       "differs": 2159,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 299,
+       "down": 1860
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 154,
+       "down, factor 1.1-1.25": 709,
+       "down, factor 1-1.1": 997,
+       "up, factor 1-1.1": 262,
+       "up, factor 1.1-1.25": 37,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 1757,
+      "further": 402
+     },
+     "acid": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_fw": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_m": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_t": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ecotox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 336,
+       "within noise": 0,
+       "differs": 2114,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 1340,
+       "down": 774
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 774,
+       "up, factor 1-1.1": 1338,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 2,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 639,
+      "further": 1475
+     },
+     "land": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2449,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 2,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "water": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "energy": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "mater": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_bio": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2421,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 30,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_fos": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_luc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2255,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 196,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     }
+    },
+    "water": {
+     "climate": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ozone": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "radiation": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "photo_ox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "pm": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_nc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2445,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 6,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_c": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "acid": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_fw": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_m": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_t": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ecotox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "land": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2449,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 2,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "water": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 0,
+       "within noise": 0,
+       "differs": 2435,
+       "beyond 10x": 14,
+       "zero reference": 1,
+       "zero result": 0,
+       "sign change": 1,
+       "near zero": 0,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 1872,
+       "down": 579
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 25,
+       "down, factor 1.25-2": 337,
+       "down, factor 1.1-1.25": 93,
+       "down, factor 1-1.1": 123,
+       "up, factor 1-1.1": 375,
+       "up, factor 1.1-1.25": 379,
+       "up, factor 1.25-2": 850,
+       "up, factor 2-10": 253,
+       "up, factor over 10": 14
+      },
+      "verdicts": null,
+      "closer": 977,
+      "further": 1474
+     },
+     "energy": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "mater": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_bio": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2421,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 30,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_fos": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_luc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2255,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 196,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     }
+    },
+    "integrated": {
+     "climate": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ozone": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "radiation": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "photo_ox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "pm": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_nc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2445,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 6,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ht_c": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "acid": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_fw": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_m": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "e_t": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "ecotox": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "land": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2449,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 2,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "water": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2451,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 0,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "energy": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "mater": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_bio": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2421,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 30,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_fos": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2450,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 1,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     },
+     "cc_luc": {
+      "pairs": 2451,
+      "classes": {
+       "agrees": 2255,
+       "within noise": 0,
+       "differs": 0,
+       "beyond 10x": 0,
+       "zero reference": 0,
+       "zero result": 0,
+       "sign change": 0,
+       "near zero": 196,
+       "missing": 0
+      },
+      "missing": {
+       "before": 0,
+       "after": 0,
+       "both": 0
+      },
+      "directions": {
+       "up": 0,
+       "down": 0
+      },
+      "bands": {
+       "down, factor over 10": 0,
+       "down, factor 2-10": 0,
+       "down, factor 1.25-2": 0,
+       "down, factor 1.1-1.25": 0,
+       "down, factor 1-1.1": 0,
+       "up, factor 1-1.1": 0,
+       "up, factor 1.1-1.25": 0,
+       "up, factor 1.25-2": 0,
+       "up, factor 2-10": 0,
+       "up, factor over 10": 0
+      },
+      "verdicts": null,
+      "closer": 0,
+      "further": 0
+     }
+    }
+   },
+   "total": {
+    "climate": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2167,
+      "within noise": 0,
+      "differs": 283,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 84,
+      "down": 199
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 14,
+      "down, factor 1.25-2": 14,
+      "down, factor 1.1-1.25": 105,
+      "down, factor 1-1.1": 66,
+      "up, factor 1-1.1": 47,
+      "up, factor 1.1-1.25": 29,
+      "up, factor 1.25-2": 8,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "ozone": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 1723,
+      "within noise": 0,
+      "differs": 727,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 679,
+      "down": 48
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 2,
+      "down, factor 1.25-2": 5,
+      "down, factor 1.1-1.25": 22,
+      "down, factor 1-1.1": 19,
+      "up, factor 1-1.1": 349,
+      "up, factor 1.1-1.25": 282,
+      "up, factor 1.25-2": 46,
+      "up, factor 2-10": 2,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "radiation": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2162,
+      "within noise": 0,
+      "differs": 288,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 39,
+      "down": 249
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 16,
+      "down, factor 1.25-2": 23,
+      "down, factor 1.1-1.25": 68,
+      "down, factor 1-1.1": 142,
+      "up, factor 1-1.1": 29,
+      "up, factor 1.1-1.25": 9,
+      "up, factor 1.25-2": 1,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "photo_ox": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2152,
+      "within noise": 0,
+      "differs": 298,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 163,
+      "down": 135
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 13,
+      "down, factor 1.25-2": 8,
+      "down, factor 1.1-1.25": 14,
+      "down, factor 1-1.1": 100,
+      "up, factor 1-1.1": 113,
+      "up, factor 1.1-1.25": 49,
+      "up, factor 1.25-2": 1,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "pm": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2280,
+      "within noise": 0,
+      "differs": 168,
+      "beyond 10x": 2,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 86,
+      "down": 84
+     },
+     "bands": {
+      "down, factor over 10": 2,
+      "down, factor 2-10": 11,
+      "down, factor 1.25-2": 9,
+      "down, factor 1.1-1.25": 17,
+      "down, factor 1-1.1": 45,
+      "up, factor 1-1.1": 55,
+      "up, factor 1.1-1.25": 31,
+      "up, factor 1.25-2": 0,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "ht_nc": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 997,
+      "within noise": 0,
+      "differs": 1419,
+      "beyond 10x": 1,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 28,
+      "near zero": 6,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 1186,
+      "down": 262
+     },
+     "bands": {
+      "down, factor over 10": 1,
+      "down, factor 2-10": 50,
+      "down, factor 1.25-2": 32,
+      "down, factor 1.1-1.25": 121,
+      "down, factor 1-1.1": 30,
+      "up, factor 1-1.1": 442,
+      "up, factor 1.1-1.25": 480,
+      "up, factor 1.25-2": 264,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "ht_c": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2083,
+      "within noise": 0,
+      "differs": 357,
+      "beyond 10x": 5,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 5,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 96,
+      "down": 271
+     },
+     "bands": {
+      "down, factor over 10": 5,
+      "down, factor 2-10": 14,
+      "down, factor 1.25-2": 39,
+      "down, factor 1.1-1.25": 147,
+      "down, factor 1-1.1": 61,
+      "up, factor 1-1.1": 45,
+      "up, factor 1.1-1.25": 18,
+      "up, factor 1.25-2": 32,
+      "up, factor 2-10": 1,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "acid": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2138,
+      "within noise": 0,
+      "differs": 299,
+      "beyond 10x": 13,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 255,
+      "down": 57
+     },
+     "bands": {
+      "down, factor over 10": 13,
+      "down, factor 2-10": 2,
+      "down, factor 1.25-2": 8,
+      "down, factor 1.1-1.25": 14,
+      "down, factor 1-1.1": 20,
+      "up, factor 1-1.1": 123,
+      "up, factor 1.1-1.25": 113,
+      "up, factor 1.25-2": 19,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "e_fw": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 1702,
+      "within noise": 0,
+      "differs": 748,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 606,
+      "down": 142
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 15,
+      "down, factor 1.25-2": 32,
+      "down, factor 1.1-1.25": 27,
+      "down, factor 1-1.1": 68,
+      "up, factor 1-1.1": 256,
+      "up, factor 1.1-1.25": 264,
+      "up, factor 1.25-2": 68,
+      "up, factor 2-10": 18,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "e_m": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2173,
+      "within noise": 0,
+      "differs": 269,
+      "beyond 10x": 8,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 17,
+      "down": 260
+     },
+     "bands": {
+      "down, factor over 10": 8,
+      "down, factor 2-10": 22,
+      "down, factor 1.25-2": 22,
+      "down, factor 1.1-1.25": 141,
+      "down, factor 1-1.1": 67,
+      "up, factor 1-1.1": 15,
+      "up, factor 1.1-1.25": 1,
+      "up, factor 1.25-2": 1,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "e_t": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2230,
+      "within noise": 0,
+      "differs": 207,
+      "beyond 10x": 13,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 145,
+      "down": 75
+     },
+     "bands": {
+      "down, factor over 10": 13,
+      "down, factor 2-10": 2,
+      "down, factor 1.25-2": 10,
+      "down, factor 1.1-1.25": 19,
+      "down, factor 1-1.1": 31,
+      "up, factor 1-1.1": 84,
+      "up, factor 1.1-1.25": 57,
+      "up, factor 1.25-2": 4,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "ecotox": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 1058,
+      "within noise": 0,
+      "differs": 1386,
+      "beyond 10x": 6,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 1282,
+      "down": 110
+     },
+     "bands": {
+      "down, factor over 10": 6,
+      "down, factor 2-10": 30,
+      "down, factor 1.25-2": 22,
+      "down, factor 1.1-1.25": 17,
+      "down, factor 1-1.1": 35,
+      "up, factor 1-1.1": 49,
+      "up, factor 1.1-1.25": 47,
+      "up, factor 1.25-2": 342,
+      "up, factor 2-10": 844,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "land": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2240,
+      "within noise": 0,
+      "differs": 181,
+      "beyond 10x": 13,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 15,
+      "near zero": 2,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 110,
+      "down": 99
+     },
+     "bands": {
+      "down, factor over 10": 13,
+      "down, factor 2-10": 13,
+      "down, factor 1.25-2": 4,
+      "down, factor 1.1-1.25": 12,
+      "down, factor 1-1.1": 42,
+      "up, factor 1-1.1": 62,
+      "up, factor 1.1-1.25": 39,
+      "up, factor 1.25-2": 9,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "water": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 499,
+      "within noise": 0,
+      "differs": 1952,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 0,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 1851,
+      "down": 101
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 19,
+      "down, factor 1.25-2": 4,
+      "down, factor 1.1-1.25": 70,
+      "down, factor 1-1.1": 8,
+      "up, factor 1-1.1": 229,
+      "up, factor 1.1-1.25": 391,
+      "up, factor 1.25-2": 915,
+      "up, factor 2-10": 316,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "energy": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2251,
+      "within noise": 0,
+      "differs": 199,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 146,
+      "down": 53
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 10,
+      "down, factor 1.25-2": 13,
+      "down, factor 1.1-1.25": 10,
+      "down, factor 1-1.1": 20,
+      "up, factor 1-1.1": 100,
+      "up, factor 1.1-1.25": 37,
+      "up, factor 1.25-2": 8,
+      "up, factor 2-10": 1,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "mater": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2174,
+      "within noise": 0,
+      "differs": 276,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 115,
+      "down": 161
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 23,
+      "down, factor 1.25-2": 4,
+      "down, factor 1.1-1.25": 57,
+      "down, factor 1-1.1": 77,
+      "up, factor 1-1.1": 56,
+      "up, factor 1.1-1.25": 42,
+      "up, factor 1.25-2": 16,
+      "up, factor 2-10": 1,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "cc_bio": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2255,
+      "within noise": 0,
+      "differs": 153,
+      "beyond 10x": 13,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 30,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 9,
+      "down": 157
+     },
+     "bands": {
+      "down, factor over 10": 13,
+      "down, factor 2-10": 25,
+      "down, factor 1.25-2": 16,
+      "down, factor 1.1-1.25": 61,
+      "down, factor 1-1.1": 42,
+      "up, factor 1-1.1": 3,
+      "up, factor 1.1-1.25": 5,
+      "up, factor 1.25-2": 1,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "cc_fos": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 2166,
+      "within noise": 0,
+      "differs": 284,
+      "beyond 10x": 0,
+      "zero reference": 0,
+      "zero result": 0,
+      "sign change": 0,
+      "near zero": 1,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 155,
+      "down": 129
+     },
+     "bands": {
+      "down, factor over 10": 0,
+      "down, factor 2-10": 9,
+      "down, factor 1.25-2": 12,
+      "down, factor 1.1-1.25": 11,
+      "down, factor 1-1.1": 97,
+      "up, factor 1-1.1": 112,
+      "up, factor 1.1-1.25": 27,
+      "up, factor 1.25-2": 16,
+      "up, factor 2-10": 0,
+      "up, factor over 10": 0
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    },
+    "cc_luc": {
+     "pairs": 2451,
+     "classes": {
+      "agrees": 1539,
+      "within noise": 0,
+      "differs": 693,
+      "beyond 10x": 21,
+      "zero reference": 1,
+      "zero result": 6,
+      "sign change": 3,
+      "near zero": 188,
+      "missing": 0
+     },
+     "missing": {
+      "before": 0,
+      "after": 0,
+      "both": 0
+     },
+     "directions": {
+      "up": 170,
+      "down": 554
+     },
+     "bands": {
+      "down, factor over 10": 20,
+      "down, factor 2-10": 134,
+      "down, factor 1.25-2": 39,
+      "down, factor 1.1-1.25": 62,
+      "down, factor 1-1.1": 290,
+      "up, factor 1-1.1": 49,
+      "up, factor 1.1-1.25": 49,
+      "up, factor 1.25-2": 50,
+      "up, factor 2-10": 20,
+      "up, factor over 10": 1
+     },
+     "verdicts": null,
+     "closer": null,
+     "further": null
+    }
+   }
+  },
+  "attribution": {
+   "climate": {
+    "dominant": {
+     "baseline": 283,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 283
+   },
+   "ozone": {
+    "dominant": {
+     "baseline": 727,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 727
+   },
+   "radiation": {
+    "dominant": {
+     "baseline": 288,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 288
+   },
+   "photo_ox": {
+    "dominant": {
+     "baseline": 298,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 298
+   },
+   "pm": {
+    "dominant": {
+     "baseline": 170,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 170
+   },
+   "ht_nc": {
+    "dominant": {
+     "baseline": 1444,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 4,
+    "unexplained_moved": 1454
+   },
+   "ht_c": {
+    "dominant": {
+     "baseline": 203,
+     "codes": 0,
+     "flows": 161,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 3,
+    "unexplained_moved": 1597
+   },
+   "acid": {
+    "dominant": {
+     "baseline": 312,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 312
+   },
+   "e_fw": {
+    "dominant": {
+     "baseline": 748,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 748
+   },
+   "e_m": {
+    "dominant": {
+     "baseline": 277,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 277
+   },
+   "e_t": {
+    "dominant": {
+     "baseline": 220,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 220
+   },
+   "ecotox": {
+    "dominant": {
+     "baseline": 1377,
+     "codes": 0,
+     "flows": 3,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 12,
+    "unexplained_moved": 1408
+   },
+   "land": {
+    "dominant": {
+     "baseline": 209,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 209
+   },
+   "water": {
+    "dominant": {
+     "baseline": 388,
+     "codes": 0,
+     "flows": 0,
+     "water": 1257,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 307,
+    "unexplained_moved": 1035
+   },
+   "energy": {
+    "dominant": {
+     "baseline": 199,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 199
+   },
+   "mater": {
+    "dominant": {
+     "baseline": 276,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 276
+   },
+   "cc_bio": {
+    "dominant": {
+     "baseline": 166,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 166
+   },
+   "cc_fos": {
+    "dominant": {
+     "baseline": 284,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 284
+   },
+   "cc_luc": {
+    "dominant": {
+     "baseline": 724,
+     "codes": 0,
+     "flows": 0,
+     "water": 0,
+     "integrated": 0
+    },
+    "not_attributable": 0,
+    "spread": 0,
+    "unexplained_moved": 724
+   }
+  },
+  "items": [],
+  "items_count": {
+   "all": 2451,
+   "qualifying": 2451,
+   "listed": 0,
+   "not_listed": 2451
+  },
+  "explanations": [],
+  "notes": [
+   "The diagnostic comparison uses the larger absolute score as the denominator and groups near-zero results. The Score stage separately tests a 5% difference relative to ADEME for non-zero reference values.",
+   "The integrated step groups the remaining changes. Its results alone cannot attribute a difference to any single amendment."
+  ],
+  "made_by": "sentier-diagnostics 0.1.0"
+ },
+ "review": null,
+ "pairs": {},
+ "tagged": null,
+ "releases": [],
+ "of_tag": null
+}

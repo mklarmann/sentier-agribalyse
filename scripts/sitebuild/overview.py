@@ -38,13 +38,20 @@ def ways(site, up=""):
 def overview(site):
     p, d = esc(site.provider), esc(site.dataset)
     waiting = site.triage["counts"].get("filed", 0)
+    latest = site.compared.get("", {})
+    comparison = latest.get("compared") or latest.get("review")
+    section = "#moved" if (site.last_run or {}).get("before_after") else ""
+    compare_link = (
+        f' <a class="button" href="{esc(comparison)}{section}">Compare results before and after</a>'
+        if comparison else ""
+    )
     opening = (
         f'<section class="wrap hero"><p class="eyebrow">{d} life-cycle inventory database</p>'
         f"<h1>Feedback on {p}'s inventory data, from the people who use it</h1>"
         f'<p class="lead">Users of the {d} life-cycle inventory database record here what they find in the data, check '
         f"each other's measurements and report the findings to {p}. The aim is a better database for everyone. "
         f"{p} decides what it changes.</p>"
-        f'<div class="actions"><a class="button primary" href="findings.html">See the findings</a></div>'
+        f'<div class="actions"><a class="button primary" href="findings.html">See the findings</a>{compare_link}</div>'
         f"{shell.lookup(site)}</section>"
     )
     steps = (
