@@ -1,5 +1,8 @@
 """A finding as a row of a list, the findings list with its index, and the finding page."""
 
+import json
+from urllib.parse import urlencode
+
 import community
 
 from . import status
@@ -126,7 +129,7 @@ def list_index(site):
         "note": "For the findings list of the site. Tools read api/v1/findings.json instead.",
         "columns": ["number", "title", "concerns", "more", "codes", "releases", "status", "steps", "outcome",
                     "patches", "thread", "thread_url", "comments", "changed", "waiting_since", "kind"],
-        "statuses": [[s["key"], s["label"]] for s in community.statuses(site.provider)],
+        "statuses": [[s["key"], site.label(s["key"])] for s in community.STATUSES],
         "releases": [[r["id"], r["name"]] for r in config["releases"]],
         "kinds": [[key, community.KINDS[key]["label"]] for key in kinds],
         "outcomes": [community.OUTCOMES[key]["label"].lower() for key in outcomes],
@@ -150,7 +153,7 @@ def findings_list(site, up=""):
     total = len(ordered)
     anchors = "".join(f'<span class="status-target" id="stage-{s["key"]}"></span>' for s in community.STATUSES)
     statuses = [("", "All statuses")] + [
-        (s["key"], f'{s["label"]} ({thousands(counts.get(s["key"], 0))})') for s in community.statuses(p)
+        (s["key"], f'{site.label(s["key"])} ({thousands(counts.get(s["key"], 0))})') for s in community.statuses(p)
     ]
     controls = (
         '<form class="filter-row" id="controls" role="search" hidden>'
@@ -244,15 +247,19 @@ def discussion_card(site, f, up):
         + (f'<p class="card-also">Also discussed in</p><ul class="links">{others}</ul>' if others else "")
         + "</section>"
     )
-    if f["stage"] == "filed":
-        where = f'in {ext(url, esc(label.replace("Issue", "issue")))}' if url else "in its discussion"
-        card += (
-            '<section class="card help" aria-labelledby="repeat"><h2 class="card-label" id="repeat">Can you repeat this measurement?</h2>'
-            f"<p>Measure it on {esc(site.provider)}'s release files and write what you got {where}. "
-            "A different result is as useful as the same one.</p>"
-            f'<a class="arrow" href="{up}take-part.html">How to take part</a></section>'
-        )
     return card
+
+
+def verification(site, f, up):
+    if f["stage"] != "filed":
+        return ""
+    url, _, _ = discussion(site, f)
+    action = ext(url, "Comment with your result", "button ext") if url else f'<a href="{up}take-part.html">How to submit your check</a>'
+    method = ' <a href="#method">See the original check.</a>' if f["method"].strip() else ""
+    return (f'<section class="card help"><h2>Verify this finding</h2><p>Use the original {esc(site.provider)} release. '
+            f'Check the reported value and its unit.{method} In the discussion, give the release, dataset or file, '
+            'where you looked, and what you found. A different result is welcome.</p>'
+            f'<p>{action}</p><p class="note">A maintainer records your check with your public username and a link to your comment.</p></section>')
 
 
 def answer_block(site, f, up):
@@ -308,10 +315,12 @@ def panel(site, f, up):
     return f'<dl class="panel">{rows_}</dl>' if rows_ else ""
 
 
-def finding_page(site, f):
+def finding_page(site, f, case_panel=""):
     """The page of one finding: header, tracker, discussion beside, then answer, facts and text."""
     up, p, rid = "../", site.provider, esc(f["id"])
     config = site.records_config
+    listing, label_plural = ("cases.html", "Cases") if case_panel else ("findings.html", "Findings")
+    folder = "cases" if case_panel else "findings"
 
     def text(value, inline=False):
         return record_text(site, value, inline=inline, up=up, link_ids=True, own=f["id"])
@@ -340,12 +349,20 @@ def finding_page(site, f):
         for other in f["related"]
     )
     source = f'{site.source_repo}/blob/{site.ref}/{f["path"]}'
+    summary_file = site.root / "site/case-summaries.json"
+    summaries = site.derived("case_summaries", lambda: json.loads(summary_file.read_text()) if summary_file.exists() else {})
+    summary = summaries.get(f["id"])
+    for key, label in (("reported", "Original report"), ("repeated", "Independent check")):
+        credit = f.get(key)
+        if credit and credit.get("by") and credit.get("url"):
+            facts += f'<div><dt>{label}</dt><dd>{ext(credit["url"], "View contributor’s public record")}</dd></div>'
     main = (
-        answer_block(site, f, up)
-        + panel(site, f, up)
+        verification(site, f, up)
+        + answer_block(site, f, up)
+        + case_panel + panel(site, f, up)
         + "<h2>What was observed</h2>" + text(f["observation"])
         + (f"<h2>What it affects</h2>{text(f['exposure'])}" if f["exposure"].strip() else "")
-        + (f"<h2>How it was checked</h2>{text(f['method'])}" if f["method"].strip() else "")
+        + (f'<h2 id="method">How it was checked</h2>{text(f["method"])}' if f["method"].strip() else "")
         + other_datasets(site, f, up)
         + (f'<h2>Related findings</h2><ul class="plain">{related}</ul>' if related else "")
         + (f"<h2>Also on record</h2><ul>{retained}</ul>" if retained else "")
@@ -354,20 +371,26 @@ def finding_page(site, f):
         f'<a href="{up}api/v1/findings/{rid}.json">this finding as JSON</a></p>'
     )
     label = site.label(f["stage"])
+    stage_page = (f'{listing}?{urlencode({"stage": label})}' if case_panel else f'findings.html#stage-{f["stage"]}')
+    if not case_panel and site.config.get("case_review"):
+        main = f'<p><a href="../cases/{rid}.html">Open review case {rid}</a></p>' + main
     body = (
         '<div class="wrap page">'
-        f'<header class="record-head"><nav class="crumb" aria-label="Breadcrumb"><a href="{up}findings.html">Findings</a> '
-        f'<span aria-hidden="true">/</span> <a href="{up}findings.html#stage-{esc(f["stage"])}">{esc(label)}</a> '
+        f'<header class="record-head"><nav class="crumb" aria-label="Breadcrumb"><a href="{up}{listing}">{label_plural}</a> '
+        f'<span aria-hidden="true">/</span> <a href="{up}{esc(stage_page)}">{esc(label)}</a> '
         f'<span aria-hidden="true">/</span> <span aria-current="page">{rid}</span></nav>'
-        f'<h1 dir="auto">{esc(f["title"])}</h1><dl class="facts">{facts}</dl></header>'
+        f'<h1 dir="auto">{esc(f["title"])}</h1>'
+        + (f'<p class="lead">{esc(summary)}</p>' if summary else "")
+        + f'<dl class="facts">{facts}</dl></header>'
         + status.finding_tracker(site, f, up)
         + f'<div class="with-rail"><aside class="rail" aria-label="Discussion">{discussion_card(site, f, up)}</aside>'
         f'<div class="prose">{main}</div></div></div>'
     )
     names = community.release_names(f, config) if f["releases"] else ""
     description = f'{f["id"]}: {f["title"]}. Status: {label}.' + (f" {names}." if names else "")
+    title = f'{f["id"]} · {f["title"]}'
     return site.shell(
-        f'{f["id"]} · {f["title"]}', body, "findings.html", up=up, page=f'findings/{f["id"]}.html',
+        ("Case " + title) if case_panel else title, body, listing, up=up, page=f'{folder}/{f["id"]}.html',
         description=description,
         head=f'<link rel="alternate" type="application/json" href="{up}api/v1/findings/{rid}.json">',
     )

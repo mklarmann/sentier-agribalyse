@@ -9,6 +9,8 @@ A step is shown as done only when the record holds its evidence (triage.steps). 
 without evidence that a later step has passed says "not recorded".
 """
 
+from urllib.parse import urlencode
+
 import community
 
 from .text import day, esc, thousands
@@ -18,16 +20,16 @@ from .text import day, esc, thousands
 # The feedback is continuous: the path ends when a release of the provider covers the point,
 # and nothing here frames it as waiting for a release.
 STEPS = (
-    ("reported", "Measured", "Someone measures it on {p}'s files."),
-    ("repeated", "Repeated", "A second person repeats the measurement."),
+    ("reported", "Identify", "Record what you found in the original files."),
+    ("repeated", "Verify", "Someone else checks the finding on the same release."),
     ("sent", "Reported to {p}", "The finding is reported to {p}."),
     ("answer", "Answered by {p}", "{p} answers."),
-    ("fixed_in", "Resolved", "{a_p} release covers the point."),
+    ("fixed_in", "Resolved", "A published release or file from {p} corrects the finding."),
 )
 # The status of the findings that wait after each step, and the words under their count.
 AFTER = {
-    "reported": ("filed", "needs a second measurement", "need a second measurement"),
-    "repeated": ("confirmed", "repeated, not yet reported", "repeated, not yet reported"),
+    "reported": ("filed", "awaiting verification", "awaiting verification"),
+    "repeated": ("confirmed", "verified, ready to report", "verified, ready to report"),
     "sent": ("sent", "reported, no answer yet", "reported, no answer yet"),
     "answer": ("answered", "answered by {p}", "answered by {p}"),
     "fixed_in": ("fixed", "resolved", "resolved"),
@@ -52,6 +54,34 @@ TYPICAL = {
 }
 OFF = '<span class="meter off" aria-hidden="true"></span>'
 CONTRIBUTION_STATES = ("proposed", "testing", "reviewing", "accepted")
+
+
+def display_label(stage, provider):
+    if stage == "filed":
+        return "Awaiting verification"
+    if stage == "confirmed":
+        return "Verified, ready to report"
+    return community.status_label(stage, provider)
+
+
+def description(stage, provider):
+    if stage == "filed":
+        return f"A second person can verify this finding on {provider}'s original files."
+    if stage == "fixed":
+        return f"The record identifies the published {provider} release or file that corrects this finding."
+    return community.status_description(stage, provider)
+
+
+def marker(key):
+    if key in TYPICAL:
+        return meter(TYPICAL[key])
+    return f'<span class="off-mark {esc(key)}" aria-hidden="true"></span>'
+
+
+def stage_link(site, stage, up=""):
+    if site.config.get("case_review"):
+        return f'{up}cases.html?{urlencode({"stage": site.label(stage)})}'
+    return f"{up}findings.html#stage-{stage}"
 
 
 def meter(states):
@@ -120,7 +150,7 @@ def finding_tracker(site, f, up=""):
         f'<section class="tracker{" is-off" if off else ""}" aria-label="Where this finding stands">'
         + path(steps, "The path of this finding")
         + f'<p class="stage-line"><strong>{esc(site.label(f["stage"]))}.</strong> '
-        f'{esc(community.status_description(f["stage"], p))}</p></section>'
+        f'{esc(description(f["stage"], p))}</p></section>'
     )
 
 
@@ -129,7 +159,7 @@ def status_cell(site, f):
     label = esc(site.label(f["stage"]))
     if f["closed"]:
         return (f'<div class="record-stage off"><span class="stage-label">{label}</span>'
-                f'<span class="stage-sub">{OFF}<span class="tag">off the path</span></span></div>')
+                f'<span class="stage-sub">{marker(f["stage"])}<span class="tag">off the path</span></span></div>')
     tags = ""
     if f["answer"]:
         tags += f'<span class="tag">{esc(community.OUTCOMES[f["answer"]["outcome"]]["label"].lower())}</span>'
@@ -148,10 +178,10 @@ def chips(site, counts, href="#stage-{}", label="Filter by status"):
         key, n = status["key"], counts.get(status["key"], 0)
         if key == "not-a-defect":
             out += '<span class="chips-gap">Off the path</span>'
-        mark = meter(TYPICAL[key]) if key in TYPICAL else OFF
+        mark = marker(key)
         out += (
             f'<a class="chip{"" if n else " none"}" href="{href.format(key)}" data-filter="{key}">'
-            f'{mark}{esc(status["label"])} <b>{thousands(n)}</b></a>'
+            f'{mark}{esc(site.label(status["key"]))} <b>{thousands(n)}</b></a>'
         )
     return out + "</div>"
 
@@ -166,7 +196,7 @@ def path_with_counts(site, up=""):
         n = counts.get(stage, 0)
         caption = esc((one if n == 1 else many).format(p=p))
         box = f'<span class="path-desc">{esc(text.format(p=p, a_p=community.with_article(p)))}</span>' + (
-            f'<a class="path-count{" help" if stage == "filed" else ""}" href="{up}findings.html#stage-{stage}">'
+            f'<a class="path-count{" help" if stage == "filed" else ""}" href="{esc(stage_link(site, stage, up))}">'
             f"<strong>{thousands(n)}</strong> <span>{caption}</span></a>"
             if n else f'<span class="path-count none"><strong>0</strong> <span>{caption}</span></span>'
         )
@@ -175,7 +205,7 @@ def path_with_counts(site, up=""):
 
     def off(n, key, words):
         text = f"<strong>{thousands(n)}</strong> {words}"
-        return f'<a href="{up}findings.html#stage-{key}">{text}</a>' if n else text
+        return marker(key) + " " + (f'<a href="{esc(stage_link(site, key, up))}">{text}</a>' if n else text)
 
     return (
         f'<div class="card pipeline">{path(steps, "How it works", "counts")}'
@@ -188,8 +218,8 @@ def vocabulary(site):
     """Every status with its meter and the one sentence that is true of every finding that has it."""
     rows = ""
     for status in community.statuses(site.provider):
-        mark = meter(TYPICAL[status["key"]]) if status["key"] in TYPICAL else OFF
-        rows += f'<div><dt>{mark}{esc(status["label"])}</dt><dd>{esc(status["description"])}</dd></div>'
+        mark = marker(status["key"])
+        rows += f'<div><dt>{mark}{esc(site.label(status["key"]))}</dt><dd>{esc(description(status["key"], site.provider))}</dd></div>'
     return f'<dl class="panel vocabulary">{rows}</dl>'
 
 

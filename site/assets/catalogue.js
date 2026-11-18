@@ -84,6 +84,7 @@
       search.value = query.get("q") || "";
       selectResults();
       controls.hidden = false;
+      document.querySelector("#catalogue-fallback").hidden = true;
       kind.addEventListener("change", () => { search.value = ""; update(); });
       search.addEventListener("input", update);
       controls.addEventListener("submit", event => { event.preventDefault(); update(); });

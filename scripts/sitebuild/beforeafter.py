@@ -416,7 +416,7 @@ def name_of(item):
     return esc(item["name"]) + (f' <span class="quiet">{esc(item["place"])}</span>' if item.get("place") else "")
 
 
-def grid(data, word, details=""):
+def grid(data, word, details="", cases=None):
     """The items that moved, one row each, one column per indicator: after ÷ before.
     `details` is the folder, from the page, that holds the breakdowns the items name."""
     listed = data.get("moved") or []
@@ -470,10 +470,14 @@ def grid(data, word, details=""):
     classed = any(item.get("classes") for item in listed)
     keys = ("before", "after", "items", "threshold", "indicators", "groups", "causes", "moved", "reference")
     payload = json.dumps(
-        {key: data.get(key) for key in keys} | {"word": list(word), "kinds": KINDS, "said": SAID, "details": details},
+        {key: data.get(key) for key in keys} | {"word": list(word), "kinds": KINDS, "said": SAID, "details": details, "cases": cases},
         ensure_ascii=False, separators=(",", ":"), allow_nan=False,
     )
     payload = as_data(payload)
+    case_field = ('<label class="field"><span>Review case</span><select data-ba-case>'
+                  '<option value="">All cases</option>' + "".join(
+                      f'<option value="{esc(rid)}">{esc(rid)} · {esc(info["title"])}</option>'
+                      for rid, info in cases.items()) + '</select></label>') if cases else ""
     legend = (
         '<p class="ba-legend" aria-hidden="true"><span><span class="ba-key is-below"></span>lower after</span> '
         '<span><span class="ba-key is-above"></span>higher after</span> '
@@ -489,11 +493,14 @@ def grid(data, word, details=""):
         '<div class="ba-board" data-before-after>'
         '<div class="ba-controls" hidden><div class="filter-row">'
         '<label class="field grow"><span>Name</span><input type="search" data-ba-filter placeholder="Filter by name" autocomplete="off" spellcheck="false"></label>'
+        + case_field
+        + '<label class="field" data-ba-place-field hidden><span>Geography</span><select data-ba-place><option value="">All places</option></select></label>'
         '<label class="field" data-ba-cause-field hidden><span>Cause</span><select data-ba-cause><option value="">Any</option></select></label>'
         '<label class="field" data-ba-group-field hidden><span>Group</span><select data-ba-group><option value="">All</option></select></label>'
         '<label class="field" data-ba-kind-field hidden><span>Class</span><select data-ba-kind><option value="">Any</option></select></label>'
         '</div><p class="ba-count" data-ba-count role="status" aria-live="polite"></p></div>'
-        f"{legend}"
+        + ('<p data-ba-case-link hidden></p>' if cases else "")
+        + f"{legend}"
         f'<div class="table-wrap ba-grid-wrap" role="region" aria-label="After divided by before, per {esc(one)} and {esc(word[0])}" tabindex="0">'
         f'<table class="ba-grid" style="--n:{len(data["indicators"])}"><thead><tr><th scope="col" class="ba-name">{esc(one.capitalize())}</th>{head}</tr></thead>'
         f"<tbody>{rows}</tbody></table></div>"
@@ -530,7 +537,7 @@ def reading(data, word):
     )
 
 
-def body(data, back=None, said=plain, file=None, up="", details="", opening="", diagnostics=""):
+def body(data, back=None, said=plain, file=None, up="", details="", opening="", diagnostics="", cases=None):
     """The page of one comparison, without a frame. `back` is `(address, label)` of where
     the reader came from, `said` how a text of the file is shown, `file` the address of the
     comparison as a file, `up` the way from the page to the folder that holds `assets/`,
@@ -566,7 +573,7 @@ def body(data, back=None, said=plain, file=None, up="", details="", opening="", 
         + classes_block(data)
         + causes_table(data, said)
         + indicators_table(data, said, word)
-        + grid(data, word, details)
+        + grid(data, word, details, cases)
         + (f'<h2 id="notes">Notes</h2><ul class="plain">{notes}</ul>' if notes else "")
         + reading(data, word)
         + as_file
@@ -617,8 +624,10 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
     described = title
     if data:
         described = f'{title}: which {many} moved, in which {words(data)[1]}, and what caused it.'
+        from .cases import comparison_cases
+        cases = comparison_cases(site) if site.config.get("case_review") else None
         inner = body(data, back, lambda text: inline(site, text, ""), f'api/v1/{name.removesuffix(".html")}.json',
-                     opening=opening, diagnostics=diagnostics_body)
+                     opening=opening, diagnostics=diagnostics_body, cases=cases)
     else:
         crumb = f'<p class="crumb"><a href="{esc(back[0])}">{esc(back[1])}</a></p>' if back else ""
         inner = f'{crumb}<h1>{esc(title)}</h1>{opening}{diagnostics_body}'

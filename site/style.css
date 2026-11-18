@@ -318,6 +318,13 @@ select { /* drawn here, so that Safari does not fall back to its small native co
 .meter i.help { background: var(--wait); border-color: var(--wait); }
 .meter i.fail { background: var(--fail); border-color: var(--fail); }
 .meter i.gap { border-color: var(--index); background: linear-gradient(var(--index), var(--index)) center / 55% 1.5px no-repeat; }
+.off-mark { display: inline-block; font: 700 1rem/1 sans-serif; }
+.off-mark.not-a-defect::before { content: "ⓘ"; }
+.off-mark.withdrawn::before { content: "⊖"; }
+.review-workflow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem,100%),1fr)); padding: 0; margin: 0 0 var(--s5); gap: var(--s4); list-style: none; }
+.review-workflow li { padding: var(--s3) var(--s4); border-left: 3px solid var(--index-soft); }
+.review-workflow a { font-weight: 800; }
+.review-workflow span { display: block; color: var(--muted); margin-top: var(--s1); }
 .meter.off { width: .875rem; height: .4375rem; border: 1.5px dashed var(--line-strong); border-radius: 2px; }
 .tag { font-size: var(--t-xs); font-weight: 700; color: var(--muted); white-space: nowrap; }
 
@@ -983,3 +990,14 @@ html.run-has-full { overflow: hidden; }
   .run-term-tools, .run-play, .run-progress, .run-clock, .run-switch { display: none; }
   .run-tabs { display: none; }
 }
+
+/* Source and case registers share their search and table layout. */
+.prose.wide > [data-register] { max-width: none; }
+[data-register] .filter-row { align-items: end; }
+[data-register] .table-wrap { margin-top: .75rem; }
+[data-register] td:first-child { width: 55%; }
+[data-register] tr[hidden], [data-register] form[hidden] { display: none; }
+.ba-controls select { max-width: min(32rem, 100%); }
+
+.build-cases { margin-block: var(--s4); }
+.build-cases > summary { cursor: pointer; font-weight: 700; color: var(--index); }

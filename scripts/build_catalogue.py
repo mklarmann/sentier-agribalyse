@@ -1,6 +1,7 @@
 """Refresh the public browse index using ADEME's open food table and foreground metadata."""
 
 import csv
+import hashlib
 import json
 import lzma
 import re
@@ -40,8 +41,12 @@ def foods():
 def foreground_labels():
     flows = set()
     parameters = set()
-    with lzma.open(ROOT / "source/AGB32_ecoinvent_free.CSV.xz", "rt", encoding="latin-1") as stream:
-        processes = stream.read().split("\nProcess\n")
+    with lzma.open(ROOT / "source/AGB32_ecoinvent_free.CSV.xz", "rb") as stream:
+        raw = stream.read()
+    evidence = json.loads((ROOT / "site/inventory-quality-evidence.json").read_text())
+    if hashlib.sha256(raw).hexdigest() != evidence["source_sha256"]:
+        raise ValueError("Foreground export differs from the reviewed build")
+    processes = raw.decode("latin-1").replace("\r\n", "\n").split("\nProcess\n")
     for process in processes[1:]:
         # The stripped release still has empty process shells from other libraries.
         # Read only the release's own namespace, and never publish exchange or parameter values.

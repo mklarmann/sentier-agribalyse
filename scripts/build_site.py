@@ -29,7 +29,7 @@ import github_api  # noqa: E402
 import last_run  # noqa: E402
 import triage  # noqa: E402
 from sitebuild import review as sitebuild_review  # noqa: E402
-from sitebuild import beforeafter, contributions, data, findings, lastrun, overview, pages, prose, shell, status, theme  # noqa: E402
+from sitebuild import beforeafter, cases, contributions, data, findings, lastrun, overview, pages, prose, quality, shell, status, theme  # noqa: E402
 from sitebuild.text import esc, plural  # noqa: E402,F401
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,7 +69,7 @@ def build_date():
 class Site:
     def __init__(self, out, source_repository=None, source_ref=None, preview_url=None,
                  issues_snapshot=None, offline=False, require_issues=False, root=ROOT,
-                 last_run_snapshot=None, built_by=None):
+                 last_run_snapshot=None, built_by=None, inventory_archive=None, measure_inventory=False):
         self.out = Path(out)
         self.root = Path(root)
         # A record that `community.py check` refuses must not be built into a page either.
@@ -142,6 +142,7 @@ class Site:
                 raise ValueError('a page shows the last run, and site/config.json has no "run" that says which workflow')
             self.run_reader = last_run
             self.last_run = last_run.load(self.built_by, self.run, last_run_snapshot, offline)
+        self.quality = quality.measure(self, inventory_archive, measure_inventory and not offline) if self.config.get("inventory_quality") else None
         self.build_views, self.build_sections = shell.build_views(self)
         self.built = build_date()
         self.revision = revision(self.root)
@@ -184,7 +185,7 @@ class Site:
     # ------------------------------------------------------------------ helpers
 
     def label(self, stage):
-        return community.status_label(stage, self.provider)
+        return status.display_label(stage, self.provider)
 
     def release_name(self, rid):
         names = {r["id"]: r["name"] for r in self.records_config["releases"]}
@@ -306,6 +307,11 @@ class Site:
         """What a prose page can ask for with a marker, <!-- name -->; listed in site/README.md.
         (function, takes the full width of the page)."""
         return {
+            "source-register": (lambda: cases.source_list(self), True),
+            "inventory-quality": (lambda: quality.detail(self), True),
+            "inventory-quality-summary": (lambda: quality.overview(self), False),
+            "build-case-register": (lambda: cases.build_register(self), False),
+            "case-register": (lambda: cases.case_list(self), True),
             "findings-list": (lambda: findings.findings_list(self, up), True),
             "contributions-list": (lambda: contributions.contributions_list(self, up), True),
             "feedback-lists": (lambda: pages.feedback_lists(self, up), True),
@@ -465,6 +471,8 @@ class Site:
             self.page(doc["page"], self.document(doc))
         for f in self.triage["findings"]:
             self.page(f'findings/{f["id"]}.html', self.finding_page(f), f["changed"])
+        if self.config.get("case_review"):
+            cases.write(self)
         self.write_json("findings/index.json", findings.list_index(self), one_per_line="rows")
         for c in self.contributions:
             self.page(f'contributions/{c["id"]}.html', self.contribution_page(c))
@@ -490,6 +498,8 @@ class Site:
         # GitHub Pages serves 404.html for any missing address, so its links start at the root.
         self.write("404.html", shell.not_found(self))
         data.write_data(self)
+        if self.quality:
+            self.write_json("api/v1/inventory-quality.json", self.quality)
         if self.last_run is not None:
             self.write_json("api/v1/last-run.json", lastrun.public_record(self.last_run, self))
         self.write("sitemap.xml", pages.sitemap(self))
@@ -528,9 +538,9 @@ class Site:
 
 
 def build(out, source_repository=None, source_ref=None, preview_url=None, issues_snapshot=None,
-          offline=False, require_issues=False, root=ROOT, last_run_snapshot=None, built_by=None):
+          offline=False, require_issues=False, root=ROOT, last_run_snapshot=None, built_by=None, inventory_archive=None, measure_inventory=False):
     Site(out, source_repository, source_ref, preview_url, issues_snapshot, offline, require_issues, root,
-         last_run_snapshot, built_by).build()
+         last_run_snapshot, built_by, inventory_archive, measure_inventory).build()
 
 
 if __name__ == "__main__":
@@ -543,9 +553,12 @@ if __name__ == "__main__":
     parser.add_argument("--offline", action="store_true", help="Do not read issues from GitHub")
     parser.add_argument("--require-issues", action="store_true", help="Fail when GitHub cannot be read")
     parser.add_argument("--last-run", type=Path, help="Record of the last build (JSON) instead of reading GitHub")
+    parser.add_argument("--inventory-archive", type=Path, help="Assess these exact ecoSpold export bytes against the run digest")
+    parser.add_argument("--measure-inventory", action="store_true", help="Assess the matching tagged ecoSpold export for this build")
     parser.add_argument("--built-by", metavar="OWNER/NAME",
                         help="The repository whose workflow builds this copy: its builds are shown, "
                              "and a copy built by another repository than the site's own says so on every page")
     args = parser.parse_args()
     build(args.out, args.source_repository, args.source_ref, args.preview_url, args.issues,
-          args.offline, args.require_issues, last_run_snapshot=args.last_run, built_by=args.built_by)
+          args.offline, args.require_issues, last_run_snapshot=args.last_run, built_by=args.built_by,
+          inventory_archive=args.inventory_archive, measure_inventory=args.measure_inventory)

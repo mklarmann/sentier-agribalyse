@@ -12,7 +12,7 @@ Find a food by its French or English name, AGRIBALYSE code or CIQUAL code. You c
 <p id="catalogue-status" role="status"></p>
 <ul id="catalogue-results" aria-label="Catalogue results"></ul>
 <button id="catalogue-more" class="button" type="button" hidden>Show more results</button>
-<noscript><p>Search foods directly in <a href="https://agribalyse.ademe.fr/">ADEME’s food explorer</a>. The sources below document the foreground inventory.</p></noscript>
+<p id="catalogue-fallback">Search foods directly in <a href="https://agribalyse.ademe.fr/">ADEME’s food explorer</a>. The sources below document the foreground inventory.</p>
 </div>
 
 <style>

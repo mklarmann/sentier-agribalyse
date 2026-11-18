@@ -143,7 +143,7 @@
     var releases = r[5].map(function (i) { return index.releases[i][1]; }).join(", ");
     if (r[7] === "") {
       stage = '<div class="record-stage off"><span class="stage-label">' + esc(status[1]) + '</span><span class="stage-sub">' +
-        '<span class="meter off" aria-hidden="true"></span><span class="tag">off the path</span></span></div>';
+        '<span class="off-mark ' + esc(status[0]) + '" aria-hidden="true"></span><span class="tag">off the path</span></span></div>';
     } else {
       var cells = r[7].split("").map(function (c) { return SEGMENT[c] ? '<i class="' + SEGMENT[c] + '"></i>' : "<i></i>"; }).join("");
       var tags = (r[8] >= 0 ? '<span class="tag">' + esc(index.outcomes[r[8]]) + "</span>" : "") +

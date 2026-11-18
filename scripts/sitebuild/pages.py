@@ -139,7 +139,7 @@ def feedback_lists(site, up=""):
          f"No finding is recorded as reported to {p} and still without an answer."),
         ("answered", f"Answered by {p}", answered, "answered", answer_line(site, up), f"No answer from {p} is recorded yet."),
         ("resolved", "Resolved", fixed, "fixed", None, "No finding is recorded as resolved yet."),
-        ("ready", "Repeated, not yet reported", ready, "confirmed", None,
+        ("ready", site.label("confirmed"), ready, "confirmed", None,
          "No finding is waiting to be reported."),
     )
     tally = '<ul class="tally">' + "".join(

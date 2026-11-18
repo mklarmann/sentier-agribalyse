@@ -55,6 +55,7 @@ def shell(site, title, body, current, up="", page=None, description=None, head="
     full = c["home_title"] if home else f'{title} · {c["title_suffix"]}'
     described = description or c["description"]
     section = None if home else site.build_sections.get(page)
+    current = c.get("nav_parents", {}).get(current, current)
     subnav = ""
     if section:
         current = site.walk_page

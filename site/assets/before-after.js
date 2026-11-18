@@ -9,7 +9,7 @@
   try { D = JSON.parse(board.querySelector('[data-ba-data]').textContent); } catch (e) { return; }
   var STEP = 100;
   var q = function (sel) { return board.querySelector(sel); };
-  var state = { filter: '', cause: '', group: '', kind: '', sort: null, limit: STEP, chosen: null, list: [] };
+  var state = { place: '', reviewCase: '', filter: '', cause: '', group: '', kind: '', sort: null, limit: STEP, chosen: null, list: [] };
   var KINDS = D.kinds || {}, SAID = D.said || {};
   var parts = {}; // the breakdowns of single items that were loaded, by file name
   var threshold = D.threshold || 0;
@@ -105,6 +105,8 @@
     var f = state.filter.toLowerCase();
     var list = D.moved.filter(function (item) {
       return (!f || (item.name + ' ' + (item.place || '') + ' ' + item.id).toLowerCase().indexOf(f) >= 0) &&
+        (!state.place || state.place === item.place) &&
+        (!state.reviewCase || D.cases[state.reviewCase].patches.some(function (p) { return item.causes.indexOf(p) >= 0; })) &&
         (!state.cause || item.causes.indexOf(state.cause) >= 0) &&
         (!state.group || item.group === state.group) &&
         (!state.kind || has(item, state.kind));
@@ -153,8 +155,12 @@
   function render() {
     head();
     state.list = rows();
+    if (state.chosen && state.list.indexOf(state.chosen) < 0) {
+      q('[data-ba-detail]').hidden = true;
+      state.chosen = null;
+    }
     q('.ba-grid tbody').innerHTML = state.list.length ? state.list.slice(0, state.limit).map(rowHtml).join('') :
-      '<tr class="empty"><td colspan="' + (D.indicators.length + 1) + '">Nothing matches these filters.</td></tr>';
+      '<tr class="empty"><td colspan="' + (D.indicators.length + 1) + '">' + (state.reviewCase ? 'No listed dataset matches this case and the selected filters.' : 'Nothing matches these filters.') + '</td></tr>';
     counted();
   }
 
@@ -273,6 +279,34 @@
   // ------------------------------------------------------------------ start
   var used = {};
   D.moved.forEach(function (item) { item.causes.forEach(function (c) { used[c] = 1; }); });
+  var places = Array.from(new Set(D.moved.map(function (item) { return item.place; }).filter(Boolean))).sort();
+  fill(q('[data-ba-place]'), q('[data-ba-place-field]'), places.map(function (p) { return [p, p]; }));
+  q('[data-ba-place]').addEventListener('change', function (e) { state.place = e.target.value; state.limit = STEP; render(); });
+  var caseSelect = q('[data-ba-case]');
+  if (caseSelect) {
+    function readCase() {
+      var id = new URL(location.href).searchParams.get('case');
+      state.reviewCase = Object.prototype.hasOwnProperty.call(D.cases, id) ? id : '';
+      caseSelect.value = state.reviewCase;
+      var linkBox = q('[data-ba-case-link]');
+      linkBox.hidden = !state.reviewCase;
+      if (state.reviewCase) {
+        var link = document.createElement('a');
+        link.href = 'cases/' + encodeURIComponent(id) + '.html';
+        link.textContent = 'Open case ' + id + ' · evidence and patch review';
+        linkBox.replaceChildren(link);
+      }
+      state.limit = STEP;
+    }
+    caseSelect.addEventListener('change', function () {
+      var url = new URL(location.href);
+      if (caseSelect.value) url.searchParams.set('case', caseSelect.value);
+      else url.searchParams.delete('case');
+      history.replaceState(null, '', url); readCase(); render();
+    });
+    window.addEventListener('popstate', function () { readCase(); render(); });
+    readCase();
+  }
   fill(q('[data-ba-cause]'), q('[data-ba-cause-field]'), Object.keys(used).sort().map(function (c) { return [c, c]; }));
   fill(q('[data-ba-group]'), q('[data-ba-group-field]'), Object.keys(D.groups || {}).map(function (g) { return [g, D.groups[g]]; }));
   var met = Object.keys(KINDS).filter(function (kind) { return D.moved.some(function (item) { return has(item, kind); }); });
