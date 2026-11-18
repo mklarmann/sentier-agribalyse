@@ -2,6 +2,8 @@
 
 How well does the rebuilt inventory represent one kilogram of the product it describes? A link identifies a supplier. The resulting inventory also depends on the amount purchased, the unit conversion, the choice of geography, any added or amended exchanges and the factors applied to emissions.
 
+The measurements below cover the build from the distributable AGRIBALYSE source. A separate run checks how closely ADEME’s full licensed input reproduces the published climate scores. [Compare both inputs](../site/build.md).
+
 <!-- inventory quality measurements -->
 
 ## Measured inventory checks

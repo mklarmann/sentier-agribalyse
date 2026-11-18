@@ -51,7 +51,8 @@ KEPT = {
     "needs a token": "The record the run kept was not read: this copy of the site was built without access to it.",
     "unreadable": "The record the run kept could not be read.",
 }
-VERDICT = {"yes": "It worked", "no": "It did not work", "unknown": "No record of its own"}
+VERDICT = {"yes": "It worked", "no": "It did not work", "blocked": "All stages completed",
+           "unknown": "No record of its own"}
 STOPPED = ("failure", "cancelled", "timed_out", "startup_failure")
 SHOWN_STEPS = ("Set up job", "Complete job")  # GitHub's own two; the rest are the workflow's
 # A run that was made for a tag is kept under that tag. Every sentence about that stands here,
@@ -277,7 +278,7 @@ def run_line(site, record):
 
 
 def worked(record):
-    """(yes | no | unknown, the sentence). On GitHub a run worked when the run says so and
+    """(yes | no | blocked | unknown, the sentence). On GitHub a run worked when the run says so and
     GitHub says so. A step that can't run in this place is no failure."""
     run, account = record.get("run"), record.get("summary")
     if run is None:
@@ -304,6 +305,8 @@ def worked(record):
         return "no", (f"<strong>No.</strong> The {plural(len(done), 'step')} of the run completed, "
                       f"but GitHub records that the run {ended}{at}.")
     if steps and len(done) == len(steps):
+        if account.get("blocking") and conclusion == "success":
+            return "blocked", f"All {plural(len(done), 'stage')} completed. The run recorded an unmet requirement."
         reason = " See what blocked the build below." if account.get("blocking") else ""
         return "no", f"<strong>No.</strong> All {plural(len(done), 'step')} completed. The overall run failed.{reason}"
     failed = [s for s in wrong if s["status"] == "failed"]
@@ -460,9 +463,14 @@ def showcase(site, record, up, title="The last run", ids=""):
     )
     # The stage comes first: one line says which run it is and how it ended, and the three
     # answers stand right below the stage.
+    requirement = ""
+    if kind == "blocked":
+        reasons = [sentence(site, reason, up) for reason in account["blocking"]]
+        label = "Unmet requirement" if len(reasons) == 1 else "Unmet requirements"
+        requirement = f'<div class="run-blocking"><strong>{label}</strong> {listed(reasons)}</div>'
     head = (
         f'<div class="run-top"><h2 class="run-title" id="{ids}the-last-run">{esc(title)}</h2>'
-        f'<p class="run-verdict run-{kind}">{VERDICT[kind]}</p>'
+        f'<p class="run-verdict run-{kind}">{VERDICT[kind]}</p>{requirement}'
         f'<p class="run-when">{run_line(site, record)}</p></div>'
     )
     below = '<dl class="run-answers">' + "".join(f"<div><dt>{label}</dt><dd>{value}</dd></div>" for label, value in answers) + "</dl>"
@@ -648,7 +656,8 @@ def last_run(site, up=""):
     script = f'<script src="{up}assets/replay.js" defer></script>' if record.get("summary") or (record.get("of_tag") or {}).get("summary") else ""
     of_tag = record.get("of_tag")
     if not of_tag:
-        return view(site, record, up, f"The last {name}") + script
+        title = f"Recorded {name}" if record.get("local") else f"The last {name}"
+        return view(site, record, up, title) + script
     made = record | of_tag | {"newer": None, "of_tag": None}
     tag = (made.get("summary") or {}).get("tag") or made["run"].get("branch") or ""
     buttons = (

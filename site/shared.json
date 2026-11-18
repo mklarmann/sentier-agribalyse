@@ -2,7 +2,7 @@
   "note": "The files this repository shares with sentier-bafu. Do not edit them here: change them in sentier-bafu, then run `python3 scripts/shared_files.py take`. `python3 scripts/shared_files.py check` compares.",
   "repository": "https://github.com/mklarmann/sentier-bafu",
   "branch": "eaternity/integration",
-  "commit": "c9375a7a3088a3a27d8aa6aaec241329dd2208c4",
+  "commit": "475621b270bdae2e9e9c0c01ca1bead3a2cfb7c2",
   "folders": [
     "schema",
     "scripts/runrecord",
@@ -31,7 +31,7 @@
     "scripts/sitebuild/contributions.py": "853468fff5eadef7b04604bc8d62d9dc5a7978cbe709795535d1b3f282da4213",
     "scripts/sitebuild/data.py": "8b7b7edf44d335a880bc35d612ceaafae9a7468304939b69711345c8f83463e7",
     "scripts/sitebuild/findings.py": "6679e767691f59ef9df5d6a5eb8053c6a575c72b2086ebf0f37a64e9d4db07f4",
-    "scripts/sitebuild/lastrun.py": "81a9d2ae9fb4d82e59c91d09a8044bec8ad060f043543be66ff9905aa573a231",
+    "scripts/sitebuild/lastrun.py": "58d0f9088ddca077295da0c6231d86641915a13b350e0c96bc270e54791c67dc",
     "scripts/sitebuild/overview.py": "11bf932da6752f436ca20750c832840195548ddfcb62de4b4692128b41673b05",
     "scripts/sitebuild/pages.py": "912b025f828fbf1d55b13f91fe60b85005ffc219bba0a9037da5b3e162ec39d6",
     "scripts/sitebuild/prose.py": "b476eb442872e2851e14f03900602330d99b719f197abab17f59e55245cb4ba6",
@@ -54,7 +54,7 @@
     "site/assets/register.js": "32dd0e4e0d184177da55445983bc48e99d7a7bf1693698860376ef27b2f6c9de",
     "site/assets/replay.js": "558eab71a8dfd325338c267f5680c719e7139f56570928c465d382e6c8004fe0",
     "site/assets/review.js": "42f8b71db07841070e765cf41536a7f34453545531b7bc165bb4292ad2817395",
-    "site/style.css": "456a8ad12482cf1fcd6f1e8e580207bc8c4b712215d73f52a099b150e17cfcc7"
+    "site/style.css": "71e2272d8f199348c6c9a1e9de843eb81e431faca6371e38910c48db96fdf7e5"
   },
   "sets": [
     "site"

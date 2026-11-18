@@ -1,6 +1,21 @@
 # Import and build
 
-Follow AGRIBALYSE 3.2 from ADEME’s export to a scored inventory on ecoinvent 3.9.1. Select a stage to read the terminal output recorded on the licensed machine. The Score stage shows how closely the results reproduce ADEME’s reference values. Export shows what happens when the licensed background is stripped and restored.
+We ran the same AGRIBALYSE 3.2 import on ecoinvent 3.9.1 using two source files. The climate check asks whether at least 99% of comparable foods fall within 5% of ADEME’s published result.
+
+<!-- source comparison -->
+
+| AGRIBALYSE 3.2 input | Foods within 5% of ADEME | Outside tolerance | 99% target |
+|---|---|---:|---|
+| Distributable source | 2,163 of 2,450 (88.3%) | 287 | Missed |
+| Full licensed source | 2,446 of 2,450 (99.8%) | 4 | Passed |
+
+<!-- end source comparison -->
+
+The distributable file omits 210 processes that ADEME adapted from ecoinvent. Where reconstruction is incomplete, the import can link to an unmodified supplier or leave an input unlinked. The full licensed file retains those adaptations. [Why the source changed](https://github.com/sentier-dev/sentier-agribalyse/pull/15) · [See the verification run](runs.md#full-source-verification).
+
+Both inputs produced a local Brightway export. The distributable input also passed the strip-and-refill check. The exporter stopped the full-source inventory from being packaged for sharing because it still contains licensed ecoinvent blocks.
+
+The replay below follows the **distributable source** through all six stages. Select **Score** for its climate check or **Export** for the strip-and-refill test.
 
 <!-- generated: last-run -->
 

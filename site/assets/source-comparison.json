@@ -1,0 +1,12 @@
+{
+  "started": "2026-11-18 23:31:27 CET",
+  "revision": "2f7f8f3ecbf8886eef1152bf24bcd5276b04a5bc",
+  "compared": 2450,
+  "within_5pct": 2446,
+  "check_lines": [
+    "    ok   the build read the full export",
+    "    ok   climate change within 5% of ADEME for at least 99% of products"
+  ],
+  "brightway_parity": "  parity check: PASS (57 scores, max rel error 1.24e-15)",
+  "stripped_export": "refused-licensed-blocks"
+}

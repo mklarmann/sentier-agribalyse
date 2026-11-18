@@ -788,8 +788,10 @@ a.download::after {
 .run-verdict::before { content: ""; flex: none; width: .7rem; height: .7rem; border-radius: 50%; background: currentColor; }
 .run-verdict.run-yes { background: var(--good-tint); color: var(--good-ink); }
 .run-verdict.run-yes::before { width: .8rem; height: .8rem; border-radius: 0; -webkit-mask: var(--tick) center / contain no-repeat; mask: var(--tick) center / contain no-repeat; }
-.run-verdict.run-no { background: var(--fail-tint); color: var(--fail); }
+.run-verdict.run-no, .run-verdict.run-blocked { background: var(--fail-tint); color: var(--fail); }
 .run-verdict.run-unknown { background: var(--paper-deep); color: var(--muted); }
+.run-blocking { flex-basis: 100%; }
+.run-blocking strong { color: var(--fail); }
 .run-when { font-size: var(--t-sm); color: var(--muted); line-height: 1.5; }
 .run-when code { font-size: .8125rem; }
 .run-answers { margin-top: var(--s5); display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--s4) var(--s6); }

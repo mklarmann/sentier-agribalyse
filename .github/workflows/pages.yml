@@ -45,6 +45,8 @@ jobs:
           enable-cache: false
       - name: Verify inventory quality measurements
         run: uv run --frozen scripts/inventory_quality.py --check
+      - name: Verify the comparison of source inputs
+        run: python3 scripts/source_comparison.py --check
       - name: Build the site from the records and the issues
         env:
           GITHUB_TOKEN: ${{ github.token }}
