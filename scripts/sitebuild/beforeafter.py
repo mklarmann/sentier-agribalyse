@@ -606,7 +606,7 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
             if notice.name in ("LICENSE", "NOTICE") and notice.parent.name == "licenses":
                 site.copy(package.locate_file(notice), f"assets/diagnostics-{notice.name}.txt")
         head += '<link rel="stylesheet" href="assets/diagnostics.css"><script src="assets/diagnostics.js" defer></script>'
-        diagnostics_body = '<section aria-labelledby="diagnostics"><h2 id="diagnostics">Diagnostics by build step</h2>'
+        diagnostics_body = '<section class="ba-diagnostics" aria-labelledby="diagnostics"><h2 id="diagnostics">Diagnostics by build step</h2>'
         diagnostics_body += diagnostics_page.body(diagnostics, title=False) + "</section>"
         jumps.append(("diagnostics", "Build-step diagnostics"))
     if data:

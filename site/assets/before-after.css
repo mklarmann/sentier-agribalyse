@@ -7,9 +7,8 @@
    a row of 25 ratios cannot be stacked. */
 /* what is hidden stays hidden, whatever a rule below lays out */
 .ba-page [hidden], .ba-board [hidden], [data-review] [hidden] { display: none !important; }
-.wrap.ba-page { max-width: calc(104rem + 2 * var(--gutter)); }
 .ba-page .prose.wide > :is(h1, h2, p, ul, .ba-sides, .ba-figures) { max-width: 60rem; }
-.prose.wide > .ba-board { max-width: none; }
+.ba-page .prose.wide > .ba-diagnostics, .prose.wide > .ba-board { max-width: none; }
 .ba-board > :is(p, .ba-controls, .ba-static, .ba-detail) { max-width: 72rem; }
 .ba-figures { display: flex; flex-wrap: wrap; gap: var(--s4) var(--s6); margin-top: var(--s5); }
 .ba-figures > div { display: flex; flex-direction: column-reverse; min-width: 0; }
