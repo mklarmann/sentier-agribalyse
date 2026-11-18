@@ -10,7 +10,7 @@ Revision `2f7f8f3`. The review has evidence for 2 of 3 equally weighted checks.
 
 | Check | Result | Observation |
 |---|---|---|
-| Required climate factors | Pass | 0 of 1 audited climate methods failed the required greenhouse-gas coverage check. |
+| Required climate factors | Pass | 1 of 1 audited climate methods covered the required greenhouse-gas flows. |
 | Reproduction of climate results | Fail | 2,163 of 2,450 climate scores fall within 5% of ADEME (88.3%). The acceptance target is 99%. |
 | Evidence for an EF data-quality rating | Absent | Rated 0 of 3 own criteria. |
 
@@ -26,14 +26,11 @@ These counts locate evidence for a reviewer. Assigning a product rating requires
 
 <!-- end inventory quality measurements -->
 
-## Evidence from this build
+## Trace the results
 
-| Question | Evidence to review |
-|---|---|
-| Did the import preserve the intended exchanges? | The [mapping record](../site/mapping.md) gives supplier-link counts, unit conversions and exchanges dropped. Review the identity, quantity and destination of changed exchanges. |
-| Are the climate factors present? | The final inventory passed the build’s check for required core greenhouse-gas flows under its climate method. Other indicators and exclusions need their own coverage evidence. |
-| Do the impact results reproduce ADEME’s values? | Of 2,450 climate scores with a non-zero reference after the near-zero rule, 2,163 (88.3%) fall within 5% of ADEME. The review target is 99%. The [Score stage](../site/build.md#run-step-5) records the test. |
-| Does the stripped export reconstruct the same inventory? | The [Export stage](../site/build.md#run-step-6) records the checks on the stripped columns, the refilled matrices and the recalculated scores. |
+- [Mapping](../site/mapping.md) shows how many supplier links were resolved, where unit conversions were used and how many exchanges were dropped.
+- The [Score stage](../site/build.md#run-step-5) records the climate acceptance test. Open Comparison in the Build navigation to follow differences across 19 EF 3.1 indicators.
+- The [Export stage](../site/build.md#run-step-6) shows whether refilling the stripped package reproduces the original matrices and scores.
 
 ## What an Inventory Quality Score would assess
 

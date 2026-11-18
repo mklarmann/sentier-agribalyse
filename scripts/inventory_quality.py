@@ -2,7 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = ["sentier-diagnostics"]
 # [tool.uv.sources]
-# sentier-diagnostics = { git = "https://github.com/sentier-dev/sentier-diagnostics", rev = "43a9efb049baedbd0931647abeebcd076688ad7e" }
+# sentier-diagnostics = { git = "https://github.com/sentier-dev/sentier-diagnostics", rev = "09e2c4f5fc1d377ff9266a0efe6c0edf622a2b82" }
 # ///
 """Record safe quality evidence from a licensed run and render its rows in the review site."""
 
@@ -153,10 +153,10 @@ def factor_coverage(data):
         "climate_factors",
         Verdict.FAIL if failed else Verdict.PASS,
         (count - failed) / count,
-        "{failed} of {methods} audited climate methods failed the required greenhouse-gas coverage check.",
+        "{passed} of {methods} audited climate methods covered the required greenhouse-gas flows.",
         [
             Observation(
-                "failed", failed, how="number of failed methods in the final characterization audit"
+                "passed", count - failed, how="audited climate methods minus methods with missing required coverage"
             ),
             Observation("methods", count, at="characterization_audit.json:climate_methods_audited"),
         ],

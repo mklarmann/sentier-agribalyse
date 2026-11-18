@@ -4,7 +4,7 @@ The site is built from the records, not written by hand: one page per finding an
 
 ```sh
 uv run --frozen scripts/inventory_quality.py --check
-uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@43a9efb049baedbd0931647abeebcd076688ad7e' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@09e2c4f5fc1d377ff9266a0efe6c0edf622a2b82' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
