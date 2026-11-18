@@ -2,6 +2,30 @@
 
 How well does the rebuilt inventory represent one kilogram of the product it describes? A link identifies a supplier. The resulting inventory also depends on the amount purchased, the unit conversion, the choice of geography, any added or amended exchanges and the factors applied to emissions.
 
+<!-- inventory quality measurements -->
+
+## Measured inventory checks
+
+Revision `2f7f8f3`. The review has evidence for 2 of 3 equally weighted checks.
+
+| Check | Result | Observation |
+|---|---|---|
+| Required climate factors | Pass | 0 of 1 audited climate methods failed the required greenhouse-gas coverage check. |
+| Reproduction of climate results | Fail | 2,163 of 2,450 climate scores fall within 5% of ADEME (88.3%). The acceptance target is 99%. |
+| Evidence for an EF data-quality rating | Absent | Rated 0 of 3 own criteria. |
+
+### Reference outputs in the source inventories
+
+Of 17,966 source processes, 16,168 have at least one named product or waste-treatment output with a unit and an explicit, finite, nonzero quantity. 0 fail this check and 1,798 have insufficient evidence. Co-products are assessed together within their process. A parameter or formula requires its evaluated quantity before it can pass. The unit’s suitability and the amount’s accuracy require further evidence.
+
+### What the AGRIBALYSE source documents
+
+Across 17,966 source processes, 482 declare geography, 459 declare technology and 478 declare a time period. 2,491 describe collection methods and 383 include a representativeness statement.
+
+These counts locate evidence for a reviewer. Assigning a product rating requires a documented sampling or estimation basis, independently assessed fit to the product, and the modelling basis of the included datasets. The current review record has no verified ratings for those inputs.
+
+<!-- end inventory quality measurements -->
+
 ## Evidence from this build
 
 | Question | Evidence to review |

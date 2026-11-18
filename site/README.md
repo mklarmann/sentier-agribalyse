@@ -3,7 +3,8 @@
 The site is built from the records, not written by hand: one page per finding and per contribution, a page per AGRIBALYSE release, the overview, what changed, and the pages of prose named in `site/config.json`.
 
 ```sh
-uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@d8dd120afb4837778d9ef51d3cb43be572216d0a' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
+uv run --frozen scripts/inventory_quality.py --check
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@43a9efb049baedbd0931647abeebcd076688ad7e' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```

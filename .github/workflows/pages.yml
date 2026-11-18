@@ -43,6 +43,8 @@ jobs:
         with:
           python-version: "3.12"
           enable-cache: false
+      - name: Verify inventory quality measurements
+        run: uv run --frozen scripts/inventory_quality.py --check
       - name: Build the site from the records and the issues
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -52,7 +54,7 @@ jobs:
         # published site. Links to source files lead to the repository and the branch this
         # run was made of, which is where those files are: on main of this repository that
         # is what site/config.json says anyway, on a fork it is the fork's branch.
-        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@d8dd120afb4837778d9ef51d3cb43be572216d0a' python scripts/build_site.py --last-run site/licensed-run.json --require-issues --built-by "$GITHUB_REPOSITORY" --source-repository "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" --source-ref "$GITHUB_REF_NAME"
+        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@43a9efb049baedbd0931647abeebcd076688ad7e' python scripts/build_site.py --last-run site/licensed-run.json --require-issues --built-by "$GITHUB_REPOSITORY" --source-repository "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" --source-ref "$GITHUB_REF_NAME"
       - name: Check links, assets and published file types
         run: uv run --no-project --python 3.12 python scripts/check_site.py _site
       - name: Hand the site, and nothing else, to the deployment

@@ -1,0 +1,26 @@
+{
+  "commit": "2f7f8f3ecbf8886eef1152bf24bcd5276b04a5bc",
+  "source_sha256": "54dc5fcd61f65bdbd0f73fbf7aded26f964f73ea2efcb93f7d741cdc87cdf559",
+  "inventory_hash": "77756b162ce720b81ea813335a005fd65b7536ab49ce9d8c3d1d24928b272a45",
+  "flow_audit": {
+    "methods": 1,
+    "failed": 0
+  },
+  "processes": 17966,
+  "source_outputs": {
+    "pass": 16168,
+    "fail": 0,
+    "absent": 1798
+  },
+  "source_output_standings": {
+    "within target": 16168,
+    "not enough evidence": 1798
+  },
+  "metadata": {
+    "Geography": 482,
+    "Technology": 459,
+    "Time period": 478,
+    "Collection method": 2491,
+    "Representativeness": 383
+  }
+}

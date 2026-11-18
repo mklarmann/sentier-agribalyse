@@ -1,0 +1,29 @@
+{
+  "about": "Separate profiles for source-process output evidence and the build-level review checks.",
+  "absent_charge": 0,
+  "absent_charge_why": "Report evidence coverage separately from the measured outcomes.",
+  "evidence_floor": 1,
+  "bands": [
+    {
+      "name": "within target",
+      "starts_at": 0.99
+    },
+    {
+      "name": "needs review",
+      "starts_at": 0
+    }
+  ],
+  "caps": {
+    "warn": "needs review",
+    "fail": "needs review"
+  },
+  "gate": {
+    "mean_drop": 0.01
+  },
+  "weights": {
+    "climate_factors": 1,
+    "climate_agreement": 1,
+    "ef_data_quality": 1,
+    "source_output": 1
+  }
+}
