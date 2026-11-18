@@ -26,6 +26,10 @@ These counts locate evidence for a reviewer. Assigning a product rating requires
 
 <!-- end inventory quality measurements -->
 
+## Which reference value was checked?
+
+ADEME published corrected spreadsheet rows for seven packaging cases while the 3.2 software retained the earlier values. For a product-level comparison, identify the food, edition and row on both sides. Explaining the overall climate gap requires checking the affected products individually. [Release notice and CIQUAL codes](../site/earlier-reports.md#packaging-for-seven-foods).
+
 ## Trace the results
 
 - [Mapping](../site/mapping.md) shows how many supplier links were resolved, where unit conversions were used and how many exchanges were dropped.

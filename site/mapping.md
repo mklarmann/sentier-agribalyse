@@ -2,6 +2,8 @@
 
 A food inventory brings together ingredients, energy, transport and emissions. The import resolves each supplier input against the product and activity catalogues. For an emission, it looks for a flow in the appropriate environmental compartment so the impact method can characterize it.
 
+In the [foreground catalogue](browse.md), try “peat”. An energy resource entering a process and an emission leaving it have different meanings. Check the direction, compartment, unit and method before choosing a characterization factor. A shared word in two flow names is insufficient evidence for assigning the same factor.
+
 ## What changed during linking
 
 In the recorded run, the import corrected 53,992 input labels and applied 2,116 unit conversions in supplier matching. Its report counts 132,585 linked exchanges out of 135,252 at that matching stage. The final scoring package retains 392,852 exchanges and records 3,917 drops across the assembled inventory. Those counts refer to different stages and populations.

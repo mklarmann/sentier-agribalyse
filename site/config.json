@@ -23,13 +23,17 @@
   "source_ref": "main",
   "home_title": "AGRIBALYSE inventory database: community findings · Sentier",
   "title_suffix": "AGRIBALYSE findings · Sentier",
-  "description": "Users of the AGRIBALYSE life-cycle inventory database record measured findings here, repeat each other's measurements and report them to ADEME.",
+  "description": "Browse AGRIBALYSE 3.2, check community findings against ADEME’s release and follow the results of the ecoinvent build.",
   "sibling_name": "BAFU/UVEK",
   "sibling_url": "https://sentier-dev.github.io/sentier-bafu/",
   "nav": [
     [
       "index.html",
       "Overview"
+    ],
+    [
+      "browse.html",
+      "Browse"
     ],
     [
       "findings.html",
@@ -75,7 +79,7 @@
       "title": "Findings",
       "source": "site/findings.md",
       "page": "findings.html",
-      "description": "Measured observations about ADEME's inventory data. Each finding has a status, a record and a public place where it is discussed."
+      "description": "Find what other users have identified, the release they checked and the public discussion."
     },
     {
       "title": "Feedback to ADEME",
@@ -99,7 +103,7 @@
       "title": "Take part",
       "source": "site/take-part.md",
       "page": "take-part.html",
-      "description": "Report a finding, repeat a measurement or propose a contribution. Everything is discussed in public on GitHub."
+      "description": "Identify a finding, verify someone else’s report or contribute a change on GitHub."
     },
     {
       "title": "Data and terms",
@@ -130,6 +134,19 @@
       "source": "site/runs.md",
       "page": "runs.html",
       "description": "The licensed local import and the automated checks that accompany it."
+    },
+    {
+      "title": "Browse AGRIBALYSE 3.2",
+      "source": "site/browse.md",
+      "page": "browse.html",
+      "description": "Search foods in French or English, elementary flows and parameter names."
+    },
+    {
+      "title": "Earlier reports and release notes",
+      "source": "site/earlier-reports.md",
+      "page": "earlier-reports.html",
+      "nav": "findings.html",
+      "description": "Original sources for published corrections, software reports and methodological questions."
     }
   ],
   "assessments": {
@@ -171,5 +188,27 @@
       "before-after.html",
       "runs.html"
     ]
-  }
+  },
+  "review_workflow": [
+    [
+      "browse.html",
+      "Identify the food, flow or parameter."
+    ],
+    [
+      "findings.html",
+      "Read the observation and check the release."
+    ],
+    [
+      "feedback.html",
+      "Follow the report and ADEME’s response."
+    ],
+    [
+      "contributions.html",
+      "Review a proposed change."
+    ],
+    [
+      "build.html",
+      "Inspect what changed in the inventory and its results."
+    ]
+  ]
 }
