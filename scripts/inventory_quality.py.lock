@@ -3,9 +3,9 @@ revision = 3
 requires-python = ">=3.12"
 
 [manifest]
-requirements = [{ name = "sentier-diagnostics", git = "https://github.com/sentier-dev/sentier-diagnostics?rev=4740326dd6d1b662f01d29d8ac98419979487fbb" }]
+requirements = [{ name = "sentier-diagnostics", git = "https://github.com/sentier-dev/sentier-diagnostics?rev=b971c0aa565862fbf0be622c4d74a130554a455b" }]
 
 [[package]]
 name = "sentier-diagnostics"
 version = "0.1.0"
-source = { git = "https://github.com/sentier-dev/sentier-diagnostics?rev=4740326dd6d1b662f01d29d8ac98419979487fbb#4740326dd6d1b662f01d29d8ac98419979487fbb" }
+source = { git = "https://github.com/sentier-dev/sentier-diagnostics?rev=b971c0aa565862fbf0be622c4d74a130554a455b#b971c0aa565862fbf0be622c4d74a130554a455b" }
