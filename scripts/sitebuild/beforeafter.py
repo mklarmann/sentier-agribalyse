@@ -416,7 +416,7 @@ def name_of(item):
     return esc(item["name"]) + (f' <span class="quiet">{esc(item["place"])}</span>' if item.get("place") else "")
 
 
-def grid(data, word, details="", cases=None):
+def grid(data, word, details="", cases=None, external_case=False):
     """The items that moved, one row each, one column per indicator: after ÷ before.
     `details` is the folder, from the page, that holds the breakdowns the items name."""
     listed = data.get("moved") or []
@@ -477,7 +477,7 @@ def grid(data, word, details="", cases=None):
     case_field = ('<label class="field"><span>Review case</span><select data-ba-case>'
                   '<option value="">All cases</option>' + "".join(
                       f'<option value="{esc(rid)}">{esc(rid)} · {esc(info["title"])}</option>'
-                      for rid, info in cases.items()) + '</select></label>') if cases else ""
+                      for rid, info in cases.items()) + '</select></label>') if cases and not external_case else ""
     legend = (
         '<p class="ba-legend" aria-hidden="true"><span><span class="ba-key is-below"></span>lower after</span> '
         '<span><span class="ba-key is-above"></span>higher after</span> '
@@ -499,7 +499,7 @@ def grid(data, word, details="", cases=None):
         '<label class="field" data-ba-group-field hidden><span>Group</span><select data-ba-group><option value="">All</option></select></label>'
         '<label class="field" data-ba-kind-field hidden><span>Class</span><select data-ba-kind><option value="">Any</option></select></label>'
         '</div><p class="ba-count" data-ba-count role="status" aria-live="polite"></p></div>'
-        + ('<p data-ba-case-link hidden></p>' if cases else "")
+        + ('<p data-ba-case-link hidden></p>' if cases and not external_case else "")
         + f"{legend}"
         f'<div class="table-wrap ba-grid-wrap" role="region" aria-label="After divided by before, per {esc(one)} and {esc(word[0])}" tabindex="0">'
         f'<table class="ba-grid" style="--n:{len(data["indicators"])}"><thead><tr><th scope="col" class="ba-name">{esc(one.capitalize())}</th>{head}</tr></thead>'
@@ -537,7 +537,7 @@ def reading(data, word):
     )
 
 
-def body(data, back=None, said=plain, file=None, up="", details="", opening="", diagnostics="", cases=None):
+def body(data, back=None, said=plain, file=None, up="", details="", opening="", diagnostics="", cases=None, external_case=False):
     """The page of one comparison, without a frame. `back` is `(address, label)` of where
     the reader came from, `said` how a text of the file is shown, `file` the address of the
     comparison as a file, `up` the way from the page to the folder that holds `assets/`,
@@ -568,12 +568,14 @@ def body(data, back=None, said=plain, file=None, up="", details="", opening="", 
     as_file = (
         f'<p class="note">The same comparison as a file: <a href="{esc(file)}"><code>{esc(file)}</code></a>.</p>' if file else ""
     )
+    dataset_table = grid(data, word, details, cases, external_case)
+    build_results = '<h2>Whole-build details</h2>' if external_case else ""
     measurements = (
-        f"{variants(data)}{tally}{sides}{setting(data, said)}"
+        f"{build_results}{variants(data)}{tally}{'' if external_case else sides}{setting(data, said)}"
         + classes_block(data)
         + causes_table(data, said)
         + indicators_table(data, said, word)
-        + grid(data, word, details, cases)
+        + ("" if external_case else dataset_table)
         + (f'<h2 id="notes">Notes</h2><ul class="plain">{notes}</ul>' if notes else "")
         + reading(data, word)
         + as_file
@@ -581,6 +583,8 @@ def body(data, back=None, said=plain, file=None, up="", details="", opening="", 
     )
     if diagnostics:
         measurements = f'<details class="ba-pair"><summary>Before-and-after measurements</summary>{measurements}</details>'
+    if external_case:
+        return f'{opening}{dataset_table}{diagnostics}{measurements}'
     return f'{crumb}<p class="eyebrow">Before and after</p><h1>{esc(data["title"])}</h1>{opening}{diagnostics}{measurements}'
 
 
@@ -593,6 +597,8 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
     title = (data or diagnostics)["title"]
     head = f'<link rel="stylesheet" href="{STYLE}">'
     jumps = []
+    config = site.config.get("comparison_page") if name == "before-after.html" and site.config.get("case_review") else None
+    use_selector = config is not None
     diagnostics_body = ""
     if diagnostics:
         from importlib.metadata import distribution
@@ -606,7 +612,8 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
             if notice.name in ("LICENSE", "NOTICE") and notice.parent.name == "licenses":
                 site.copy(package.locate_file(notice), f"assets/diagnostics-{notice.name}.txt")
         head += '<link rel="stylesheet" href="assets/diagnostics.css"><script src="assets/diagnostics.js" defer></script>'
-        diagnostics_body = '<section class="ba-diagnostics" aria-labelledby="diagnostics"><h2 id="diagnostics">Diagnostics by build step</h2>'
+        scope = "Whole-build diagnostics by build step" if use_selector else "Diagnostics by build step"
+        diagnostics_body = f'<section class="ba-diagnostics" aria-labelledby="diagnostics"><h2 id="diagnostics">{scope}</h2>'
         diagnostics_body += diagnostics_page.body(diagnostics, title=False) + "</section>"
         jumps.append(("diagnostics", "Build-step diagnostics"))
     if data:
@@ -627,9 +634,16 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
         from .cases import comparison_cases
         cases = comparison_cases(site) if site.config.get("case_review") else None
         inner = body(data, back, lambda text: inline(site, text, ""), f'api/v1/{name.removesuffix(".html")}.json',
-                     opening=opening, diagnostics=diagnostics_body, cases=cases)
+                     opening=opening, diagnostics=diagnostics_body, cases=cases, external_case=use_selector)
     else:
         crumb = f'<p class="crumb"><a href="{esc(back[0])}">{esc(back[1])}</a></p>' if back else ""
-        inner = f'{crumb}<h1>{esc(title)}</h1>{opening}{diagnostics_body}'
+        inner = opening + diagnostics_body if use_selector else f'{crumb}<h1>{esc(title)}</h1>{opening}{diagnostics_body}'
     framed = f'<div class="wrap page ba-page"><article class="prose wide">{inner}{review_section}</article></div>'
+    if use_selector:
+        from .comparison import opening as comparison_opening
+        title = "Comparison"
+        head += '<link rel="stylesheet" href="assets/comparison.css"><script src="assets/comparison.js" defer></script>'
+        top = comparison_opening(site, data, diagnostics, back, config, lambda text: inline(site, text, ""))
+        framed = (f'<div class="sentier-comparison wrap page">{top}</div>'
+                  f'<div class="wrap ba-page"><article class="prose wide">{inner}{review_section}</article></div>')
     return shell.shell(site, title, framed, current or name, page=name, description=described, head=head)

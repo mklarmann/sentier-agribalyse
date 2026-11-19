@@ -48,6 +48,10 @@ def overview(site):
     browse = ('<a class="button primary" href="cases.html">Browse cases</a> <a class="button" href="sources.html">Explore sources</a>'
               if site.config.get("case_review") else '<a class="button primary" href="findings.html">See the findings</a>')
     intro = site.config.get("home_intro", {})
+    if intro.get("feedback_actions") and site.config.get("case_review"):
+        browse = (f'<a class="button primary" href="{esc(site.finding_submission())}">Report a finding</a> '
+                  '<a class="button" href="cases.html">Browse cases</a>')
+        compare_link = ""
     heading = esc(intro.get("heading", f"Feedback on {site.provider}'s inventory data, from the people who use it"))
     lead = esc(intro.get("lead",
         f"Users of the {site.dataset} life-cycle inventory database record here what they find in the data, "

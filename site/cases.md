@@ -8,4 +8,6 @@ To repeat an observation, open its [finding](findings.md) and follow the recorde
 
 To open a new case, [describe the observation and how to check it](take-part.md#identify-a-finding).
 
+Under [Build](build.md), open **Comparison** and choose a case to see its evidence alongside the results for the whole build.
+
 For corrections ADEME has already documented, including the packaging of seven foods, see [earlier reports and release notes](earlier-reports.md).

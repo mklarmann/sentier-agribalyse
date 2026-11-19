@@ -310,6 +310,19 @@ class Site(unittest.TestCase):
         self.assertEqual(linked["report-F7"], CONFIG["repository"] + "/issues/7")
         self.assertEqual(linked["flow-download"], CONFIG["repository"] + "/pull/9")
 
+    def test_comparison_picker_uses_the_case_register_and_keeps_the_recorded_diagnostics(self):
+        html = self.pages["before-after.html"]
+        register = json.loads((self.out / "api/v1/cases.json").read_text())["cases"]
+        picker = re.findall(r'<select\b[^>]*\bid="review-case"[^>]*>(.*?)</select>', html, re.S)
+        self.assertEqual(len(picker), 1)
+        options = re.findall(r'<option\b[^>]*\bvalue="([^"]*)"', picker[0])
+        self.assertEqual(options[0], "")
+        self.assertCountEqual(options[1:], [case["id"] for case in register])
+        payload = re.search(r'<script[^>]*data-sd="data"[^>]*>(.*?)</script>', html, re.S)
+        diagnostics = json.loads(payload[1])
+        record = json.loads((ROOT / "site/licensed-run.json").read_text())
+        self.assertEqual(diagnostics, record["diagnostics"])
+
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)
         # This review records a licensed run completed outside GitHub.
@@ -331,9 +344,11 @@ class Site(unittest.TestCase):
 
     def test_the_site_is_about_this_dataset_and_this_provider(self):
         home = self.pages["index.html"]
-        self.assertIn("Review AGRIBALYSE 3.2 on ecoinvent", home)
+        self.assertIn("Feedback on AGRIBALYSE data, from the people who use it", home)
         submission = CONFIG["finding_submission_url"].replace("&", "&amp;")
-        self.assertIn(f'href="{submission}"', home)
+        hero_actions = re.search(r'<div class="actions">(.*?)</div>', home, re.S)[1]
+        self.assertIn(f'href="{submission}"', hero_actions)
+        self.assertIn('href="cases.html"', hero_actions)
         self.assertIn(f'href="{submission}"', self.pages["take-part.html"])
         self.assertIn("Look up a finding number or a word", home)
         # The pages the build writes on its own name no other dataset, except in the footer's link

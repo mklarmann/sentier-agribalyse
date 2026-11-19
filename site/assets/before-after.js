@@ -282,6 +282,15 @@
   var places = Array.from(new Set(D.moved.map(function (item) { return item.place; }).filter(Boolean))).sort();
   fill(q('[data-ba-place]'), q('[data-ba-place-field]'), places.map(function (p) { return [p, p]; }));
   q('[data-ba-place]').addEventListener('change', function (e) { state.place = e.target.value; state.limit = STEP; render(); });
+  var review = document.getElementById('review-case');
+  if (review) {
+    state.reviewCase = review.value;
+    review.addEventListener('comparison-case', function () {
+      state.reviewCase = review.value;
+      state.limit = STEP;
+      render();
+    });
+  }
   var caseSelect = q('[data-ba-case]');
   if (caseSelect) {
     function readCase() {

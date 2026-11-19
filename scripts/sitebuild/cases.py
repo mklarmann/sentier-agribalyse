@@ -131,7 +131,7 @@ def case_panel(site, f):
     result = ""
     if compared and any(patch_key(p) in cause_ids for p in f["patches"]):
         result = f'<p><a href="../{esc(compared)}?case={rid}#moved">Inspect this case in the build comparison</a></p>'
-    return ('<section><h2>Sources for this case</h2><ul>' + "".join(items) + '</ul>'
+    return ('<section><h2 id="case-sources">Sources for this case</h2><ul>' + "".join(items) + '</ul>'
             '<h2>Patch record</h2>' + ('<ul>' + patches + '</ul>' if patches else '<p>No community patch is registered for this case.</p>')
             + f'<p><a href="../api/v1/cases/{rid}.json" download>Download the finding record used by the patch workflow</a></p>'
             + result + '</section>' + quality.case_summary(site, f))

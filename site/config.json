@@ -21,13 +21,14 @@
   "repository": "https://github.com/sentier-dev/sentier-agribalyse",
   "site_url": "https://sentier-dev.github.io/sentier-agribalyse/",
   "source_ref": "main",
-  "home_title": "AGRIBALYSE 3.2 community review · Sentier",
+  "home_title": "Feedback on AGRIBALYSE data, from the people who use it · Sentier",
   "home_intro": {
-    "heading": "Review AGRIBALYSE 3.2 on ecoinvent",
-    "lead": "Explore ADEME’s published data, follow the evidence behind individual cases and compare the results of rebuilding the inventory on ecoinvent 3.9.1."
+    "feedback_actions": true,
+    "heading": "Feedback on AGRIBALYSE data, from the people who use it",
+    "lead": "If something looks wrong in an AGRIBALYSE food or process, record what you found and which release you used. Other users can check your finding on the same release. The community can then report verified findings to ADEME, which decides what to change."
   },
   "title_suffix": "AGRIBALYSE community review · Sentier",
-  "description": "Browse AGRIBALYSE 3.2, check community findings against ADEME’s release and follow the results of the ecoinvent build.",
+  "description": "Report an observation about an AGRIBALYSE food or process, check another user’s finding and follow verified feedback to ADEME.",
   "sibling_name": "BAFU/UVEK",
   "sibling_url": "https://sentier-dev.github.io/sentier-bafu/",
   "nav": [
@@ -223,6 +224,12 @@
     ]
   ],
   "case_review": true,
+  "comparison_page": {
+    "intro": "Compare ADEME’s published food results with AGRIBALYSE 3.2 rebuilt from the distributable export on ecoinvent 3.9.1.",
+    "run_url": "runs.html",
+    "sources_url": "sources.html",
+    "headline_indicator": "climate"
+  },
   "nav_parents": {
     "contributions.html": "cases.html",
     "earlier-reports.html": "sources.html",

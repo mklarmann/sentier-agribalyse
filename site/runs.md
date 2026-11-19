@@ -22,6 +22,8 @@ To reproduce the full-source run on a licensed machine, place ADEME’s full AGR
 
 The [six-stage terminal replay](build.md#the-last-run) follows the local build of AGRIBALYSE 3.2 on ecoinvent 3.9.1. Its stage timings, command outcomes and acceptance checks come from that execution.
 
+The **Comparison** view under [Build](build.md) follows 2,451 reference products through five recorded steps. Its climate indicator uses the larger absolute score as the denominator and groups near-zero results separately. The run’s climate acceptance check uses ADEME’s score as the denominator and covers 2,450 foods with a non-zero reference.
+
 - [Read the comparison with ADEME’s climate results](build.md#run-step-5).
 - [Inspect the stripped-package and refill checks](build.md#run-step-6).
 - [Read the public run record as JSON](api/v1/last-run.json).

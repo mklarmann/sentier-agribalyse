@@ -1,0 +1,105 @@
+/* Shared by the three Sentier comparison pages. Site typography and accent are inherited. */
+.sentier-comparison .comparison-opening {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+  min-width: 0;
+  color: #292a29;
+  text-align: left;
+}
+.sentier-comparison .comparison-opening * { box-sizing: border-box; }
+.sentier-comparison .comparison-crumb {
+  margin: 0 0 .65rem;
+  font-size: .875rem;
+  font-weight: 700;
+}
+.sentier-comparison .comparison-title {
+  margin: 0 0 .5rem;
+  font-size: clamp(2rem, 1.75rem + 1vw, 2.6rem);
+  line-height: 1.14;
+  letter-spacing: -.025em;
+}
+.sentier-comparison .comparison-intro {
+  max-width: 72ch;
+  margin: 0 0 1.25rem;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+.sentier-comparison .comparison-filter {
+  max-width: 100%;
+  margin: 0 0 1rem;
+}
+.sentier-comparison .comparison-filter label {
+  display: block;
+  margin: 0 0 .35rem;
+  font-size: .9375rem;
+  line-height: 1.45;
+  font-weight: 750;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.sentier-comparison .comparison-filter select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 2.875rem;
+  padding: .55rem 2rem .55rem .75rem;
+  border: 1px solid #79786d;
+  border-radius: .375rem;
+  background-color: #fbfaf5;
+  color: #292a29;
+  font: inherit;
+  font-weight: 650;
+  text-overflow: ellipsis;
+}
+.sentier-comparison .comparison-opening :is(a, select, button):focus-visible {
+  outline: 3px solid #245c77;
+  outline-offset: 3px;
+}
+.sentier-comparison .comparison-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 0;
+}
+.sentier-comparison .comparison-state {
+  min-width: 0;
+  padding: .95rem 1.125rem;
+  border: 1px solid #ceccbd;
+  border-radius: .5rem;
+  background: #fbfaf5;
+  overflow-wrap: anywhere;
+}
+.sentier-comparison .comparison-state-label {
+  margin: 0 0 .35rem;
+  color: #55564e;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .065em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.sentier-comparison .comparison-state-name {
+  display: block;
+  margin: 0;
+  color: #292a29;
+  font-size: 1.125rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.sentier-comparison .comparison-state-detail {
+  margin: .25rem 0 0;
+  font-size: .9375rem;
+  line-height: 1.45;
+}
+.sentier-comparison .comparison-results-title {
+  margin: 1.75rem 0 .5rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+@media (max-width: 40rem) {
+  .sentier-comparison .comparison-pair { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  .sentier-comparison .comparison-state { padding: .75rem .875rem; }
+}

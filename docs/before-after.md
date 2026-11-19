@@ -246,6 +246,8 @@ classes. A site with a frame of its own defines these, and nothing else is neede
   `chips`, `tag`, `quiet`, `note`, `eyebrow`, `lead`, `crumb`, `plain`, `num`, `table-wrap`,
   `list-none`, `empty`, `field`, `filter-row`, `grow` and `visually-hidden`.
 
+The optional case selector on a full site uses the `sentier-comparison` frame.
+
 A test holds this list against the stylesheet, the two page builders and the two scripts.
 
 Without the script the page is still a page to read: the counts, the classes, the causes
