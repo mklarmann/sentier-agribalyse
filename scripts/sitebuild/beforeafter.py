@@ -20,6 +20,7 @@ says how far from 1 it lies, and on which side. Where the file puts each value i
 class out itself.
 """
 
+import hashlib
 import json
 import math
 
@@ -588,6 +589,23 @@ def body(data, back=None, said=plain, file=None, up="", details="", opening="", 
     return f'{crumb}<p class="eyebrow">Before and after</p><h1>{esc(data["title"])}</h1>{opening}{diagnostics}{measurements}'
 
 
+def published_scores(site, diagnostics, config):
+    """Load a host-published food or dataset score table only for the exact reviewed chain."""
+    asset = (config or {}).get("public_scores")
+    if not asset or diagnostics.get("audience") != "public" or diagnostics.get("tier") != "items":
+        return {}
+    chain_bytes = json.dumps(diagnostics, sort_keys=True, separators=(",", ":")).encode()
+    if hashlib.sha256(chain_bytes).hexdigest() != asset["chain_sha256"]:
+        return {}
+    name = asset["file"]
+    if "/" in name or "\\" in name or not name.endswith(".json"):
+        raise ValueError("The published scores must be a JSON asset beside the other site assets")
+    path = site.root / "site/assets" / name
+    if hashlib.sha256(path.read_bytes()).hexdigest() != asset["sha256"]:
+        raise ValueError("The published scores differ from the reviewed table")
+    return {"base": "assets/", "matrix": name, "score_summary": True}
+
+
 def page(site, data, name, back=None, current=None, review_section="", diagnostics=None):
     """The whole page of one comparison, in the frame of a site the shared build writes: a
     text of the file links the findings it names, as everywhere on such a site."""
@@ -614,7 +632,7 @@ def page(site, data, name, back=None, current=None, review_section="", diagnosti
         head += '<link rel="stylesheet" href="assets/diagnostics.css"><script src="assets/diagnostics.js" defer></script>'
         scope = "Whole-build diagnostics by build step" if use_selector else "Diagnostics by build step"
         diagnostics_body = f'<section class="ba-diagnostics" aria-labelledby="diagnostics"><h2 id="diagnostics">{scope}</h2>'
-        diagnostics_body += diagnostics_page.body(diagnostics, title=False) + "</section>"
+        diagnostics_body += diagnostics_page.body(diagnostics, title=False, **published_scores(site, diagnostics, config)) + "</section>"
         jumps.append(("diagnostics", "Build-step diagnostics"))
     if data:
         many = data["items"]["many"]

@@ -1,5 +1,14 @@
 # Build runs
 
+## Reproducing the public download
+
+On 19 November 2026 we extracted the [foreground kit](build.md#download-and-reproduce-the-inventories) into an empty directory and rebuilt it with a licensed ecoinvent 3.9.1 cut-off background. The published foreground and locally rebuilt background reproduced both inventory matrices. All 46,569 patched food scores agreed within the relative tolerance of 0.001%. The largest relative difference was 1.96 × 10⁻¹⁴ or less.
+
+<pre tabindex="0"><code>technosphere: restored 130725 published coefficients; every joined coefficient verified
+biosphere: restored 200208 published coefficients; every joined coefficient verified
+Restored 19036 foreground processes against the locally supplied background
+{"foods": 2451, "indicators": 19, "score_cells": 46569, "outside_relative_tolerance_1e-5": 0}</code></pre>
+
 ## Full-source verification
 
 The same adapter revision, ecoinvent background and climate acceptance target were used for both inputs. The additional run read ADEME’s full licensed SimaPro export locally. [Compare the results by source](build.md).
@@ -22,7 +31,7 @@ To reproduce the full-source run on a licensed machine, place ADEME’s full AGR
 
 The [six-stage terminal replay](build.md#the-last-run) follows the local build of AGRIBALYSE 3.2 on ecoinvent 3.9.1. Its stage timings, command outcomes and acceptance checks come from that execution.
 
-The **Comparison** view under [Build](build.md) follows 2,451 reference products through five recorded steps. Its climate indicator uses the larger absolute score as the denominator and groups near-zero results separately. The run’s climate acceptance check uses ADEME’s score as the denominator and covers 2,450 foods with a non-zero reference.
+The **Comparison** view under [Build](build.md) follows 2,451 reference products through five recorded steps. Select a food to see its published and rebuilt impact scores, or [download the foreground and reproduce them](build.md#download-and-reproduce-the-inventories). Its climate indicator uses the larger absolute score as the denominator and groups near-zero results separately. The run’s climate acceptance check uses ADEME’s score as the denominator and covers 2,450 foods with a non-zero reference.
 
 - [Read the comparison with ADEME’s climate results](build.md#run-step-5).
 - [Inspect the stripped-package and refill checks](build.md#run-step-6).

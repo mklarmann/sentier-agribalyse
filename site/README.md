@@ -4,7 +4,7 @@ The site is built from the records, not written by hand: one page per finding an
 
 ```sh
 uv run --frozen scripts/inventory_quality.py --check
-uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@55a2cf4a76e08ddfc13bef1ac3ecc419a28bc7a2' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
@@ -13,13 +13,13 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 
 ## Compare locally scored products
 
-The public Comparison page shows counts by build step. In the catalogue, **ADEME impact results** shows the reference values from ADEME’s open food table, including its published treatment of packaging corrections. Run `python3 scripts/build_catalogue.py` to refresh the catalogue and these values.
+The public Comparison page shows every reference food across 19 impact indicators and five build steps. In the catalogue, **ADEME impact results** shows the reference values from ADEME’s open food table, including its published treatment of packaging corrections. Run `python3 scripts/build_catalogue.py` to refresh the catalogue and these values.
 
-For individual before/after rebuild scores, point the following command at the five licensed local build checkouts and the two repeat runs. Each checkout must retain its run report, source export and scored Parquet. The generator checks the export fingerprints and product identifiers. The optional explorer opens directly from disk with the complete local matrix. The counts file is suitable for review independently.
+For individual before/after rebuild scores, point the following command at the five licensed local build checkouts and the two repeat runs. Each checkout must retain its run report, source export and scored Parquet. The generator checks the export fingerprints and product identifiers. The optional explorer opens directly from disk with the complete local matrix. Use `--public-foods site/assets/food-scores.json` to generate the compact public score table, and `--results-csv food-comparison.csv` for the paired download. Place the resulting public chain in the reviewed run record and update the two comparison checksums in site/config.json.
 
 ```sh
 mkdir -p .local
-uv run --frozen --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/compare_review_builds.py \
+uv run --frozen --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@55a2cf4a76e08ddfc13bef1ac3ecc419a28bc7a2' python scripts/compare_review_builds.py \
   --baseline "$BUILDS/fb-nb-main-a-adapter" --repeat-baseline "$BUILDS/fb-nb-main-b2-adapter" \
   --codes "$BUILDS/fb-nb-a-adapter" --repeat-codes "$BUILDS/fb-nb-a2-adapter" \
   --flows "$BUILDS/fb-nb-ac-adapter" --water "$BUILDS/fb-nb-acw-adapter" \
@@ -29,7 +29,7 @@ python3 -m http.server 63245 --bind 127.0.0.1 --directory .local/review-explorer
 
 Open [Comparison with food-level results](http://127.0.0.1:63245/site/before-after.html#sd.step=water) to review the food matrix under the normal Build navigation. The standalone `.local/review-explorer/index.html` also opens directly from disk.
 
-Set `BUILDS` to the folder containing the build checkouts. Without `--local-explorer`, the same command writes only aggregate counts. The page published by Pages does not read the ignored `.local/` directory.
+Set `BUILDS` to the folder containing the build checkouts. Without a product output option the command writes aggregate counts. The page published by Pages does not read the ignored `.local/` directory.
 
 ## Shared with sentier-bafu
 
@@ -58,7 +58,7 @@ Until the work lands in `sentier-dev/sentier-bafu`, `site/shared.json` names the
 
 What differs from sentier-bafu, and why:
 
-- **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The Build page replays the reviewed local import from `site/licensed-run.json`. That public record contains stage timings, terminal output and aggregate diagnostics.
+- **No patched release and no release build.** `site/config.json` lists no page for one, so the build reads no release build and no page links to one. The Build page replays the reviewed local import from `site/licensed-run.json`. That public record contains stage timings, terminal output and food comparison diagnostics.
 - **Releases.** A release is one entry under `releases`, with the background it is built on. Register a release only after ADEME has published it; a test holds the list to the published releases.
 - **Processes have a name and a process identifier of letters and digits, and no number.** The shared record format lists datasets by number, so `dataset_code_pattern` is left out. A finding lists no datasets and says in `scope` what it is about, for a single process with its process identifier.
 - **Numbers.** `older_numbering_until` is 0: the number of a finding is the number of its issue.
@@ -72,4 +72,4 @@ The design follows [Départ de Sentier's website](https://www.d-d-s.ch/): the gr
 
 Not here yet: the two workflows of sentier-bafu that write to issues. Intake proposes a record as a pull request when an issue is filed with the finding form, and Sync keeps the labels of finding issues in line with the records. Their scripts, `scripts/intake.py` and `scripts/sync.py`, are among the shared files and are tested here on the finding form; the workflows that run them are added when the first findings arrive and a maintainer has agreed to the permissions they need. Until then a maintainer writes a finding's record by hand, from the [template](../community/templates/finding.json).
 
-Pages reads the reviewed aggregate run record in `site/licensed-run.json`. Product-level rebuild scores stay in the local explorer.
+Pages reads the reviewed run record in `site/licensed-run.json` and the matching food table in `site/assets/food-scores.json`.

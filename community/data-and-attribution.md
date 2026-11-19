@@ -12,7 +12,7 @@ The existing adapter keeps source snapshots, background-derived CF tables, scori
 
 Record the release, source hashes, background version, method source, applied mapping packages and parameter overrides. Explain every modification and cite its evidence. Separate importer repairs, scenarios and proposed source corrections. Preserve the original baseline identity, the candidate identity and any applicable attribution or distribution conditions with exported artifacts.
 
-Only publish authorized aggregate results and metadata. Reviewers can reproduce a licensed build locally; the community site is not an inventory download service. Partner discussions should be linked or summarized with the contributors' permission when they are not already public.
+The public comparison covers the published and rebuilt impact scores for all 2,451 AGRIBALYSE reference foods. The [inventory downloads](../site/build.md#download-and-reproduce-the-inventories) contain the stripped AGRIBALYSE source, its build code and the patched foreground exchanges. Reproduction uses the reviewer’s own licensed ecoinvent 3.9.1 cut-off background. Partner discussions should be linked or summarized with the contributors' permission when they are not already public.
 
 ## Recommendations to ADEME
 

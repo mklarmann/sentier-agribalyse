@@ -19,6 +19,14 @@ The replay below follows the **distributable source** through all six stages. Se
 
 <!-- generated: last-run -->
 
+## Download and reproduce the inventories
+
+[Download the foreground inventory and rebuild kit (ZIP)](https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/agribalyse-3.2-foreground.zip) · [Download the patched foreground exchanges (compressed CSV)](https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/patched-foreground-exchanges.csv.gz)
+
+The kit contains the 17,966-process source export, the patched foreground and the expected food scores. Extract it and follow `README.txt` to reconnect your own ecoinvent 3.9.1 cut-off background. The second download contains the linked foreground exchanges after patching. Its rows identify the AGRIBALYSE process, the product or elementary-flow row and the signed matrix coefficient. The row identifiers match the locally rebuilt scoring package.
+
+[Download ADEME and patched results side by side (CSV)](https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/food-comparison.csv)
+
 ## What you need
 
 The [source register](sources.md) identifies the public inputs. [Case F7](cases/F7.html) traces the elementary flow list from a user’s question to the download command used to prepare the import.

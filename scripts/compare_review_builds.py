@@ -1,10 +1,11 @@
-"""Generate public, counts-only diagnostics from the local AGRIBALYSE build series.
+"""Generate public comparison diagnostics from the local AGRIBALYSE build series.
 
 Supply the baseline, stable-code, flow-matching, water-use and integrated build
 directories in order. A repeated baseline or stable-code build measures numerical noise.
 """
 
 import argparse
+import csv
 import hashlib
 import json
 import math
@@ -68,6 +69,17 @@ def numbers(df, methods, prefix):
     }
 
 
+def write_compared_scores(path, names, indicators, values):
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(["Code AGB", "Food", "Group", "Indicator", "Unit per kg of food",
+                         "ADEME published", "Patched build"])
+        for code, food in names.items():
+            for key, label, _, unit in indicators:
+                writer.writerow([code, food["name"], food["group"], label, unit,
+                                 values["ademe"][key][code], values["integrated"][key][code]])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for key, _, _ in STATES:
@@ -79,6 +91,9 @@ def main():
         "--local-explorer", action="store_true",
         help="Also write the full product explorer under .local/review-explorer in this checkout.",
     )
+    parser.add_argument("--public-foods", type=Path, metavar="MATRIX",
+                        help="Publish all named food scores and write their compact table to MATRIX.")
+    parser.add_argument("--results-csv", type=Path, help="Write the original and patched score for every food and indicator")
     args = parser.parse_args()
     data = {k: load(getattr(args, k)) for k, _, _ in STATES}
     baseline, _, sha = data["baseline"]
@@ -192,13 +207,36 @@ def main():
             "The integrated step groups the remaining changes. Its results alone cannot attribute a difference to any single amendment.",
         ],
     )
-    output = chain.build(title, **options, tier="counts", audience="public")
+    names = {
+        code: {"name": row["LCI Name"], "group": row["Groupe d'aliment"]}
+        for code, row in raw.iterrows()
+    }
+    if args.results_csv:
+        write_compared_scores(args.results_csv, names, indicators, values)
+    if args.public_foods:
+        # Only ADEME's named reference foods and their impact results enter this publication.
+        # The native grid reads the compact table alongside a small initial selection.
+        options["about"] = (
+            "Compare ADEME’s published scores with the patched build for each kilogram of food. "
+            "Choose a food to see both scores and their units, or select a build step to trace a change."
+        )
+        output = chain.build(title, **options, tier="items", audience="public", listed=len(names), names=names)
+        rows = output["items"]
+        if {row["id"] for row in rows} != set(names):
+            raise ValueError("The public grid would omit reference foods")
+        matrix = matrix_format.make(output, rows)
+        output["items"] = rows[:24]
+        counts = output["items_count"]
+        counts.update(listed=len(output["items"]), not_listed=counts["qualifying"] - len(output["items"]))
+        descriptor = {"file": args.public_foods.name, "items": len(names)}
+        errors = matrix_format.errors(matrix) or matrix_format.against(matrix, {**output, "matrix": descriptor})
+        if errors:
+            raise ValueError("; ".join(errors[:10]))
+        matrix_format.write(matrix, args.public_foods)
+    else:
+        output = chain.build(title, **options, tier="counts", audience="public")
     chain.write(output, args.out)
     if args.local_explorer:
-        names = {
-            code: {"name": row["LCI Name"], "group": row["Groupe d'aliment"]}
-            for code, row in raw.iterrows()
-        }
         local, matrix = chain.build_with_matrix(
             title, **options, tier="items", audience="local", names=names
         )

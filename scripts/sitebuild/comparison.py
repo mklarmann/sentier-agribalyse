@@ -67,6 +67,8 @@ def opening(site, data, diagnostics, back, config, said):
     if config.get("reference_url"):
         label = config.get("reference_label") or "Reference results"
         links.append(f'<a href="{esc(config["reference_url"])}">{esc(label)}</a>')
+    if config.get("scores_download_url"):
+        links.append(f'<a href="{esc(config["scores_download_url"])}">Download the compared scores (CSV)</a>')
     whole = whole_result(data, diagnostics, config) + '<p>' + " · ".join(links) + '</p>'
     templates = "".join(f'<template data-result-case="{esc(f["id"])}">{case_result(site, f, data)}</template>' for f in cases)
     intro = config.get("intro") or (data or diagnostics)["title"]

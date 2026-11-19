@@ -343,8 +343,17 @@ class Site(unittest.TestCase):
         self.assertIsNone(record.get("run"))
         self.assertIsNotNone(record.get("local"))
         self.assertEqual([s["name"] for s in record["summary"]["steps"]], ["ADEME's export", "Licensed files", "Registry", "Link", "Score", "Export"])
-        self.assertEqual(record["diagnostics"]["tier"], "counts")
-        self.assertEqual(record["diagnostics"]["items"], [])
+        diagnostics = record["diagnostics"]
+        self.assertEqual((diagnostics["audience"], diagnostics["tier"]), ("public", "items"))
+        html = self.pages["before-after.html"]
+        matrix = json.loads((self.out / "assets/food-scores.json").read_text())
+        self.assertIn('data-sd-matrix="food-scores.json"', html)
+        self.assertEqual(matrix["of"]["states"], [s["id"] for s in diagnostics["states"]])
+        self.assertEqual(matrix["of"]["states"][::5], ["ademe", "integrated"])
+        self.assertEqual(len(matrix["of"]["indicators"]), 19)
+        self.assertEqual(len(matrix["items"]), diagnostics["items_count"]["all"])
+        self.assertEqual(len({row[0] for row in matrix["items"]}), 2451)
+        self.assertTrue(all(len(row) == 6 * 19 for row in matrix["values"]))
         for name, text in self.pages.items():
             self.assertNotIn("patched-release.html", text, name)
             if name not in ("build.html", "about/data.html", "runs.html"):

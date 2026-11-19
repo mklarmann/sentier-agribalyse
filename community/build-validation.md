@@ -77,4 +77,4 @@ The audit emits a **summary_sha256** over the dataset, scope, counts, changes, c
 - **Disaggregation/reconstruction:** give the new inventory its own identity. Compare against the aggregated original; even a high mass-coverage ratio does not imply matching impacts.
 - **Scenario or forecast:** hold scope fixed and record assumptions, uncertainty and held-out validation. A scenario is not automatically a correction of the provider's source dataset.
 
-Publish only permitted aggregate evidence and metadata. Inventories, licensed background files and confidential partner evidence stay local. A passing technical check is not partner consensus; [the review workflow](workflow.md) records those decisions separately.
+The published evidence includes scores for each food and the [AGRIBALYSE foreground inventory](../site/build.md#download-and-reproduce-the-inventories). Reviewers supply the ecoinvent background locally. Confidential partner evidence stays with its contributors. A passing technical check is not partner consensus; [the review workflow](workflow.md) records those decisions separately.
