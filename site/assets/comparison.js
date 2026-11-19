@@ -24,4 +24,21 @@
   window.addEventListener('popstate', display);
   display();
   opening.querySelector('[data-review-filter]').hidden = false;
+
+  // A widget route is a bookmark, not a native element ID. Let history restores
+  // and ordinary section links keep the browser's scroll position.
+  const initialHash = location.hash;
+  const route = new URLSearchParams(initialHash.slice(1));
+  const navigation = performance.getEntriesByType('navigation')[0];
+  if ((route.has('sd.step') || route.has('sd.steps')) && !route.has('sd.item')
+      && (!navigation || navigation.type !== 'back_forward')) {
+    window.addEventListener('load', function () {
+      requestAnimationFrame(function () {
+        const selected = document.querySelector('.sentier-diagnostics [data-sd="step-said"]');
+        if (selected && selected.textContent && location.hash === initialHash) {
+          selected.scrollIntoView({ block: 'start' });
+        }
+      });
+    }, { once: true });
+  }
 })();

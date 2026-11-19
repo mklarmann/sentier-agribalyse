@@ -56,7 +56,7 @@ jobs:
         # published site. Links to source files lead to the repository and the branch this
         # run was made of, which is where those files are: on main of this repository that
         # is what site/config.json says anyway, on a fork it is the fork's branch.
-        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@09e2c4f5fc1d377ff9266a0efe6c0edf622a2b82' python scripts/build_site.py --last-run site/licensed-run.json --require-issues --built-by "$GITHUB_REPOSITORY" --source-repository "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" --source-ref "$GITHUB_REF_NAME"
+        run: uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@4740326dd6d1b662f01d29d8ac98419979487fbb' python scripts/build_site.py --last-run site/licensed-run.json --require-issues --built-by "$GITHUB_REPOSITORY" --source-repository "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" --source-ref "$GITHUB_REF_NAME"
       - name: Check links, assets and published file types
         run: uv run --no-project --python 3.12 python scripts/check_site.py _site
       - name: Hand the site, and nothing else, to the deployment

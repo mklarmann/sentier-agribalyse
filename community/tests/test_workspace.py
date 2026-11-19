@@ -323,6 +323,19 @@ class Site(unittest.TestCase):
         record = json.loads((ROOT / "site/licensed-run.json").read_text())
         self.assertEqual(diagnostics, record["diagnostics"])
 
+    def test_published_reference_covers_the_catalogue_and_uses_the_step_indicator_ids(self):
+        ref = json.loads((self.out / "assets/ademe-reference.json").read_text())
+        catalogue = json.loads((self.out / "assets/agribalyse-catalogue.json").read_text())
+        run = json.loads((ROOT / "site/licensed-run.json").read_text())["diagnostics"]
+        self.assertEqual(ref["source"], "https://data.ademe.fr/data-fair/api/v1/datasets/agribalyse-31-synthese")
+        self.assertEqual(set(ref["scores"]), {food[2] for food in catalogue["foods"]})
+        ids = [i["id"] for i in ref["indicators"]]
+        self.assertEqual(ids, [i["id"] for i in run["indicators"]])
+        self.assertTrue(all(i["unit"] for i in ref["indicators"]))
+        self.assertTrue(all(len(row) == len(ids) for row in ref["scores"].values()))
+        self.assertIn('href="browse.html?kind=results"', self.pages["before-after.html"])
+        self.assertFalse((self.out / "matrix.js").exists())
+
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)
         # This review records a licensed run completed outside GitHub.

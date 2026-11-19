@@ -12,7 +12,7 @@ import subprocess
 from pathlib import Path
 
 import pandas as pd
-from sentier_diagnostics import chain, rule
+from sentier_diagnostics import chain, page, rule
 from config import Settings
 from config.paths import Paths
 from pipelines.backtest import BacktestPipeline
@@ -74,6 +74,10 @@ def main():
     parser.add_argument("--repeat-baseline", type=Path)
     parser.add_argument("--repeat-codes", type=Path)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument(
+        "--local-explorer", action="store_true",
+        help="Also write the full product explorer under .local/review-explorer in this checkout.",
+    )
     args = parser.parse_args()
     data = {k: load(getattr(args, k)) for k, _, _ in STATES}
     baseline, _, sha = data["baseline"]
@@ -172,8 +176,8 @@ def main():
                 ),
             )
         )
-    output = chain.build(
-        "From ADEME’s results to the integrated build",
+    title = "From ADEME’s results to the integrated build"
+    options = dict(
         indicators=indicators,
         states=states,
         steps=steps,
@@ -181,15 +185,24 @@ def main():
         units=units,
         item_word=("product", "products"),
         indicator_word=("indicator", "indicators"),
-        tier="counts",
-        audience="public",
         about="Follow the same reference products through the ecoinvent 3.9.1 cut-off rebuild. Select an indicator or a build step to see where its results change.",
         notes=[
             "The diagnostic comparison uses the larger absolute score as the denominator and groups near-zero results. The Score stage separately tests a 5% difference relative to ADEME for non-zero reference values.",
             "The integrated step groups the remaining changes. Its results alone cannot attribute a difference to any single amendment.",
         ],
     )
+    output = chain.build(title, **options, tier="counts", audience="public")
     chain.write(output, args.out)
+    if args.local_explorer:
+        names = {
+            code: {"name": row["LCI Name"], "group": row["Groupe d'aliment"]}
+            for code, row in raw.iterrows()
+        }
+        local, matrix = chain.build_with_matrix(
+            title, **options, tier="items", audience="local", names=names
+        )
+        folder = Path(__file__).resolve().parents[1] / ".local/review-explorer"
+        print(page.write(local, folder, matrix=matrix))
 
 
 if __name__ == "__main__":

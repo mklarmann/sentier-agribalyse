@@ -4,12 +4,30 @@ The site is built from the records, not written by hand: one page per finding an
 
 ```sh
 uv run --frozen scripts/inventory_quality.py --check
-uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@09e2c4f5fc1d377ff9266a0efe6c0edf622a2b82' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@4740326dd6d1b662f01d29d8ac98419979487fbb' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
 
-`_site/` is ignored. ADEME's export, the ecoinvent background, scoring caches and Brightway packages are never build inputs, and `check_site.py` refuses data file types. The site serves no built database: AGRIBALYSE 3.2 is built on a licensed background.
+`_site/` is ignored. ADEME's export, the ecoinvent background, scoring caches and Brightway packages are never build inputs, and `check_site.py` refuses data file types. The site links to the local rebuild instructions. AGRIBALYSE 3.2 is built on a licensed background.
+
+## Compare locally scored products
+
+The public Comparison page shows counts by build step. In the catalogue, **ADEME impact results** shows the reference values from ADEME’s open food table, including its published treatment of packaging corrections. Run `python3 scripts/build_catalogue.py` to refresh the catalogue and these values.
+
+For individual before/after rebuild scores, point the following command at the five licensed local build checkouts and the two repeat runs. Each checkout must retain its run report, source export and scored Parquet. The generator checks the export fingerprints and product identifiers. The optional explorer opens directly from disk with the complete local matrix. The counts file is suitable for review independently.
+
+```sh
+mkdir -p .local
+uv run --frozen --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@4740326dd6d1b662f01d29d8ac98419979487fbb' python scripts/compare_review_builds.py \
+  --baseline "$BUILDS/fb-nb-main-a-adapter" --repeat-baseline "$BUILDS/fb-nb-main-b2-adapter" \
+  --codes "$BUILDS/fb-nb-a-adapter" --repeat-codes "$BUILDS/fb-nb-a2-adapter" \
+  --flows "$BUILDS/fb-nb-ac-adapter" --water "$BUILDS/fb-nb-acw-adapter" \
+  --integrated "$BUILDS/fb-review-nov18-adapter" --out .local/counts.json --local-explorer
+open .local/review-explorer/index.html
+```
+
+Set `BUILDS` to the folder containing the build checkouts. Without `--local-explorer`, the same command writes only aggregate counts. The page published by Pages does not read the ignored `.local/` directory.
 
 ## Shared with sentier-bafu
 
@@ -52,4 +70,4 @@ The design follows [Départ de Sentier's website](https://www.d-d-s.ch/): the gr
 
 Not here yet: the two workflows of sentier-bafu that write to issues. Intake proposes a record as a pull request when an issue is filed with the finding form, and Sync keeps the labels of finding issues in line with the records. Their scripts, `scripts/intake.py` and `scripts/sync.py`, are among the shared files and are tested here on the finding form; the workflows that run them are added when the first findings arrive and a maintainer has agreed to the permissions they need. Until then a maintainer writes a finding's record by hand, from the [template](../community/templates/finding.json).
 
-No workflow of the published site reads a record of a run from a file: a run on a licensed machine must never be published. A test holds that.
+Pages reads the reviewed aggregate run record in `site/licensed-run.json`. Product-level rebuild scores stay in the local explorer.

@@ -63,8 +63,11 @@ def opening(site, data, diagnostics, back, config, said):
     build = site.walk_page or site.patched_page or "index.html"
     run = config.get("run_url") or (back[0] if back else build)
     sources = config.get("sources_url", "sources.html")
-    whole = (whole_result(data, diagnostics, config)
-             + f'<p><a href="{esc(run)}">Build record</a> · <a href="{esc(sources)}">Sources</a></p>')
+    links = [f'<a href="{esc(run)}">Build record</a>', f'<a href="{esc(sources)}">Sources</a>']
+    if config.get("reference_url"):
+        label = config.get("reference_label") or "Reference results"
+        links.append(f'<a href="{esc(config["reference_url"])}">{esc(label)}</a>')
+    whole = whole_result(data, diagnostics, config) + '<p>' + " · ".join(links) + '</p>'
     templates = "".join(f'<template data-result-case="{esc(f["id"])}">{case_result(site, f, data)}</template>' for f in cases)
     intro = config.get("intro") or (data or diagnostics)["title"]
     return (f'<div class="comparison-opening"><p class="comparison-crumb"><a href="{esc(build)}">Build</a></p>'

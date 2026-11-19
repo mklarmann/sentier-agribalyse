@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import lzma
+import math
 import re
 from pathlib import Path
 from urllib.parse import urlencode
@@ -18,24 +19,72 @@ SECTIONS = re.compile(
 )
 
 
-def foods():
+# Stable indicator IDs shared with the step explorer and the corresponding ADEME API fields.
+IMPACTS = {
+    "climate": "Changement_climatique",
+    "ozone": "Appauvrissement_de_la_couche_d'ozone",
+    "radiation": "Rayonnements_ionisants",
+    "photo_ox": "Formation_photochimique_d'ozone",
+    "pm": "Particules_fines",
+    "ht_nc": "Effets_toxicologiques_sur_la_santé_humaine___substances_non-cancérogènes",
+    "ht_c": "Effets_toxicologiques_sur_la_santé_humaine___substances_cancérogènes",
+    "acid": "Acidification_terrestre_et_eaux_douces",
+    "e_fw": "Eutrophisation_eaux_douces",
+    "e_m": "Eutrophisation_marine",
+    "e_t": "Eutrophisation_terrestre",
+    "ecotox": "Écotoxicité_pour_écosystèmes_aquatiques_d'eau_douce",
+    "land": "Utilisation_du_sol",
+    "water": "Épuisement_des_ressources_eau",
+    "energy": "Épuisement_des_ressources_énergétiques",
+    "mater": "Épuisement_des_ressources_minéraux",
+    "cc_bio": "Changement_climatique_-_émissions_biogéniques",
+    "cc_fos": "Changement_climatique_-_émissions_fossiles",
+    "cc_luc": "Changement_climatique_-_émissions_liées_au_changement_d'affectation_des_sols",
+}
+
+
+def published_foods():
     with urlopen(API, timeout=30) as response:
-        if "3.2" not in json.load(response)["description"]:
-            raise ValueError("Check the ADEME food table release before refreshing")
-    query = urlencode({"size": 1000, "select": ",".join(FIELDS), "sort": "Code_AGB"})
+        metadata = json.load(response)
+    if "3.2" not in metadata["description"] or "Open Licence" not in metadata["license"]["title"]:
+        raise ValueError("Check the release and terms of ADEME’s food table")
+    schema = {field["key"]: field for field in metadata["schema"]}
+    fields = [*FIELDS, *IMPACTS.values()]
+    query = urlencode({"size": 1000, "select": ",".join(fields), "sort": "Code_AGB"})
     url = f"{API}/lines?{query}"
     rows = []
+    scores = {}
     total = None
     while url:
         with urlopen(url, timeout=30) as response:
             page = json.load(response)
         if total is None:
             total = page["total"]
-        rows.extend([str(record[key]).strip() for key in FIELDS] for record in page["results"])
+        for record in page["results"]:
+            food = [str(record[key]).strip() for key in FIELDS]
+            rows.append(food)
+            values = [record.get(key) for key in IMPACTS.values()]
+            if any(v is not None and not math.isfinite(v) for v in values):
+                raise ValueError(f"Invalid public score for {food[2]}")
+            scores[food[2]] = values
         url = page.get("next")
-    if len(rows) != total or len({r[2] for r in rows}) != len(rows):
+    if len(rows) != total or len(scores) != total:
         raise ValueError("Incomplete food table or duplicate AGRIBALYSE identifier")
-    return sorted(rows, key=lambda row: (row[1].casefold(), row[2]))
+    # Use the same English labels that readers see in the build comparison.
+    run = json.loads((ROOT / "site/licensed-run.json").read_text())["diagnostics"]
+    methods = {field["id"]: field for field in run["indicators"]}
+    indicators = [
+        {
+            "id": key, "name": methods[key]["name"],
+            "unit": schema[field]["description"].split("/kg de produit")[0].strip()
+            or methods[key]["unit"],
+        }
+        for key, field in IMPACTS.items()
+    ]
+    return sorted(rows, key=lambda row: (row[1].casefold(), row[2])), {
+        "edition": "3.2", "updated": metadata["dataUpdatedAt"][:10], "source": API,
+        "indicators": indicators, "scores": scores
+    }
 
 
 def foreground_labels():
@@ -69,9 +118,11 @@ def foreground_labels():
 
 if __name__ == "__main__":
     flow_rows, parameter_rows = foreground_labels()
-    catalogue = {"foods": foods(), "flows": flow_rows, "parameters": parameter_rows}
-    path = ROOT / "site/assets/agribalyse-catalogue.json"
-    with path.open("w", encoding="utf-8") as stream:
-        json.dump(catalogue, stream, ensure_ascii=False, separators=(",", ":"))
-        stream.write("\n")
+    food_rows, reference = published_foods()
+    catalogue = {"foods": food_rows, "flows": flow_rows, "parameters": parameter_rows}
+    for name, data in [("agribalyse-catalogue", catalogue), ("ademe-reference", reference)]:
+        path = ROOT / f"site/assets/{name}.json"
+        with path.open("w", encoding="utf-8") as stream:
+            json.dump(data, stream, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+            stream.write("\n")
     print(", ".join(f"{len(rows):,} {name}" for name, rows in catalogue.items()))

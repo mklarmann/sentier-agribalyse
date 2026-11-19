@@ -228,7 +228,9 @@
     "intro": "Compare ADEME’s published food results with AGRIBALYSE 3.2 rebuilt from the distributable export on ecoinvent 3.9.1.",
     "run_url": "runs.html",
     "sources_url": "sources.html",
-    "headline_indicator": "climate"
+    "headline_indicator": "climate",
+    "reference_url": "browse.html?kind=results",
+    "reference_label": "ADEME’s results by food"
   },
   "nav_parents": {
     "contributions.html": "cases.html",

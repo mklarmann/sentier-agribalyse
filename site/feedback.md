@@ -1,6 +1,6 @@
 # Feedback to ADEME
 
-Follow a finding from independent verification through submission to ADEME, its reply and any change in a published release. Each dated step links to its evidence.
+See which cases have been sent to ADEME, what ADEME replied and which release contains a correction. The [case register](cases.md) also includes observations still under review.
 
 <!-- generated: feedback-lists -->
 

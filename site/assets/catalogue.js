@@ -11,6 +11,12 @@
     flows: { example: "e.g. methane or river", singular: "flow entry", plural: "flow entries" },
     parameters: { example: "e.g. packaging or yield", singular: "parameter entry", plural: "parameter entries" }
   };
+  const indicator = document.querySelector("#catalogue-indicator");
+  const table = document.querySelector("#reference-table");
+  const tableBody = table.querySelector("tbody");
+  const referenceURL = new URL("ademe-reference.json", dataURL);
+  settings.results = settings.foods;
+  let reference;
   const pageSize = 20;
   let catalogue, matches, shown;
 
@@ -41,9 +47,29 @@
     return li;
   }
 
+  function scoreRow(row) {
+    const [french, english, code] = row;
+    const tr = document.createElement("tr");
+    const header = document.createElement("th");
+    header.scope = "row";
+    const link = document.createElement("a");
+    link.href = "https://agribalyse.ademe.fr/app/aliments/" + encodeURIComponent(code);
+    link.textContent = english;
+    const detail = document.createElement("small");
+    detail.lang = "fr";
+    detail.textContent = french + " · " + code;
+    header.append(link, detail);
+    const cell = tr.insertCell();
+    const value = reference.scores[code][indicator.selectedIndex];
+    cell.textContent = value == null ? "Unavailable" : String(value);
+    tr.prepend(header);
+    return tr;
+  }
+
   function appendPage() {
     const next = matches.slice(shown, shown + pageSize);
-    results.append(...next.map(item));
+    if (kind.value === "results") tableBody.append(...next.map(scoreRow));
+    else results.append(...next.map(item));
     shown += next.length;
     more.hidden = shown >= matches.length;
     const { singular, plural } = settings[kind.value];
@@ -55,10 +81,26 @@
   function selectResults() {
     search.placeholder = settings[kind.value].example;
     const tokens = fold(search.value).trim().split(/\s+/).filter(Boolean);
-    matches = catalogue[kind.value].filter(row => {
+    const scores = kind.value === "results";
+    const missingScores = scores && !reference;
+    table.hidden = !scores || missingScores;
+    results.hidden = scores;
+    document.querySelector("#reference-source").hidden = !scores;
+    document.querySelector("#indicator-field").hidden = !scores || missingScores;
+    if (missingScores) {
+      more.hidden = true;
+      status.textContent = "The impact results could not be loaded. Reload this page or open ADEME’s published table.";
+      return;
+    }
+    if (scores) {
+      const option = indicator.selectedOptions[0];
+      table.caption.textContent = option.label + " (" + reference.indicators[indicator.selectedIndex].unit + " per kg of food)";
+    }
+    matches = catalogue[scores ? "foods" : kind.value].filter(row => {
       const text = fold(row.join(" "));
       return tokens.every(token => text.includes(token));
     });
+    tableBody.replaceChildren();
     results.replaceChildren();
     shown = 0;
     appendPage();
@@ -67,6 +109,8 @@
   function update() {
     const url = new URL(location.href);
     url.searchParams.set("kind", kind.value);
+    if (kind.value === "results") url.searchParams.set("indicator", indicator.value);
+    else url.searchParams.delete("indicator");
     if (search.value) url.searchParams.set("q", search.value);
     else url.searchParams.delete("q");
     history.replaceState(null, "", url);
@@ -76,22 +120,36 @@
   async function load() {
     status.textContent = "Loading catalogue…";
     try {
-      const response = await fetch(dataURL);
-      if (!response.ok) throw new Error("Catalogue unavailable");
-      catalogue = await response.json();
+      async function json(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Catalogue unavailable");
+        return response.json();
+      }
+      [catalogue, reference] = await Promise.all([json(dataURL), json(referenceURL).catch(() => null)]);
+      for (const field of reference?.indicators || []) indicator.add(new Option(field.name, field.id));
       const query = new URLSearchParams(location.search);
-      kind.value = Object.hasOwn(settings, query.get("kind")) ? query.get("kind") : "foods";
+      const initial = query.get("kind") || (location.hash === "#reference-results" ? "results" : "foods");
+      kind.value = Object.hasOwn(settings, initial) ? initial : "foods";
+      const requested = query.get("indicator");
+      if (reference?.indicators.some(field => field.id === requested)) indicator.value = requested;
       search.value = query.get("q") || "";
       selectResults();
       controls.hidden = false;
       document.querySelector("#catalogue-fallback").hidden = true;
-      kind.addEventListener("change", () => { search.value = ""; update(); });
+      let previous = kind.value;
+      kind.addEventListener("change", () => {
+        if (settings[previous] !== settings[kind.value]) search.value = "";
+        previous = kind.value;
+        update();
+      });
+      indicator.addEventListener("change", update);
       search.addEventListener("input", update);
       controls.addEventListener("submit", event => { event.preventDefault(); update(); });
       more.addEventListener("click", () => {
-        const firstNew = results.children.length;
+        const container = kind.value === "results" ? tableBody : results;
+        const firstNew = container.children.length;
         appendPage();
-        const row = results.children[firstNew];
+        const row = container.children[firstNew];
         if (row) { row.tabIndex = -1; row.focus(); }
       });
     } catch {
