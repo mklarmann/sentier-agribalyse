@@ -1,8 +1,8 @@
 {
   "note": "The files this repository shares with sentier-bafu. Do not edit them here: change them in sentier-bafu, then run `python3 scripts/shared_files.py take`. `python3 scripts/shared_files.py check` compares.",
   "repository": "https://github.com/mklarmann/sentier-bafu",
-  "branch": "shared/keep-navigation-queries",
-  "commit": "43f4493285fd11f308e2bc1afa8c69f529709bb2",
+  "branch": "shared/wide-comparison-grid",
+  "commit": "16be4776ff9c28c699d57f66ea3339d8b83497e5",
   "folders": [
     "schema",
     "scripts/runrecord",
@@ -45,7 +45,7 @@
     "scripts/sync.py": "e2f5747a45bc538bd197532fb43711b95dbe6d1ffaa1febed09e2d938d081725",
     "scripts/triage.py": "adbec32cd6161a6bbdbd8c0ee1f30cc691cc7a4531c7a62b46552d92c3a831cd",
     "site/assets/OFL.txt": "ee9491ad3ea5d390878695bd6cce49beb3cacd5c4312f8ab574b541e9f7afa21",
-    "site/assets/before-after.css": "47155e61b36b5a3f2c4fb2cb84aa7b07eb56088f2f48d6b12d1f83961efa60dc",
+    "site/assets/before-after.css": "194fe26b9944bd1d43bca37a73efeddffa274da59365a34c517b165ea2cbb02e",
     "site/assets/before-after.js": "78600110563fc7c129a6f0f58542f14584398fe22168700decdec506288dd1a9",
     "site/assets/comparison.css": "01bb5a73fffae149875286e505dc02010e9bd62a42a5dda9cb89b93430bf2d31",
     "site/assets/comparison.js": "a1d4399feb198e6c5caaa148c71abf6430e9230c83500d14dbab91236b55f073",
