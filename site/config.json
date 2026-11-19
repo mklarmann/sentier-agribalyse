@@ -234,7 +234,8 @@
     "public_scores": {
       "file": "food-scores.json",
       "sha256": "36790bbadc25b30838158dc1284a9464915151ffc9e5caf1d5dc14b470ac1b9b",
-      "chain_sha256": "e4b20decc721986c17ebed92c58ec4ccd11b20c69bd2a342269bc218aa3dcebf"
+      "chain_sha256": "e5cf5c98887cb39b99de09093643c28b12868f273affea8adeb61ab4ebdde161",
+      "note": "site/water-use.md"
     },
     "scores_download_url": "https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/food-comparison.csv"
   },

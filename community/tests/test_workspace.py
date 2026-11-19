@@ -323,6 +323,17 @@ class Site(unittest.TestCase):
         record = json.loads((ROOT / "site/licensed-run.json").read_text())
         self.assertEqual(diagnostics, record["diagnostics"])
 
+    def test_water_study_links_the_source_control_to_its_build_step(self):
+        html = self.pages["before-after.html"]
+        self.assertEqual(html.count('id="water-use-gap"'), 1)
+        self.assertIn('href="#sd.step=water"', html)
+        self.assertIn('id="sd.step=water"', html)
+        self.assertIn("all 2,451 foods fall within 5%", html)
+        self.assertIn("210 processes", html)
+        run = json.loads((self.out / "api/v1/last-run.json").read_text())
+        water = next(step for step in run["diagnostics"]["steps"] if step["id"] == "water")
+        self.assertTrue(water["link"].endswith("/before-after.html#water-use-gap"))
+
     def test_published_reference_covers_the_catalogue_and_uses_the_step_indicator_ids(self):
         ref = json.loads((self.out / "assets/ademe-reference.json").read_text())
         catalogue = json.loads((self.out / "assets/agribalyse-catalogue.json").read_text())

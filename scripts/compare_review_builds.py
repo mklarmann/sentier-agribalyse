@@ -32,7 +32,7 @@ STATES = [
         "Flow compartment matching",
         "Resolve elementary flows using their environmental subcompartment.",
     ),
-    ("water", "Regional water use", "Apply the water-use correction to the reconstructed system."),
+    ("water", "Regional water use", "Score water withdrawals and returns using regional and compartment-specific EF 3.1 factors."),
     (
         "integrated",
         "Integrated review build",
@@ -183,6 +183,7 @@ def main():
                 kind="reproduction" if reproduction else "build change",
                 about=about,
                 explained=not reproduction and key != "integrated",
+                link="https://mklarmann.github.io/sentier-agribalyse/before-after.html#water-use-gap" if key == "water" else None,
                 tolerance=chain.tolerance(
                     0.05 if reproduction else 1e-6,
                     basis="declared",

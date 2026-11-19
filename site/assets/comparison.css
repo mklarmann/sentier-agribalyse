@@ -103,3 +103,20 @@
   .sentier-comparison .comparison-pair { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
   .sentier-comparison .comparison-state { padding: .75rem .875rem; }
 }
+
+.sentier-comparison .comparison-note {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 70rem;
+  margin: 1.5rem auto 0;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  background: #fbfaf5;
+  border: 1px solid #ceccbd;
+  border-radius: .5rem;
+}
+.sentier-comparison .comparison-note > :first-child { margin-top: 0; scroll-margin-top: 9rem; }
+.sentier-comparison .comparison-note > :last-child { margin-bottom: 0; }
+.sentier-comparison .comparison-note p { max-width: 85ch; }
+.ba-diagnostics > [id^="sd.step="] { display: block; scroll-margin-top: 9rem; }
+.sentier-comparison .comparison-note > .table-wrap { max-width: none; }
+.sentier-comparison .comparison-note th { white-space: normal; }

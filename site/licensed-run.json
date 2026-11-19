@@ -815,7 +815,7 @@
    {
     "id": "water",
     "label": "Regional water use",
-    "about": "Apply the water-use correction to the reconstructed system.",
+    "about": "Score water withdrawals and returns using regional and compartment-specific EF 3.1 factors.",
     "kind": "build",
     "identity": {
      "Adapter revision": "b8ed9cd9ae2e57d9b42d4e349e696b572bbec308",
@@ -989,10 +989,10 @@
     "from": "flows",
     "to": "water",
     "label": "Regional water use",
-    "about": "Apply the water-use correction to the reconstructed system.",
+    "about": "Score water withdrawals and returns using regional and compartment-specific EF 3.1 factors.",
     "kind": "build change",
     "explained": true,
-    "link": null,
+    "link": "https://mklarmann.github.io/sentier-agribalyse/before-after.html#water-use-gap",
     "claim": null,
     "tolerance": {
      "value": 1e-06,

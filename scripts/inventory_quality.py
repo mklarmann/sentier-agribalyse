@@ -2,7 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = ["sentier-diagnostics"]
 # [tool.uv.sources]
-# sentier-diagnostics = { git = "https://github.com/sentier-dev/sentier-diagnostics", rev = "f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1" }
+# sentier-diagnostics = { git = "https://github.com/sentier-dev/sentier-diagnostics", rev = "4fa50c94cd364abf40503cbc43b6656609d2375a" }
 # ///
 """Record safe quality evidence from a licensed run and render its rows in the review site."""
 
