@@ -21,7 +21,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import community  # noqa: E402
@@ -183,6 +183,16 @@ class Site:
         return self.derived("releases", lambda: community.release_index(self.triage["findings"], self.records_config))
 
     # ------------------------------------------------------------------ helpers
+
+    def finding_submission(self, dataset=None):
+        """Use this project's public intake, or prefill its GitHub issue template."""
+        override = self.config.get("finding_submission_url")
+        if override:
+            if urlsplit(override).scheme != "https" or not urlsplit(override).hostname:
+                raise ValueError("finding_submission_url must be a public HTTPS address")
+            return override
+        url = f"{self.repo}/issues/new?template={self.finding_form}"
+        return f"{url}&dataset={quote(dataset)}" if dataset else url
 
     def label(self, stage):
         return status.display_label(stage, self.provider)

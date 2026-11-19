@@ -277,12 +277,21 @@ class Site(unittest.TestCase):
         self.assertEqual((self.out / "style.css").read_bytes(), (ROOT / "site/style.css").read_bytes())
 
     def test_feedback_and_contributions_stay_in_their_review_sections(self):
+        labels = ["Overview", "AGRIBALYSE catalogue", "Sources", "Cases", "Build", "Contribute"]
+        for page, html in self.framed.items():
+            with self.subTest(page=page):
+                nav = re.search(r'<nav class="nav".*?</nav>', html, re.S)[0]
+                self.assertEqual(re.findall(r'<a [^>]*>([^<]*)</a>', nav), labels)
+                self.assertEqual(nav.count("aria-current"), 0 if page == "404.html" else 1)
         for page, parent, view in (
             ("feedback.html", "Cases", "Feedback to ADEME"),
             ("cases/F7.html", "Cases", "Case register"),
             ("findings/F7.html", "Cases", "Findings"),
             ("earlier-reports.html", "Sources", "Earlier reports"),
-            ("contributions/C001.html", "Sources", "Contributions"),
+            ("contributions/C001.html", "Cases", "Proposed changes"),
+            ("about/terms.html", "Sources", "Access and terms"),
+            ("about/data.html", "Sources", "Public records"),
+            ("housekeeping.html", "Contribute", "Maintainer checks"),
         ):
             with self.subTest(page=page):
                 html = self.pages[page]
@@ -323,7 +332,9 @@ class Site(unittest.TestCase):
     def test_the_site_is_about_this_dataset_and_this_provider(self):
         home = self.pages["index.html"]
         self.assertIn("Review AGRIBALYSE 3.2 on ecoinvent", home)
-        self.assertIn("issues/new?template=agribalyse-data-finding.yml", home)
+        submission = CONFIG["finding_submission_url"].replace("&", "&amp;")
+        self.assertIn(f'href="{submission}"', home)
+        self.assertIn(f'href="{submission}"', self.pages["take-part.html"])
         self.assertIn("Look up a finding number or a word", home)
         # The pages the build writes on its own name no other dataset, except in the footer's link
         # to the sibling site. Pages of prose may: they say where a lesson or a format comes from.

@@ -22,4 +22,4 @@ In February 2025 a user reported allocation and impact-factor validation message
 
 ## How often was a point raised?
 
-This selection links four original sources for these topics. They comprise one ADEME release page, one ADEME FAQ, one research paper and one first-hand software thread. Replies and repeated citations count with their original source. Counts of independent reports across mailing lists or private correspondence are unknown. To add a public report, include its date, release and original link. [Take part](take-part.md).
+This selection links four original sources for these topics. They comprise one ADEME release page, one ADEME FAQ, one research paper and one first-hand software thread. Replies and repeated citations count with their original source. Counts of independent reports across mailing lists or private correspondence are unknown. To add a public report, include its date, release and original link. [Submit evidence](take-part.md#submit-evidence).

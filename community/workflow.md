@@ -1,6 +1,12 @@
 # Contribution workflow
 
-This is the working document for people who propose, test or review a contribution. The site's [Contributions](https://sentier-dev.github.io/sentier-agribalyse/contributions.html) page lists the contributions and gives the short version of this text.
+This is the working document for people who propose, test or review a contribution. The site lists existing proposals under [Cases → Proposed changes](../site/contributions.md). [Contribute](../site/take-part.md) gives the public routes for submitting evidence, reporting an observation and checking a finding.
+
+## Record the source and case
+
+1. For a public source, check its publisher, release or version, access terms and the scope of the evidence. Add the reference to [the source register](sources.json) if it has no entry. Link the finding numbers it supports in `cases`. A source can be listed before anyone raises a case.
+2. For a new observation, start from [the finding template](templates/finding.json), use the number of its issue and record the original report, its date and how to repeat the observation. For an independent verification, link the second person's dated result in the same record. The site derives the case status from that evidence.
+3. Record a submission to ADEME and its reply as separate dated events with public evidence or an authorised summary. Identify the release and file if ADEME later publishes a correction. Review proposed changes using the steps below.
 
 A contribution is a proposal that goes beyond a single finding: a mapping, a model, a parameter scenario or a method variant. It comes with its evidence and with the checks it must pass. A contribution never replaces ADEME's numbers.
 
@@ -37,7 +43,7 @@ A contribution is **proposed**, then **testing**, then **reviewing**. It ends as
 
 ## Steps
 
-1. **Propose.** Open a [contribution issue](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=community-contribution.yml). Add the record in a pull request.
+1. **Propose.** Use the [submission link under Contribute a change](../site/take-part.md#contribute-a-change) to open a prefilled issue. Add the record in a pull request.
 2. **Build beside, never in place.** Build ADEME's release and the changed version separately, from the same inputs, at exact revisions, on your own machine and with your own ecoinvent licence. Keep both builds in a local folder that is not committed, such as `.local/`.
 3. **Test.** Run the checks that the record names. Add each result to the record, with a public link to its evidence. A check that failed or was not run stays in the record. [How builds are checked](build-validation.md) describes the checks on a build, and [application-and-testing.md](application-and-testing.md) shows the steps.
 4. **Review.** The reviewers named in the record approve the exact version that was tested. An objection is recorded with its answer and a link.

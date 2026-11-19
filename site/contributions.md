@@ -1,4 +1,4 @@
-# Contributions
+# Proposed changes<span id="contributions"></span>
 
 A contribution proposes a change someone can test alongside ADEME’s published release. It can supply a mapping, change a parameter or introduce a model. Each record names the release and links to the implementation and its checks.
 

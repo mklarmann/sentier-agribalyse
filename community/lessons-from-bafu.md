@@ -17,6 +17,6 @@ No defect of an AGRIBALYSE value and no recommendation to ADEME is asserted by t
 
 ## Add a finding
 
-[Open a finding](https://github.com/sentier-dev/sentier-agribalyse/issues/new?template=agribalyse-data-finding.yml) with the release, what it concerns, what you measured and how. Record whether the observation comes from source files, an imported representation or a served result. Invite independent reproduction; keep unresolved interpretations explicit.
+[Open a finding](../site/take-part.md#identify-a-finding) with the release, what it concerns, what you measured and how. Record whether the observation comes from source files, an imported representation or a served result. Invite independent reproduction; keep unresolved interpretations explicit.
 
 If a contribution addresses it, link its record in `contributions/` and its [validation](build-validation.md). A workaround does not close the provider question. Reviewed recommendations and actual ADEME responses belong in [the recommendation tracker](recommendations/).

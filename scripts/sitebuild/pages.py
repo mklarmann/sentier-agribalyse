@@ -261,7 +261,7 @@ def dataset_page(site, code, entry):
                      + (f'<p>They are applied in the <a href="{up}{site.patched_page}">patched copy</a>. '
                         if site.patched_page else "<p>")
                      + f"A patch is not {p}'s correction.</p>")
-    report = f"{site.repo}/issues/new?template={site.finding_form}&dataset={quote(title)}"
+    report = site.finding_submission(title)
     body = (
         f'<nav class="crumb" aria-label="Breadcrumb"><a href="{up}findings.html">Findings</a> '
         f'<span aria-hidden="true">/</span> <span aria-current="page">Dataset {code}</span></nav>'

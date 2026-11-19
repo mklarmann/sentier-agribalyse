@@ -2,10 +2,11 @@
 
 This is the working space for people who use AGRIBALYSE. Users record what they find in the data, repeat each other's measurements and report the findings to ADEME, which publishes the database and decides what it changes. Proposals that go beyond a single finding are contributions, with their evidence and their checks.
 
-The public site is built from the records here. Its pages say how to [take part](../site/take-part.md); this page says where things are in the repository.
+The public site is built from the records here. [Contribute](../site/take-part.md) gives contributors the public submission and verification routes. The [review workflow](workflow.md) describes how maintainers record the evidence and decision.
 
 | Where | What |
 |---|---|
+| [`sources.json`](sources.json) | Public references added by maintainers, with the finding numbers they support. The Sources register also reads releases, findings and contributions directly from their records. |
 | `findings/<number // 1000>/F<number>.json` | one record per finding. A record holds what was observed and the dated evidence of what happened to it. Its status is computed from that evidence; nobody sets it by hand. The number of a finding is the number of its issue. |
 | `contributions/C<number>.json` | one record per contribution; see [the contribution workflow](workflow.md) |
 | `recommendations/tracker.json` | what was recommended to ADEME, and what ADEME answered |

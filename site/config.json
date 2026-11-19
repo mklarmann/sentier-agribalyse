@@ -37,7 +37,7 @@
     ],
     [
       "browse.html",
-      "Browse"
+      "AGRIBALYSE catalogue"
     ],
     [
       "sources.html",
@@ -53,7 +53,7 @@
     ],
     [
       "take-part.html",
-      "Take part"
+      "Contribute"
     ]
   ],
   "footer": [
@@ -100,7 +100,7 @@
       "description": "What was reported to ADEME and when, what ADEME answered, what is resolved, and what is ready to be reported."
     },
     {
-      "title": "Contributions",
+      "title": "Proposed changes",
       "source": "site/contributions.md",
       "page": "contributions.html",
       "description": "Proposals that go beyond a single finding: mappings, models, parameter scenarios and method variants, each with its checks and reviewers."
@@ -112,7 +112,7 @@
       "description": "Follow the six stages of a licensed local build of AGRIBALYSE 3.2 on ecoinvent 3.9.1, from ADEME’s export to the stripped scoring package."
     },
     {
-      "title": "Take part",
+      "title": "Contribute",
       "source": "site/take-part.md",
       "page": "take-part.html",
       "description": "Identify a finding, verify someone else’s report or contribute a change on GitHub."
@@ -148,7 +148,7 @@
       "description": "The licensed local import and the automated checks that accompany it."
     },
     {
-      "title": "Browse AGRIBALYSE 3.2",
+      "title": "AGRIBALYSE catalogue",
       "source": "site/browse.md",
       "page": "browse.html",
       "description": "Search foods in French or English, elementary flows and parameter names."
@@ -192,7 +192,7 @@
       "about/checks.html": "Quality",
       "runs.html": "Runs"
     },
-    "on_home": true,
+    "on_home": false,
     "order": [
       "mapping.html",
       "about/checks.html",
@@ -216,25 +216,39 @@
     [
       "build.html",
       "Check what changed in the inventory and its results."
+    ],
+    [
+      "take-part.html",
+      "Submit evidence, verify an observation or propose a change."
     ]
   ],
   "case_review": true,
   "nav_parents": {
-    "contributions.html": "sources.html",
+    "contributions.html": "cases.html",
     "earlier-reports.html": "sources.html",
     "findings.html": "cases.html",
-    "feedback.html": "cases.html"
+    "feedback.html": "cases.html",
+    "about/terms.html": "sources.html",
+    "about/data.html": "sources.html",
+    "housekeeping.html": "take-part.html"
   },
   "section_navigation": {
     "sources.html": {
       "sources.html": "Source register",
       "earlier-reports.html": "Earlier reports",
-      "contributions.html": "Contributions"
+      "about/terms.html": "Access and terms",
+      "about/data.html": "Public records"
     },
     "cases.html": {
       "cases.html": "Case register",
       "findings.html": "Findings",
+      "contributions.html": "Proposed changes",
       "feedback.html": "Feedback to ADEME"
+    },
+    "take-part.html": {
+      "take-part.html": "How to contribute",
+      "housekeeping.html": "Maintainer checks"
     }
-  }
+  },
+  "finding_submission_url": "https://github.com/sentier-dev/sentier-agribalyse/issues/new?title=%5BFinding%5D+&body=%23%23%23+What+kind+of+finding+is+it%3F%0AQuestion%0A%0A%23%23%23+ADEME+release+it+was+observed+in%0A3.2%0A%0A%23%23%23+What+else+it+concerns%0A%5BFood+or+process+code%2C+flow+or+parameter%5D%0A%0A%23%23%23+What+the+data+says%0A%5BWhat+you+noticed%2C+with+units+where+relevant%5D%0A%0A%23%23%23+How+you+measured+it%0A%5BFile%2C+field+and+steps+another+person+can+follow%5D"
 }

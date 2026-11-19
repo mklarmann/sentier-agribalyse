@@ -1,6 +1,10 @@
-# Take part
+# Contribute<span id="take-part"></span>
 
-Use this site to look up a food, check a release or report something you found. A browser and a public GitHub comment are enough for many checks. The LCI Workbench and the [local build](build.md) are for people investigating models or comparing inventories.
+You can contribute a source, report an observation, verify someone else’s result or propose a change. Start with the [case register](cases.md) to see whether someone is already investigating the same point.
+
+## Submit evidence
+
+For an existing case, open its discussion and add the public reference there. For new material, give the source title, author or publisher, version or date, public link and access terms. Include the relevant food code, flow or case number when you have one. Keep licensed exchanges on your machine. [Submit a source on GitHub](https://github.com/sentier-dev/sentier-agribalyse/issues/new?title=%5BSource%5D%20&body=Title%20and%20author%3A%20%0AVersion%20or%20date%3A%20%0APublic%20link%20and%20access%20terms%3A%20%0ARelated%20case%20or%20observation%3A%20).
 
 ## Verify a finding
 
@@ -19,3 +23,9 @@ Start with one sentence describing what you noticed. Choose question, defect or 
 ## Contribute a change
 
 If you have a better mapping, a parameter scenario or an inventory model, describe what it changes and how someone can test it. The [contribution record](contributions.md) shows who did the work, the checks and the review decision. [Propose a contribution on GitHub](https://github.com/sentier-dev/sentier-agribalyse/issues/new?title=%5BContribution%5D%20&body=Proposed%20change%3A%20%0AAGRIBALYSE%20release%3A%20%0AEvidence%20and%20how%20to%20test%20it%3A%20).
+
+## What the maintainer records
+
+The maintainer checks what can be shared, credits the source and links it to the cases it supports. A new observation receives the number of its GitHub issue. An independent check records the reviewer, date, public comment and outcome, including a different result.
+
+For a proposed change, the maintainer records the tested revision, checks, reviewer decisions and any outstanding objections. A report sent to ADEME and a reply each get their own dated evidence link. [Review workflow](../community/workflow.md) · [Maintainer checks](housekeeping.html).

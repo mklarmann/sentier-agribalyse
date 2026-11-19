@@ -161,7 +161,7 @@ def lookup(site, up="", field="lookup"):
 
 
 def redirect(site, target, label, up="", fragments=None):
-    """An old address: it leads on at once, keeps a fragment, and says where it leads."""
+    """An old address: it leads on at once, keeps the query and fragment, and says where it leads."""
     here = up + target
     hash_js = "location.hash"
     default = here
@@ -172,7 +172,7 @@ def redirect(site, target, label, up="", fragments=None):
         '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><title>Moved: '
         f'{esc(label)}</title><meta name="robots" content="noindex"><link rel="canonical" href="{esc(site.config["site_url"] + target)}">'
         f'<meta http-equiv="refresh" content="0; url={esc(default)}">'
-        f"<script>location.replace({json.dumps(here)} + {hash_js});</script></head>"
+        f"<script>location.replace({json.dumps(here)} + location.search + {hash_js});</script></head>"
         f'<body><p>This page has moved. <a href="{esc(default)}">Continue to {esc(label)}</a>.</p></body></html>\n'
     )
 

@@ -21,7 +21,7 @@ def second_measurement_list(site, up="", limit=5):
 def ways(site, up=""):
     """The three ways to take part."""
     p = esc(site.provider)
-    report = f"{site.repo}/issues/new?template={site.finding_form}"
+    report = site.finding_submission()
     return (
         '<div class="ways">'
         f'<div class="card"><h3>Verify a finding</h3><p>Choose an open finding, check it on '

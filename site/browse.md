@@ -1,6 +1,6 @@
-# Browse AGRIBALYSE 3.2
+# AGRIBALYSE catalogue<span id="browse-agribalyse-32"></span>
 
-Find a food by its French or English name, AGRIBALYSE code or CIQUAL code. You can also look up an elementary flow or a parameter from the AGRIBALYSE foreground inventory.
+Search the foods in AGRIBALYSE 3.2 by French or English name, AGRIBALYSE code or CIQUAL code. Choose **Elementary flows** or **Parameters** to explore the foreground inventory. You can bookmark or share a search using the address in your browser.
 
 <div id="catalogue">
 <form id="catalogue-controls" hidden>
@@ -32,4 +32,4 @@ Foods come from ADEME’s public table of ready-to-eat foods. Some entries share
 
 The flow list shows names, compartments and units used in AGRIBALYSE’s own foreground processes. A flow can occur in several compartments. Parameters are listed by name and by whether they are inputs or calculated. Full exchanges, parameter values and formulas can be inspected in the [local build](build.md). [AGRIBALYSE source and terms](../IMPORT.md#licence).
 
-Spotted something unexpected? Note the code or name above and the release when you [identify or verify a finding](take-part.md).
+If you find an unexpected value, look for the release in [Sources](sources.md) and check the [case register](cases.md) for an existing observation. Include the code or name and the release when you [report a finding](take-part.md#identify-a-finding).
