@@ -4,7 +4,7 @@ The site is built from the records, not written by hand: one page per finding an
 
 ```sh
 uv run --frozen scripts/inventory_quality.py --check
-uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@b971c0aa565862fbf0be622c4d74a130554a455b' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
+uv run --no-project --python 3.12 --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/build_site.py --last-run site/licensed-run.json --offline --out _site
 uv run --no-project --python 3.12 python scripts/check_site.py _site
 python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 ```
@@ -19,7 +19,7 @@ For individual before/after rebuild scores, point the following command at the f
 
 ```sh
 mkdir -p .local
-uv run --frozen --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@b971c0aa565862fbf0be622c4d74a130554a455b' python scripts/compare_review_builds.py \
+uv run --frozen --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/compare_review_builds.py \
   --baseline "$BUILDS/fb-nb-main-a-adapter" --repeat-baseline "$BUILDS/fb-nb-main-b2-adapter" \
   --codes "$BUILDS/fb-nb-a-adapter" --repeat-codes "$BUILDS/fb-nb-a2-adapter" \
   --flows "$BUILDS/fb-nb-ac-adapter" --water "$BUILDS/fb-nb-acw-adapter" \
