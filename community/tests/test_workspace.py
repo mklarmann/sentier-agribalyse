@@ -276,6 +276,31 @@ class Site(unittest.TestCase):
         # the colour is not written into the stylesheet: that file is the same on every site
         self.assertEqual((self.out / "style.css").read_bytes(), (ROOT / "site/style.css").read_bytes())
 
+    def test_feedback_and_contributions_stay_in_their_review_sections(self):
+        for page, parent, view in (
+            ("feedback.html", "Cases", "Feedback to ADEME"),
+            ("cases/F7.html", "Cases", "Case register"),
+            ("findings/F7.html", "Cases", "Findings"),
+            ("earlier-reports.html", "Sources", "Earlier reports"),
+            ("contributions/C001.html", "Sources", "Contributions"),
+        ):
+            with self.subTest(page=page):
+                html = self.pages[page]
+                main = re.search(r'<nav class="nav".*?</nav>', html, re.S)[0]
+                views = re.search(r'<nav class="subnav".*?</nav>', html, re.S)[0]
+                self.assertIn(f'aria-current="page">{parent}</a>', main)
+                self.assertNotIn("Feedback to ADEME", main)
+                self.assertRegex(views, rf'aria-current="(?:page|location)">{view}</a>')
+
+    def test_the_flow_list_case_links_to_its_original_evidence(self):
+        sources = json.loads((self.out / "api/v1/sources.json").read_text())["sources"]
+        cases = json.loads((self.out / "api/v1/cases.json").read_text())["cases"]
+        flow_case = next(case for case in cases if case["id"] == "F7")
+        linked = {s["id"]: s["url"] for s in sources if "F7" in s["cases"]}
+        self.assertEqual(set(linked), set(flow_case["sources"]))
+        self.assertEqual(linked["report-F7"], CONFIG["repository"] + "/issues/7")
+        self.assertEqual(linked["flow-download"], CONFIG["repository"] + "/pull/9")
+
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)
         # This review records a licensed run completed outside GitHub.
@@ -297,7 +322,7 @@ class Site(unittest.TestCase):
 
     def test_the_site_is_about_this_dataset_and_this_provider(self):
         home = self.pages["index.html"]
-        self.assertIn("Feedback on ADEME", home)
+        self.assertIn("Review AGRIBALYSE 3.2 on ecoinvent", home)
         self.assertIn("issues/new?template=agribalyse-data-finding.yml", home)
         self.assertIn("Look up a finding number or a word", home)
         # The pages the build writes on its own name no other dataset, except in the footer's link

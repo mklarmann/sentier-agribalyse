@@ -1,15 +1,15 @@
 {
   "note": "The files this repository shares with sentier-bafu. Do not edit them here: change them in sentier-bafu, then run `python3 scripts/shared_files.py take`. `python3 scripts/shared_files.py check` compares.",
   "repository": "https://github.com/mklarmann/sentier-bafu",
-  "branch": "eaternity/integration",
-  "commit": "05a20754786808d68461115b4fc13b88818d7ba7",
+  "branch": "shared/sources-cases-navigation-20261119",
+  "commit": "33e0364bce99dace2839f43203e1cb20a4b55322",
   "folders": [
     "schema",
     "scripts/runrecord",
     "scripts/sitebuild"
   ],
   "files": {
-    "docs/before-after.md": "5489474ce05f05ba34c4fdb54e7edbfa187866299ed8c168484b60bc83088aaa",
+    "docs/before-after.md": "b65c93bfd236bc6a873585f4ecaac093df3e80578c00d860c44371d222dc9b7a",
     "schema/contribution.schema.json": "5d782e664f411bf5c5affbe9c5383c139ad70e53fb7e43af63cac9e943802bcf",
     "schema/finding.schema.json": "2e3b4d5d82d5c53b758ba6ba639248de327c62b8df66cee9bd94a26a9220fe87",
     "scripts/build_site.py": "f1017c707b48612ea915e418e69ce5b81b01e12432ce39ecd2cf8c0cf6da32f0",
@@ -27,17 +27,17 @@
     "scripts/shared_files.py": "28ec829f10f9a6d2a5ddbec95071cb2a0bc9a2e7f1d907564424abf819cfd283",
     "scripts/sitebuild/__init__.py": "89342cf628bc7f5c2f58d036a16048064cdf5050d62f46d4315f34402293457e",
     "scripts/sitebuild/beforeafter.py": "faadc329f359d9e71997277095b942dd113d2bb6aa23cb50e2328fd119dac9b6",
-    "scripts/sitebuild/cases.py": "12c82c605104de951b076d718636abb5227f857ab2f981ab26c7ad28ac8df179",
+    "scripts/sitebuild/cases.py": "617d21697e0664f13299003454099cd448a5cebab0e3ee7ef6f012f78d7d41e7",
     "scripts/sitebuild/contributions.py": "853468fff5eadef7b04604bc8d62d9dc5a7978cbe709795535d1b3f282da4213",
     "scripts/sitebuild/data.py": "8b7b7edf44d335a880bc35d612ceaafae9a7468304939b69711345c8f83463e7",
     "scripts/sitebuild/findings.py": "6679e767691f59ef9df5d6a5eb8053c6a575c72b2086ebf0f37a64e9d4db07f4",
     "scripts/sitebuild/lastrun.py": "58d0f9088ddca077295da0c6231d86641915a13b350e0c96bc270e54791c67dc",
-    "scripts/sitebuild/overview.py": "11bf932da6752f436ca20750c832840195548ddfcb62de4b4692128b41673b05",
+    "scripts/sitebuild/overview.py": "662ed09d68c2751cbc491d811527f4a24360030d94c0b92b5fe8959cc657707d",
     "scripts/sitebuild/pages.py": "912b025f828fbf1d55b13f91fe60b85005ffc219bba0a9037da5b3e162ec39d6",
     "scripts/sitebuild/prose.py": "b476eb442872e2851e14f03900602330d99b719f197abab17f59e55245cb4ba6",
     "scripts/sitebuild/quality.py": "d778cba9f526a64d9c533b26350051d1dfacce7830e538492b42f658e9bcc7ea",
     "scripts/sitebuild/review.py": "f6201164229e2c106798c945075f7d735603cd4276e4a94a831bad3c4c86bf2a",
-    "scripts/sitebuild/shell.py": "ccc1861dc1bbbb4fffaf623ac289cd3f5a97b733439921bba94f9cd5b6eb0e10",
+    "scripts/sitebuild/shell.py": "e8a7897b5803e9c6db31f0eab5221f69337609331022ad8481fd9e1e56e304d1",
     "scripts/sitebuild/status.py": "c32fe4bf9056d5d1dc48852bddcf6e9251f6801ff46a9b2c48f5e490b1d5e1ac",
     "scripts/sitebuild/text.py": "daa17e6073ea98002feacbd272270ddd834672b7ca521de930f8124fce4ee4f2",
     "scripts/sitebuild/theme.py": "0175d73fc04e49428573838be33f776c985e1c8357cc59e71a00410e4a171af9",
@@ -54,7 +54,7 @@
     "site/assets/register.js": "32dd0e4e0d184177da55445983bc48e99d7a7bf1693698860376ef27b2f6c9de",
     "site/assets/replay.js": "558eab71a8dfd325338c267f5680c719e7139f56570928c465d382e6c8004fe0",
     "site/assets/review.js": "42f8b71db07841070e765cf41536a7f34453545531b7bc165bb4292ad2817395",
-    "site/style.css": "71e2272d8f199348c6c9a1e9de843eb81e431faca6371e38910c48db96fdf7e5"
+    "site/style.css": "1c1a39f38968674120303dc01e3f3fccb9a7ebcbb8b0261ff21834c83cc41d3e"
   },
   "sets": [
     "site"

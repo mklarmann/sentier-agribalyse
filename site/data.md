@@ -6,6 +6,8 @@ Addresses are relative to `https://sentier-dev.github.io/sentier-agribalyse/`. I
 
 <!-- generated: data-files -->
 
+The [source register](api/v1/sources.json) lists the public material and the cases that cite it. The [case register](api/v1/cases.json) links each observation to its sources, review status and any registered patch.
+
 The two files under `schema/` are the JSON Schema of a finding record and of a contribution record. They are the rules that the records in the repository are checked against.
 
 The files have the same shape on every Sentier dataset site, so a tool that reads one site reads the others. For that reason the `schema` value inside a file names the format, `sentier-bafu/findings/1` and so on, also on this site. It does not say that the content is about BAFU's data.

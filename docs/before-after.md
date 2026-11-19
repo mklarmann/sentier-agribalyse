@@ -240,7 +240,7 @@ classes. A site with a frame of its own defines these, and nothing else is neede
 
 - tokens: `--index`, `--ink`, `--muted`, `--surface`, `--paper-deep`, `--line`,
   `--line-strong`, `--wait`, `--wait-ink`, `--wait-tint`, `--fail`, `--fail-tint`, `--good`,
-  `--radius`, `--gutter`, the sizes `--t-xs`, `--t-sm`, `--t-md`, `--t-lg` and the spaces
+  `--radius`, the sizes `--t-xs`, `--t-sm`, `--t-md`, `--t-lg` and the spaces
   `--s2` to `--s6`;
 - classes: `button`, `primary`, `linklike`, `card`, `card-label`, `card-meta`, `chip`,
   `chips`, `tag`, `quiet`, `note`, `eyebrow`, `lead`, `crumb`, `plain`, `num`, `table-wrap`,

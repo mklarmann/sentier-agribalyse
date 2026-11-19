@@ -54,19 +54,24 @@ def shell(site, title, body, current, up="", page=None, description=None, head="
     home = page == "index.html"
     full = c["home_title"] if home else f'{title} · {c["title_suffix"]}'
     described = description or c["description"]
-    section = None if home else site.build_sections.get(page)
-    current = c.get("nav_parents", {}).get(current, current)
-    subnav = ""
-    if section:
+    build_section = site.build_sections.get(page)
+    section = current
+    current = c.get("nav_parents", {}).get(section, section)
+    views = c.get("section_navigation", {}).get(current, {})
+    parent = current
+    if build_section:
         current = site.walk_page
-    if section or (home and site.build_views and c["build_navigation"].get("on_home")):
+    if build_section or (home and site.build_views and c["build_navigation"].get("on_home")):
+        parent, views, section = site.walk_page, site.build_views, build_section
+    subnav = ""
+    if views:
         links = "".join(
             f'<a href="{up}{esc(href)}"'
             + (' aria-current="page"' if section and href == page else ' aria-current="location"' if href == section else "")
-            + f'>{esc(label)}</a>' for href, label in site.build_views.items()
+            + f'>{esc(label)}</a>' for href, label in views.items()
         )
-        parent = dict(c["nav"])[site.walk_page]
-        subnav = f'<nav class="subnav" aria-label="{esc(parent)}: its parts"><div class="wrap subnav-in">{links}</div></nav>'
+        label = dict(c["nav"])[parent]
+        subnav = f'<nav class="subnav" aria-label="{esc(label)}: its parts"><div class="wrap subnav-in">{links}</div></nav>'
     nav = "".join(
         f'<a href="{up}{href}"' + (' aria-current="page"' if href == current else "") + f">{esc(label)}</a>"
         for href, label in c["nav"]

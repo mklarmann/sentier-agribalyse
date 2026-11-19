@@ -15,14 +15,18 @@
     "tint": "#e5dce9",
     "soft": "#a084ae"
   },
-  "lookup_example": "F1",
+  "lookup_example": "F7",
   "finding_label": "agribalyse-finding",
   "finding_form": "agribalyse-data-finding.yml",
   "repository": "https://github.com/sentier-dev/sentier-agribalyse",
   "site_url": "https://sentier-dev.github.io/sentier-agribalyse/",
   "source_ref": "main",
-  "home_title": "AGRIBALYSE inventory database: community findings · Sentier",
-  "title_suffix": "AGRIBALYSE findings · Sentier",
+  "home_title": "AGRIBALYSE 3.2 community review · Sentier",
+  "home_intro": {
+    "heading": "Review AGRIBALYSE 3.2 on ecoinvent",
+    "lead": "Explore ADEME’s published data, follow the evidence behind individual cases and compare the results of rebuilding the inventory on ecoinvent 3.9.1."
+  },
+  "title_suffix": "AGRIBALYSE community review · Sentier",
   "description": "Browse AGRIBALYSE 3.2, check community findings against ADEME’s release and follow the results of the ecoinvent build.",
   "sibling_name": "BAFU/UVEK",
   "sibling_url": "https://sentier-dev.github.io/sentier-bafu/",
@@ -36,16 +40,12 @@
       "Browse"
     ],
     [
-      "findings.html",
-      "Findings"
+      "sources.html",
+      "Sources"
     ],
     [
-      "feedback.html",
-      "Feedback to ADEME"
-    ],
-    [
-      "contributions.html",
-      "Contributions"
+      "cases.html",
+      "Cases"
     ],
     [
       "build.html",
@@ -75,6 +75,18 @@
     ]
   ],
   "documents": [
+    {
+      "title": "Sources",
+      "source": "site/sources.md",
+      "page": "sources.html",
+      "description": "Find the original releases, reports and contributions used to review AGRIBALYSE 3.2."
+    },
+    {
+      "title": "Cases",
+      "source": "site/cases.md",
+      "page": "cases.html",
+      "description": "Trace an AGRIBALYSE observation from its source through review, correspondence and any recorded change."
+    },
     {
       "title": "Findings",
       "source": "site/findings.md",
@@ -145,7 +157,6 @@
       "title": "Earlier reports and release notes",
       "source": "site/earlier-reports.md",
       "page": "earlier-reports.html",
-      "nav": "findings.html",
       "description": "Original sources for published corrections, software reports and methodological questions."
     }
   ],
@@ -195,20 +206,35 @@
       "Identify the food, flow or parameter."
     ],
     [
-      "findings.html",
-      "Read the observation and check the release."
+      "sources.html",
+      "Find the release, report or contribution behind an observation."
     ],
     [
-      "feedback.html",
-      "Follow the report and ADEME’s response."
-    ],
-    [
-      "contributions.html",
-      "Review a proposed change."
+      "cases.html",
+      "Follow the evidence and the review decision."
     ],
     [
       "build.html",
-      "Inspect what changed in the inventory and its results."
+      "Check what changed in the inventory and its results."
     ]
-  ]
+  ],
+  "case_review": true,
+  "nav_parents": {
+    "contributions.html": "sources.html",
+    "earlier-reports.html": "sources.html",
+    "findings.html": "cases.html",
+    "feedback.html": "cases.html"
+  },
+  "section_navigation": {
+    "sources.html": {
+      "sources.html": "Source register",
+      "earlier-reports.html": "Earlier reports",
+      "contributions.html": "Contributions"
+    },
+    "cases.html": {
+      "cases.html": "Case register",
+      "findings.html": "Findings",
+      "feedback.html": "Feedback to ADEME"
+    }
+  }
 }

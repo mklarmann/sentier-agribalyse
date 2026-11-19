@@ -47,12 +47,15 @@ def overview(site):
     )
     browse = ('<a class="button primary" href="cases.html">Browse cases</a> <a class="button" href="sources.html">Explore sources</a>'
               if site.config.get("case_review") else '<a class="button primary" href="findings.html">See the findings</a>')
+    intro = site.config.get("home_intro", {})
+    heading = esc(intro.get("heading", f"Feedback on {site.provider}'s inventory data, from the people who use it"))
+    lead = esc(intro.get("lead",
+        f"Users of the {site.dataset} life-cycle inventory database record here what they find in the data, "
+        f"check each other's measurements and report the findings to {site.provider}. "
+        f"The aim is a better database for everyone. {site.provider} decides what it changes."))
     opening = (
         f'<section class="wrap hero"><p class="eyebrow">{d} life-cycle inventory database</p>'
-        f"<h1>Feedback on {p}'s inventory data, from the people who use it</h1>"
-        f'<p class="lead">Users of the {d} life-cycle inventory database record here what they find in the data, check '
-        f"each other's measurements and report the findings to {p}. The aim is a better database for everyone. "
-        f"{p} decides what it changes.</p>"
+        f'<h1>{heading}</h1><p class="lead">{lead}</p>'
         f'<div class="actions">{browse}{compare_link}</div>'
         f"{shell.lookup(site)}</section>"
     )

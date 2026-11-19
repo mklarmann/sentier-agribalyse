@@ -1,0 +1,55 @@
+[
+  {
+    "id": "ademe-release-notes",
+    "kind": "Publisher notice",
+    "title": "ADEME’s corrections and release history for AGRIBALYSE 3.2",
+    "url": "https://doc.agribalyse.fr/documentation/nous-contactez/evolution-de-la-base-de-donnees",
+    "cases": []
+  },
+  {
+    "id": "ademe-food-table",
+    "kind": "Reference data",
+    "title": "ADEME’s impact indicators for ready-to-eat foods, version 3.2",
+    "url": "https://data.ademe.fr/datasets/agribalyse-31-synthese",
+    "cases": []
+  },
+  {
+    "id": "brightway-flows",
+    "kind": "Build input",
+    "title": "Brightway Flows 1.1.0 · elementary flow list",
+    "url": "https://doi.org/10.5281/zenodo.23554066",
+    "cases": [
+      "F7"
+    ]
+  },
+  {
+    "id": "flow-download",
+    "kind": "Implementation",
+    "title": "Download and verify the elementary flow list · merged change",
+    "url": "https://github.com/sentier-dev/sentier-agribalyse/pull/9",
+    "cases": [
+      "F7"
+    ]
+  },
+  {
+    "id": "ademe-packaging-faq",
+    "kind": "Method guidance",
+    "title": "ADEME’s FAQ on packaging and other modelling choices",
+    "url": "https://doc.agribalyse.fr/documentation/nous-contactez/foire-aux-questions",
+    "cases": []
+  },
+  {
+    "id": "openlca-validation",
+    "kind": "User report",
+    "title": "Validation messages in openLCA 2.0.3 for AGRIBALYSE 3.0.1",
+    "url": "https://ask.openlca.org/8838/error-in-the-validation-of-the-agribalyse-3-0-1-database",
+    "cases": []
+  },
+  {
+    "id": "organic-lca",
+    "kind": "Research",
+    "title": "Towards better representation of organic agriculture in life cycle assessment",
+    "url": "https://doi.org/10.1038/s41893-020-0489-6",
+    "cases": []
+  }
+]

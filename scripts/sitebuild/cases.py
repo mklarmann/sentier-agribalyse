@@ -20,7 +20,7 @@ def register(site):
 
     for f in site.by_id.values():
         rid = f["id"]
-        add(f"report-{rid}", "Finding", f["title"], f"findings/{rid}.html", [rid])
+        add(f"report-{rid}", "Finding", f["title"], f["reported"]["url"] or f"findings/{rid}.html", [rid])
         if f["answer"]:
             add(f"answer-{rid}", "Provider feedback", f'{site.provider} response to {rid}',
                 f["answer"]["url"], [rid])
@@ -74,7 +74,9 @@ def table(noun, columns, filters, rows):
     body = ""
     for facets, cells in rows:
         attrs = " ".join(f'data-{key}="{esc(value)}"' for key, value in facets.items())
-        body += f'<tr {attrs}>' + "".join(f'<td>{v}</td>' for v in cells) + '</tr>'
+        body += f'<tr {attrs}>' + "".join(
+            f'<td data-label="{esc(label)}">{value}</td>' for label, value in zip(columns, cells, strict=True)
+        ) + '</tr>'
     headings = "".join(f'<th scope="col">{esc(col)}</th>' for col in columns)
     return (f'<section data-register="{noun}"><form class="filter-row" role="search" hidden>{controls}'
             '<button type="reset" class="button">Clear filters</button></form>'
@@ -99,7 +101,7 @@ def case_list(site):
         patch = "Registered patch" if f["patches"] else "No registered patch"
         stage = site.label(f["stage"])
         ids = ", ".join(p["id"] for p in f["patches"]) or "—"
-        lookup = " ".join([str(d["code"]) + " " + d["name"] + " " + d["location"] for d in f["datasets"]]
+        lookup = " ".join([f["scope"]] + [str(d["code"]) + " " + d["name"] + " " + d["location"] for d in f["datasets"]]
                           + [patch_key(p) for p in f["patches"]] + [s["id"] for s in case_sources(site, rid)])
         rows.append(({"case": rid, "stage": stage, "patch": patch, "search": lookup},
                      [f'<a href="cases/{rid}.html">{rid} · {esc(f["title"])}</a>', esc(stage), esc(ids)]))

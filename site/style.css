@@ -997,7 +997,7 @@ html.run-has-full { overflow: hidden; }
 .prose.wide > [data-register] { max-width: none; }
 [data-register] .filter-row { align-items: end; }
 [data-register] .table-wrap { margin-top: .75rem; }
-[data-register] td:first-child { width: 55%; }
+@media (min-width: 40rem) { [data-register] td:first-child { width: 55%; } }
 [data-register] tr[hidden], [data-register] form[hidden] { display: none; }
 .ba-controls select { max-width: min(32rem, 100%); }
 

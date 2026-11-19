@@ -1,0 +1,35 @@
+{
+  "schema": 2,
+  "id": "F7",
+  "issue": 7,
+  "title": "Where to get the elementary flow list for the AGRIBALYSE import",
+  "kind": "question",
+  "datasets": [],
+  "scope": "The harmonised-flows-simple.json.gz input to the AGRIBALYSE 3.2 Brightway import.",
+  "releases": [
+    "3.2"
+  ],
+  "observation": "A user preparing a Brightway 2.5 import found the flow list described as a local file and asked where to obtain it.",
+  "exposure": "",
+  "method": "The merged change adds the command `uv run dds-fetch-harmonised-flows`. It retrieves Brightway Flows 1.1.0 and checks the downloaded file against the pinned checksum.",
+  "reported": {
+    "by": "lcalderari",
+    "date": "2026-10-28",
+    "url": "https://github.com/sentier-dev/sentier-agribalyse/issues/7"
+  },
+  "repeated": null,
+  "sent": null,
+  "answer": null,
+  "fixed_in": null,
+  "closed": {
+    "as": "not-a-defect",
+    "date": "2026-11-14",
+    "reason": "The import maintainers closed the question when they merged the download command and setup instructions. The change concerns how users prepare the import.",
+    "url": "https://github.com/sentier-dev/sentier-agribalyse/pull/9"
+  },
+  "related": [],
+  "threads": [],
+  "next": null,
+  "retained": [],
+  "notes": ""
+}

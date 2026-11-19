@@ -21,6 +21,8 @@ The replay below follows the **distributable source** through all six stages. Se
 
 ## What you need
 
+The [source register](sources.md) identifies the public inputs. [Case F7](cases/F7.html) traces the elementary flow list from a user’s question to the download command used to prepare the import.
+
 | What | Where it comes from |
 |---|---|
 | ADEME's export of AGRIBALYSE 3.2 | In the repository, without the ecoinvent datasets it carried: `source/AGB32_ecoinvent_free.CSV.xz`. ADEME publishes AGRIBALYSE under the Etalab Open Licence 2.0. |
