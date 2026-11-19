@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pandas as pd
 from sentier_diagnostics import chain, page, rule
+from sentier_diagnostics import matrix as matrix_format
 from config import Settings
 from config.paths import Paths
 from pipelines.backtest import BacktestPipeline
@@ -203,6 +204,21 @@ def main():
         )
         folder = Path(__file__).resolve().parents[1] / ".local/review-explorer"
         print(page.write(local, folder, matrix=matrix))
+        # Use the same Comparison page, navigation and case selector as the review site.
+        # Private scores have their own local output tree, outside the Pages artifact.
+        from build_site import Site
+
+        root = Path(__file__).resolve().parents[1]
+        review = Site(
+            folder / "site", root=root, offline=True, last_run_snapshot=root / "site/licensed-run.json"
+        )
+        recorded = review.last_run["diagnostics"]
+        if any(recorded[field] != output[field] for field in ("states", "steps", "counts", "indicators")):
+            raise ValueError("The recorded build and local product comparison differ")
+        review.last_run = {**review.last_run, "diagnostics": local}
+        review.build()
+        matrix_format.write(matrix, review.out / local["matrix"]["file"])
+        print(review.out / "before-after.html")
 
 
 if __name__ == "__main__":

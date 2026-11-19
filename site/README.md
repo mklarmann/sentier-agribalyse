@@ -19,13 +19,15 @@ For individual before/after rebuild scores, point the following command at the f
 
 ```sh
 mkdir -p .local
-uv run --frozen --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/compare_review_builds.py \
+uv run --frozen --with markdown==3.7 --with 'sentier-diagnostics @ git+https://github.com/sentier-dev/sentier-diagnostics@f174779cf19b8240befb3cc17eaf5b7f4fa6dcc1' python scripts/compare_review_builds.py \
   --baseline "$BUILDS/fb-nb-main-a-adapter" --repeat-baseline "$BUILDS/fb-nb-main-b2-adapter" \
   --codes "$BUILDS/fb-nb-a-adapter" --repeat-codes "$BUILDS/fb-nb-a2-adapter" \
   --flows "$BUILDS/fb-nb-ac-adapter" --water "$BUILDS/fb-nb-acw-adapter" \
   --integrated "$BUILDS/fb-review-nov18-adapter" --out .local/counts.json --local-explorer
-open .local/review-explorer/index.html
+python3 -m http.server 63245 --bind 127.0.0.1 --directory .local/review-explorer
 ```
+
+Open [Comparison with food-level results](http://127.0.0.1:63245/site/before-after.html#sd.step=water) to review the food matrix under the normal Build navigation. The standalone `.local/review-explorer/index.html` also opens directly from disk.
 
 Set `BUILDS` to the folder containing the build checkouts. Without `--local-explorer`, the same command writes only aggregate counts. The page published by Pages does not read the ignored `.local/` directory.
 
