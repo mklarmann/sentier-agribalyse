@@ -39,8 +39,8 @@ def event_words(site, event):
     if name == "reported":
         return "New finding ", ""
     if name == "repeated":
-        return "A second person repeated the measurement of ", (
-            "" if event["stage"] == "confirmed" else " and did not reproduce it")
+        return "A second person verified ", (
+            "" if event["stage"] == "confirmed" else " and did not find the same")
     if name == "sent":
         return "", f" was reported to {p}"
     if name == "answer":
@@ -68,7 +68,7 @@ def changes_page(site):
     more = f" This page shows the newest {CHANGES}." if total > CHANGES else ""
     body = (
         "<h1>What changed</h1>"
-        f"<p>Every dated step the records hold, the newest first: a new finding, a second measurement, a report to "
+        f"<p>Every dated step the records hold, the newest first: a new finding, a verification, a report to "
         f"{esc(site.provider)}, its answer, a release that resolves a finding, a closing. {plural(total, 'step is', 'steps are')} recorded.{more} "
         'The same list is available as a <a href="feed.xml">feed</a>.</p>'
         + change_lines(site, site.changes[:CHANGES])
@@ -293,7 +293,7 @@ def housekeeping(site):
         return f'<h2 id="{anchor}">{title}</h2><p>{text}</p>' + (items or '<p class="list-none">Nothing to do.</p>')
 
     unlisted = '<ul class="plain">' + "".join(
-        f'<li>{ext(i["url"], "Issue #" + str(int(i["number"])))} <span class="quiet">· last activity {day(i["updated"])}</span></li>'
+        f'<li>{ext(i["url"], "GitHub issue #" + str(int(i["number"])))} <span class="quiet">· last activity {day(i["updated"])}</span></li>'
         for i in t["unlisted"]
     ) + "</ul>" if t["unlisted"] else ""
     without = [site.by_id[i] for i in t["without_issue"]]

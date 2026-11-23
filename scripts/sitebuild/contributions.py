@@ -60,7 +60,7 @@ def contribution_row(site, c, up=""):
     cid = esc(c["id"])
     label, group = kind_words(site, c)
     approvals = len(c["approvals"])
-    issue = ext(f'{site.repo}/issues/{int(c["issue"])}', f'Issue #{int(c["issue"])}') if c.get("issue") else ""
+    issue = ext(f'{site.repo}/issues/{int(c["issue"])}', f'GitHub issue #{int(c["issue"])}') if c.get("issue") else ""
     return (
         f'<li class="record" data-stage="{esc(c["status"])}">'
         f'<span class="record-id">{cid}</span>'

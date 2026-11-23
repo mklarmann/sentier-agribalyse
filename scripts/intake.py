@@ -366,7 +366,7 @@ def record_from_issue(issue, config, known=None):
         "related": [],
         "threads": [],
         "next": {
-            "action": f"A second person repeats the measurement on {provider}'s release files. "
+            "action": f"A second person verifies the issue in {provider}'s release files. "
                       f"Then the finding is reported to {provider}.",
             "role": "reviewer",
         },
@@ -462,37 +462,37 @@ REPLIES = {
         "comments `/record` again."
     ),
     "usage": (
-        "To record a second measurement, begin a comment with one of these lines and say below it "
-        "what you measured and got:\n\n```\n/repeated reproduced\n/repeated not-reproduced\n```"
+        "To record that you verified it, begin a comment with one of these lines and say below it "
+        "what you checked and found:\n\n```\n/repeated reproduced\n/repeated not-reproduced\n```"
     ),
     "no-record": (
-        "This finding has no merged record yet, so a second measurement cannot be recorded. Once a "
+        "This finding has no merged record yet, so a verification cannot be recorded. Once a "
         "maintainer has merged the record, comment again with `/repeated reproduced` or "
-        "`/repeated not-reproduced`. What you measured is welcome here in the meantime."
+        "`/repeated not-reproduced`. What you found is welcome here in the meantime."
     ),
     "which": (
-        "This issue holds more than one finding ({findings}). Name the one you measured, for example "
+        "This issue holds more than one finding ({findings}). Name the one you checked, for example "
         "`/repeated reproduced {example}`."
     ),
     "other-issue": "{finding} is not discussed in this issue. Comment in the issue of that finding.",
     "reporter": (
-        "Thank you for measuring again. A second measurement has to come from someone other than "
+        "Thank you for checking. A verification has to come from someone other than "
         "the person who reported the finding, so this one is not recorded. Your result is still "
         "useful here in the discussion."
     ),
     "no-reporter": (
         "The record of **{finding}** does not name who reported it, so a second person cannot be told "
-        "apart. A maintainer records your measurement by hand."
+        "apart. A maintainer records your check by hand."
     ),
     "already": (
-        "A second measurement of **{finding}** is already recorded. Further measurements are welcome "
+        "A verification of **{finding}** is already recorded. Further checks are welcome "
         "in this discussion; a maintainer can replace the recorded one "
         "(`python3 scripts/community.py repeat {finding} --replace …`)."
     ),
-    "closed": "**{finding}** is closed, so a second measurement is not recorded. Your result is still useful here.",
-    "invalid": "This comment could not be read as a second measurement. A maintainer records it by hand.",
+    "closed": "**{finding}** is closed, so a verification is not recorded. Your result is still useful here.",
+    "invalid": "This comment could not be read as a verification. A maintainer records it by hand.",
     "pending": (
-        "A second measurement of **{finding}** is already proposed in {pull}, and a maintainer decides "
+        "A verification of **{finding}** is already proposed in {pull}, and a maintainer decides "
         "there. Yours is welcome here in the discussion."
     ),
     "by-hand": (
@@ -505,7 +505,7 @@ REPLIES = {
         "What happens next:\n\n"
         "1. Once the record is merged, the finding is listed on the [site]({site}) with the status "
         "\"{filed}\".\n"
-        "2. A second person repeats the measurement on {provider}'s release files and comments here, "
+        "2. A second person verifies the issue in {provider}'s release files and comments here, "
         "beginning with the line `/repeated reproduced` or `/repeated not-reproduced`.\n"
         "3. Findings are reported to {provider} together. {provider} decides what it changes; its "
         "answer is recorded here.\n\n"
@@ -513,7 +513,7 @@ REPLIES = {
     ),
     "reproposed": "The record of **{finding}** is proposed from this issue again in {pull}.",
     "repeated": (
-        "Thank you. Your measurement is proposed for the record of **{finding}** in {pull}. A "
+        "Thank you. Your check is proposed for the record of **{finding}** in {pull}. A "
         "maintainer reads your comment before it is merged."
     ),
 }
@@ -522,7 +522,7 @@ PULL_BODY = {
         "Proposes the record of finding {finding} from the form of #{issue}. Written by the intake "
         "workflow; nobody has reviewed it yet.\n\n"
         "Before merging, a maintainer checks:\n\n"
-        "- Is it a finding: a measured observation about {provider}'s data?\n"
+        "- Is it a finding: an observed issue in {provider}'s data?\n"
         "- Names, numbers and single values only. No text pasted from {provider}'s reports.\n"
         "- Are the dataset numbers, names and locations right, and does the kind fit?\n\n"
         "{notes}"
@@ -537,10 +537,10 @@ PULL_BODY = {
         "in those fields.\n\n{notes}"
     ),
     "repeat": (
-        "Records a second measurement of finding {finding}: {result}, as said in "
+        "Records a verification of finding {finding}: {result}, as said in "
         "[this comment]({url}) on #{issue}.\n\n"
         "Before merging, a maintainer reads the comment:\n\n"
-        "- Does it say what was measured, on {provider}'s release files, and what came out?\n"
+        "- Does it say what was checked, in {provider}'s release files, and what came out?\n"
         "- Is it by a second person, not by the reporter under another name?\n\n"
         "This pull request changes one file. After the merge the status of the finding follows "
         "from the record, and so do the labels of #{issue}."

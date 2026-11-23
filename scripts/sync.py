@@ -7,7 +7,7 @@ The record decides. A finding's status is computed from the dated evidence in it
 this job projects it onto the finding's issue:
 
 - labels: the finding label (`finding_label` in site/config.json), exactly one `status: …` label in the words the site shows, and
-  `help wanted` while the finding needs a second measurement. An issue filed as a finding
+  `help wanted` while the finding needs verifying. An issue filed as a finding
   that has no merged record carries `needs-triage` instead. A label set by hand is put right
   at the next run;
 - one comment when the status changes, never two: the comment carries a hidden marker;
@@ -136,14 +136,14 @@ def announcement(records, config):
         )
         if key == "filed":
             body = (
-                f"This issue is recorded as a finding. To help, repeat the measurement on {provider}'s "
+                f"This issue is recorded as a finding. To help, verify the issue in {provider}'s "
                 "release files and comment here, beginning with the line `/repeated reproduced` or "
-                "`/repeated not-reproduced`; then say what you measured and got."
+                "`/repeated not-reproduced`; then say what you checked and found."
             )
         elif key == "confirmed":
             block = record["repeated"]
             body = (
-                f"{block['by']} repeated the measurement on {long_date(block['date'])} and reproduced it "
+                f"{block['by']} verified the issue on {long_date(block['date'])} and found the same "
                 f"([comment]({block['url']})). It has not been reported to {provider} yet."
             )
         elif key == "sent":

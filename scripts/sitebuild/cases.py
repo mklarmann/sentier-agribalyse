@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 
 import community
 from . import findings, pages, quality
-from .text import esc, plural
+from .text import esc, ext, plural
 
 
 def register(site):
@@ -103,9 +103,11 @@ def case_list(site):
         ids = ", ".join(p["id"] for p in f["patches"]) or "—"
         lookup = " ".join([f["scope"]] + [str(d["code"]) + " " + d["name"] + " " + d["location"] for d in f["datasets"]]
                           + [patch_key(p) for p in f["patches"]] + [s["id"] for s in case_sources(site, rid)])
+        url, label, _ = findings.discussion(site, f)
+        on_github = ext(url, esc(label)) if url else "—"
         rows.append(({"case": rid, "stage": stage, "patch": patch, "search": lookup},
-                     [f'<a href="cases/{rid}.html">{rid} · {esc(f["title"])}</a>', esc(stage), esc(ids)]))
-    return table("case", ["Case", "Triage status", "Community patch"],
+                     [f'<a href="cases/{rid}.html">{rid} · {esc(f["title"])}</a>', esc(stage), esc(ids), on_github]))
+    return table("case", ["Case", "Triage status", "Community patch", "Discussion"],
                  {"stage": ("Triage status", [r[0]["stage"] for r in rows]),
                   "patch": ("Patch", [r[0]["patch"] for r in rows])}, rows)
 

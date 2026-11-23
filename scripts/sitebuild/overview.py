@@ -1,5 +1,5 @@
 """The overview: what happens here and why, the five steps with their counts, what needs a
-second measurement now, what changed recently, the ways to take part, the patched copy.
+verification now, what changed recently, the ways to take part, the patched copy.
 Each thing is said once."""
 
 from . import findings, pages, shell, status
@@ -7,7 +7,7 @@ from .text import esc, ext
 
 
 def second_measurement_list(site, up="", limit=5):
-    """The findings that need a second measurement, the longest waiting first."""
+    """The findings awaiting verification, the longest waiting first."""
     waiting = sorted(
         (f for f in site.triage["findings"] if f["stage"] == "filed"),
         key=lambda f: (f["waiting_since"] or "9999", f["id"]),
@@ -27,7 +27,7 @@ def ways(site, up=""):
         f'<div class="card"><h3>Verify a finding</h3><p>Choose an open finding, check it on '
         f"{p}'s files and write in its discussion what you got. A different result is as useful as the same one.</p>"
         f'<a class="arrow" href="{up}take-part.html">How to take part</a></div>'
-        '<div class="card"><h3>Report a finding</h3><p>Say which dataset and which release, what you measured and how. '
+        '<div class="card"><h3>Report a finding</h3><p>Say which dataset and which release, what you found and how. '
         f'Reporting needs a free GitHub account.</p>{ext(report, "Report a finding")}</div>'
         '<div class="card"><h3>Propose a contribution</h3><p>A mapping, a model, a rebuilt inventory or a method variant, '
         "with its evidence and the checks it must pass.</p>"

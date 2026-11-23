@@ -67,8 +67,12 @@ def display_label(stage, provider):
 def description(stage, provider):
     if stage == "filed":
         return f"A second person can verify this finding on {provider}'s original files."
+    if stage == "confirmed":
+        return f"A second person checked this finding and found the same; it has not been reported to {provider} yet."
     if stage == "fixed":
         return f"The record identifies the published {provider} release or file that corrects this finding."
+    if stage == "withdrawn":
+        return "The finding did not hold when it was checked again; it stays listed so that nobody reports it a second time."
     return community.status_description(stage, provider)
 
 

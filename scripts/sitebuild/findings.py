@@ -36,7 +36,7 @@ def discussion(site, f):
     issue = f["tracker"]
     if f["issue"]:
         url = issue["url"] if issue else f'{site.repo}/issues/{int(f["issue"])}'
-        return url, f'Issue #{int(f["issue"])}', issue["comments"] if issue else None
+        return url, f'GitHub issue #{int(f["issue"])}', issue["comments"] if issue else None
     if f["threads"]:
         return f["threads"][0], link_label(f["threads"][0], site.repo), None
     return None, "", None
