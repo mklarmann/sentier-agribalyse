@@ -25,7 +25,7 @@ The replay below follows the **distributable source** through all six stages. Se
 
 The kit contains the 17,966-process source export, the patched foreground and the expected food scores. Extract it and follow `README.txt` to reconnect your own ecoinvent 3.9.1 cut-off background. The second download contains the linked foreground exchanges after patching. Its rows identify the AGRIBALYSE process, the product or elementary-flow row and the signed matrix coefficient. The row identifiers match the locally rebuilt scoring package.
 
-[Download ADEME and patched results side by side (CSV)](https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/food-comparison.csv)
+[Download ADEME and patched results side by side (CSV)](https://github.com/mklarmann/sentier-agribalyse/releases/download/agribalyse-3.2-review-2026-11-19/food-comparison.csv). ADEME's values in it: source ADEME, AGRIBALYSE 3.2 food spreadsheet, last updated 21 August 2025, [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence).
 
 ## What you need
 
@@ -33,7 +33,7 @@ The [source register](sources.md) identifies the public inputs. [Case F7](cases/
 
 | What | Where it comes from |
 |---|---|
-| ADEME's export of AGRIBALYSE 3.2 | In the repository, without the ecoinvent datasets it carried: `source/AGB32_ecoinvent_free.CSV.xz`. ADEME publishes AGRIBALYSE under the Etalab Open Licence 2.0. |
+| ADEME's export of AGRIBALYSE 3.2 | In the repository, without the ecoinvent datasets it carried: `source/AGB32_ecoinvent_free.CSV.xz`. Source: ADEME, AGRIBALYSE 3.2 SimaPro export of 8 November 2024, [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence). |
 | The list of elementary flows | `dds-fetch-harmonised-flows` downloads it once (Brightway Flows, under the ODbL). |
 | ecoinvent 3.9.1 | Your own licence. The repository holds no ecoinvent data, and a guard refuses to commit any. |
 | The EF 3.1 methods | Read by the import from their published sources. |

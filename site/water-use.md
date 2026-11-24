@@ -15,3 +15,7 @@ The earlier export retained 210 processes that ADEME had adapted from ecoinvent.
 On the distributable input, Step 3 moves 977 foods closer to ADEME and 1,474 further away. Each percentage compares a food's score with its own ADEME reference before display rounding. The median weights each food equally.
 
 [Explore Step 3](#sd.step=water) · [ADEME's guidance on source formats and regional water use](https://doc.agribalyse.fr/documentation-en/agribalyse-data/data-access) · [Reproduce this check](../scripts/audit_water_gap.py)
+
+## Source of ADEME's values
+
+Source: ADEME, AGRIBALYSE 3.2 food spreadsheet (*AGRIBALYSE3.2 Tableur produits alimentaires*, sheet *Synthese*), last updated 21 August 2025, [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence). The rebuilt scores are computed here from ADEME's foreground export on ecoinvent 3.9.1. They are not ADEME's results, and ADEME has not reviewed them. [ADEME's data access](https://doc.agribalyse.fr/documentation-en/agribalyse-data/data-access)

@@ -12,7 +12,7 @@ Search the foods in AGRIBALYSE 3.2 by French or English name, AGRIBALYSE code or
 <select id="catalogue-indicator" name="indicator"></select></label>
 </form>
 <div id="reference-source" hidden>
-<p>ADEME’s AGRIBALYSE 3.2 food table gives the impact of one kilogram of each food. Search by food name or code and choose an indicator. <a href="https://data.ademe.fr/datasets/agribalyse-31-synthese">ADEME’s published table</a> · <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence">Open Licence</a>.</p>
+<p>ADEME’s AGRIBALYSE 3.2 food table gives the impact of one kilogram of each food. Search by food name or code and choose an indicator. Source: ADEME, <a href="https://data.ademe.fr/datasets/agribalyse-31-synthese">AGRIBALYSE – Synthèse</a>, version 3.2, data last updated 27 February 2025, <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence">Licence Ouverte / Etalab Open Licence 2.0</a>.</p>
 <p>The <a href="build.html">build record</a> compares the ecoinvent rebuild with ADEME’s release.</p>
 </div>
 <p id="catalogue-status" role="status"></p>
@@ -51,8 +51,8 @@ Search the foods in AGRIBALYSE 3.2 by French or English name, AGRIBALYSE code or
 
 ## What the catalogue covers
 
-Foods come from ADEME’s public table of ready-to-eat foods. Some entries share a CIQUAL code. The AGRIBALYSE code distinguishes their preparation or product variant. [ADEME’s 3.2 food table](https://data.ademe.fr/datasets/agribalyse-31-synthese) · [Open Licence](https://www.etalab.gouv.fr/licence-ouverte-open-licence).
+Foods come from ADEME’s public table of ready-to-eat foods. Some entries share a CIQUAL code. The AGRIBALYSE code distinguishes their preparation or product variant. Source: ADEME, [AGRIBALYSE – Synthèse](https://data.ademe.fr/datasets/agribalyse-31-synthese), version 3.2, data last updated 27 February 2025, [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence).
 
-The flow list shows names, compartments and units used in AGRIBALYSE’s own foreground processes. A flow can occur in several compartments. Parameters are listed by name and by whether they are inputs or calculated. Full exchanges, parameter values and formulas can be inspected in the [local build](build.md). [AGRIBALYSE source and terms](../IMPORT.md#licence).
+The flow list shows names, compartments and units used in AGRIBALYSE’s own foreground processes. Source: ADEME, AGRIBALYSE 3.2 SimaPro export of 8 November 2024, [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence). A flow can occur in several compartments. Parameters are listed by name and by whether they are inputs or calculated. Full exchanges, parameter values and formulas can be inspected in the [local build](build.md). [AGRIBALYSE source and terms](../IMPORT.md#licence).
 
 If you find an unexpected value, look for the release in [Sources](sources.md) and check the [case register](cases.md) for an existing observation. Include the code or name and the release when you [report a finding](take-part.md#identify-a-finding).

@@ -7,6 +7,7 @@ site builds from them and passes the site check, that the site is recognisably t
 release, because AGRIBALYSE is built on a licensed background and nothing built is published.
 """
 
+import datetime
 import importlib.util
 import io
 import json
@@ -346,6 +347,22 @@ class Site(unittest.TestCase):
         self.assertTrue(all(len(row) == len(ids) for row in ref["scores"].values()))
         self.assertIn('href="browse.html?kind=results"', self.pages["before-after.html"])
         self.assertFalse((self.out / "matrix.js").exists())
+
+    def test_ademe_data_names_its_source_the_date_of_its_last_update_and_the_licence(self):
+        # The Etalab Open Licence 2.0 asks a reuse to name the source and the date of its last update.
+        licence = "Licence Ouverte / Etalab Open Licence 2.0"
+        for page in ("before-after.html", "browse.html", "build.html", "about/terms.html"):
+            with self.subTest(page=page):
+                self.assertIn(licence, self.pages[page])
+                self.assertIn("ADEME, AGRIBALYSE", self.pages[page])
+        # the comparison's ADEME values are the food spreadsheet's (its notice: last change 21/08/2025)
+        self.assertIn("last updated 21 August 2025", self.pages["before-after.html"])
+        self.assertIn("last updated 21 August 2025", self.pages["build.html"])
+        # the catalogue's date is the one its table carries, so a refreshed table fails here until
+        # the words follow it
+        day = datetime.date.fromisoformat(json.loads((self.out / "assets/ademe-reference.json").read_text())["updated"])
+        self.assertIn(f"data last updated {day.day} {day:%B %Y}", self.pages["browse.html"])
+        self.assertIn(f"data last updated {day.day} {day:%B %Y}", self.pages["about/terms.html"])
 
     def test_no_page_file_or_link_of_a_served_release(self):
         self.assertNotIn("patched-release.html", self.pages)

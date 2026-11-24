@@ -2,6 +2,18 @@
 
 This public repository contains adapter code, documentation and permitted collaboration records. The code licence does not relicense ADEME's source material or ecoinvent background data.
 
+## Attribution of ADEME's data
+
+ADEME publishes AGRIBALYSE under the [Licence Ouverte / Etalab Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence). Each page that shows ADEME's data names its source and the date of its last update:
+
+| Where it appears | Source |
+|---|---|
+| ADEME's values on the comparison page and in the comparison file | ADEME, AGRIBALYSE 3.2 food spreadsheet (*AGRIBALYSE3.2 Tableur produits alimentaires*, sheet *Synthese*), last updated 21 August 2025 ([data access](https://doc.agribalyse.fr/documentation-en/agribalyse-data/data-access)) |
+| ADEME's results by food in the catalogue | ADEME, [AGRIBALYSE – Synthèse](https://data.ademe.fr/datasets/agribalyse-31-synthese), version 3.2, data last updated 27 February 2025 |
+| Flow and parameter names; the export in the repository and the inventory downloads | ADEME, AGRIBALYSE 3.2 SimaPro export of 8 November 2024, with the ecoinvent datasets it carried removed |
+
+The rebuilt scores are computed here from ADEME's export and a licensed ecoinvent 3.9.1 background. They are not ADEME's results, and ADEME has not reviewed or endorsed them.
+
 ## Follow the artifact's terms
 
 [ADEME's data-access documentation](https://doc.agribalyse.fr/documentation-en/agribalyse-data/data-access) distinguishes accessible results from detailed inventories used with ecoinvent background processes. Detailed LCA use and integration of the background in tools have their own ecoinvent licensing requirements. Consult the terms for the exact release, download and intended artifact; an accessible result table does not grant permission to redistribute the linked background.
